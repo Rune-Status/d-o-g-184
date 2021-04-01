@@ -4,27 +4,28 @@ import jag.commons.collection.Node;
 import jag.commons.collection.NodeDeque;
 
 public class PcmStream_Sub1 extends PcmStream {
-    final NodeDeque aNodeDeque454;
-    final NodeDeque aNodeDeque373;
+
+    final NodeDeque<PcmStream> aNodeDeque454;
+    final NodeDeque<PcmStream_Sub1_Listener> aNodeDeque373;
     int anInt377;
     int anInt378;
 
     public PcmStream_Sub1() {
-        this.aNodeDeque454 = new NodeDeque();
-        this.aNodeDeque373 = new NodeDeque();
-        this.anInt378 = 0;
-        this.anInt377 = -1;
+        aNodeDeque454 = new NodeDeque<>();
+        aNodeDeque373 = new NodeDeque<>();
+        anInt378 = 0;
+        anInt377 = -1;
     }
 
     void method304(int[] var1, int var2, int var3) {
-        for (PcmStream var4 = (PcmStream) this.aNodeDeque454.head(); var4 != null; var4 = (PcmStream) this.aNodeDeque454.next()) {
+        for (PcmStream var4 = aNodeDeque454.head(); var4 != null; var4 = aNodeDeque454.next()) {
             var4.method482(var1, var2, var3);
         }
 
     }
 
     void method302(int var1) {
-        for (PcmStream var2 = (PcmStream) this.aNodeDeque454.head(); var2 != null; var2 = (PcmStream) this.aNodeDeque454.next()) {
+        for (PcmStream var2 = aNodeDeque454.head(); var2 != null; var2 = aNodeDeque454.next()) {
             var2.method303(var1);
         }
 
@@ -49,7 +50,7 @@ public class PcmStream_Sub1 extends PcmStream {
             var3 -= var4;
             this.anInt378 += var4;
             this.method23();
-            PcmStream_Sub1_Listener var5 = (PcmStream_Sub1_Listener) this.aNodeDeque373.head();
+            PcmStream_Sub1_Listener var5 = this.aNodeDeque373.head();
             synchronized (var5) {
                 int var7 = var5.method500(this);
                 if (var7 < 0) {
@@ -82,7 +83,7 @@ public class PcmStream_Sub1 extends PcmStream {
             var1 -= var2;
             this.anInt378 += var2;
             this.method23();
-            PcmStream_Sub1_Listener var3 = (PcmStream_Sub1_Listener) this.aNodeDeque373.head();
+            PcmStream_Sub1_Listener var3 = this.aNodeDeque373.head();
             synchronized (var3) {
                 int var5 = var3.method500(this);
                 if (var5 < 0) {
@@ -98,12 +99,12 @@ public class PcmStream_Sub1 extends PcmStream {
     }
 
     public PcmStream method308() {
-        return (PcmStream) this.aNodeDeque454.next();
+        return this.aNodeDeque454.next();
     }
 
     void method23() {
         if (this.anInt378 > 0) {
-            for (PcmStream_Sub1_Listener var1 = (PcmStream_Sub1_Listener) this.aNodeDeque373.head(); var1 != null; var1 = (PcmStream_Sub1_Listener) this.aNodeDeque373.next()) {
+            for (PcmStream_Sub1_Listener var1 = this.aNodeDeque373.head(); var1 != null; var1 = this.aNodeDeque373.next()) {
                 var1.anInt380 -= this.anInt378;
             }
 
@@ -118,10 +119,10 @@ public class PcmStream_Sub1 extends PcmStream {
     }
 
     public PcmStream method307() {
-        return (PcmStream) this.aNodeDeque454.head();
+        return this.aNodeDeque454.head();
     }
 
-    public final synchronized void method306(PcmStream var1) {
+    public final synchronized void removeDelegate(PcmStream var1) {
         var1.unlink();
     }
 

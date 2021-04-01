@@ -1,11 +1,10 @@
 package jag.commons.collection;
 
-import jag.GameStateEvent;
 import jag.opcode.Buffer;
 
 import java.util.Iterator;
 
-public final class IterableNodeTable implements Iterable {
+public final class IterableNodeTable<T extends Node> implements Iterable<T> {
 
     public final int size;
     public final Node[] buckets;
@@ -13,122 +12,139 @@ public final class IterableNodeTable implements Iterable {
     public Node tail;
     public Node head;
 
-    public IterableNodeTable(int var1) {
-        this.index = 0;
-        this.size = var1;
-        this.buckets = new Node[var1];
+    public IterableNodeTable(int capacity) {
+        index = 0;
+        size = capacity;
+        buckets = new Node[capacity];
 
-        for (int var2 = 0; var2 < var1; ++var2) {
-            Node var3 = this.buckets[var2] = new Node();
-            var3.next = var3;
-            var3.previous = var3;
+        for (int i = 0; i < capacity; i++) {
+            Node bucket = buckets[i] = new Node();
+            bucket.next = bucket;
+            bucket.previous = bucket;
         }
 
     }
 
-    public static String getStringParameter(IterableNodeTable var0, int var1, String var2) {
-        if (var0 == null) {
-            return var2;
+    public static String getStringParameter(IterableNodeTable<? super Node> table, int key, String defaultValue) {
+        if (table == null) {
+            return defaultValue;
         }
-        ObjectNode var3 = (ObjectNode) var0.lookup(var1);
-        return var3 == null ? var2 : (String) var3.value;
+        ObjectNode node = (ObjectNode) table.lookup(key);
+        return node == null ? defaultValue : (String) node.value;
     }
 
-    public static IterableNodeTable read(Buffer var0, IterableNodeTable var1) {
-        int var2 = var0.readUByte();
-        int var3;
-        if (var1 == null) {
-            var3 = GameStateEvent.nextPowerOfTwo(var2);
-            var1 = new IterableNodeTable(var3);
+    public static IterableNodeTable<? super Node> decode(Buffer buffer, IterableNodeTable<? super Node> table) {
+        int size = buffer.g1();
+        if (table == null) {
+            int capacity = nextPowerOfTwo(size);
+            table = new IterableNodeTable<>(capacity);
         }
 
-        for (var3 = 0; var3 < var2; ++var3) {
-            boolean var4 = var0.readUByte() == 1;
-            int var5 = var0.readMediumInt();
-            Node var6;
-            if (var4) {
-                var6 = new ObjectNode(var0.readString());
+        for (int i = 0; i < size; ++i) {
+            boolean object = buffer.g1() == 1;
+            int key = buffer.g3();
+            Node node;
+            if (object) {
+                node = new ObjectNode(buffer.gstr());
             } else {
-                var6 = new IntegerNode(var0.readInt());
+                node = new IntegerNode(buffer.g4());
             }
 
-            var1.method237(var6, var5);
+            table.put(node, key);
         }
 
-        return var1;
+        return table;
     }
 
-    public Node lookup(long key) {
-        Node var3 = this.buckets[(int) (key & (long) (this.size - 1))];
+    public static int nextPowerOfTwo(int src) {
+        --src;
+        src |= src >>> 1;
+        src |= src >>> 2;
+        src |= src >>> 4;
+        src |= src >>> 8;
+        src |= src >>> 16;
+        return src + 1;
+    }
 
-        for (this.head = var3.next; var3 != this.head; this.head = this.head.next) {
-            if (this.head.key == key) {
-                Node var4 = this.head;
-                this.head = this.head.next;
-                return var4;
+    public static int getIntParameter(IterableNodeTable<? super Node> table, int key, int defaultValue) {
+        if (table == null) {
+            return defaultValue;
+        }
+        IntegerNode node = (IntegerNode) table.lookup(key);
+        return node == null ? defaultValue : node.value;
+    }
+
+    public T lookup(long key) {
+        Node node = buckets[(int) (key & (long) (size - 1))];
+
+        for (head = node.next; node != head; head = head.next) {
+            if (head.key == key) {
+                Node current = head;
+                head = head.next;
+                return (T) current;
             }
         }
 
-        this.head = null;
+        head = null;
         return null;
     }
 
-    public Node method234() {
-        Node var1;
-        if (this.index > 0 && this.buckets[this.index - 1] != this.tail) {
-            var1 = this.tail;
-            this.tail = var1.next;
-            return var1;
+    public T next() {
+        Node next;
+        if (index > 0 && buckets[index - 1] != tail) {
+            next = tail;
+            tail = next.next;
+            return (T) next;
         }
+
         do {
-            if (this.index >= this.size) {
+            if (index >= size) {
                 return null;
             }
 
-            var1 = this.buckets[this.index++].next;
-        } while (var1 == this.buckets[this.index - 1]);
+            next = buckets[index++].next;
+        } while (next == buckets[index - 1]);
 
-        this.tail = var1.next;
-        return var1;
+        tail = next.next;
+        return (T) next;
     }
 
-    public void method236() {
-        for (int var1 = 0; var1 < this.size; ++var1) {
-            Node var2 = this.buckets[var1];
-
+    public void clear() {
+        for (int i = 0; i < size; ++i) {
+            Node current = buckets[i];
             while (true) {
-                Node var3 = var2.next;
-                if (var3 == var2) {
+                Node linked = current.next;
+                if (linked == current) {
                     break;
                 }
 
-                var3.unlink();
+                linked.unlink();
             }
         }
 
-        this.head = null;
-        this.tail = null;
+        head = null;
+        tail = null;
     }
 
-    public void method237(Node var1, long var2) {
-        if (var1.previous != null) {
-            var1.unlink();
+    public void put(T entry, long key) {
+        if (entry.previous != null) {
+            entry.unlink();
         }
 
-        Node var4 = this.buckets[(int) (var2 & (long) (this.size - 1))];
-        var1.previous = var4.previous;
-        var1.next = var4;
-        var1.previous.next = var1;
-        var1.next.previous = var1;
-        var1.key = var2;
+        Node last = buckets[(int) (key & (long) (size - 1))];
+        entry.previous = last.previous;
+        entry.next = last;
+        entry.previous.next = entry;
+        entry.next.previous = entry;
+        entry.key = key;
     }
 
-    public Iterator iterator() {
-        return new IterableNodeTableIterator(this);
+    public Iterator<T> iterator() {
+        return new IterableNodeTableIterator<>(this);
     }
 
-    public Node method235() {
-        this.index = 0;
-        return this.method234();
+    public T first() {
+        index = 0;
+        return next();
     }
 }

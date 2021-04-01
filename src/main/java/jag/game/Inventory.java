@@ -5,7 +5,7 @@ import jag.commons.collection.NodeTable;
 
 public class Inventory extends Node {
 
-    public static NodeTable cache = new NodeTable(32);
+    public static NodeTable<Inventory> cache = new NodeTable<>(32);
 
     public int[] ids;
     public int[] stackSizes;
@@ -16,7 +16,7 @@ public class Inventory extends Node {
     }
 
     public static int getCountIncludingStacks(int key, int itemId) {
-        Inventory inventory = (Inventory) cache.lookup(key);
+        Inventory inventory = cache.lookup(key);
         if (inventory == null) {
             return 0;
         } else if (itemId == -1) {
@@ -33,7 +33,7 @@ public class Inventory extends Node {
     }
 
     public static int getItemIdAt(int key, int index) {
-        Inventory inventory = (Inventory) cache.lookup(key);
+        Inventory inventory = cache.lookup(key);
         if (inventory == null) {
             return -1;
         }
@@ -41,7 +41,7 @@ public class Inventory extends Node {
     }
 
     public static void addItem(int key, int index, int id, int stack) {
-        Inventory inventory = (Inventory) cache.lookup(key);
+        Inventory inventory = cache.lookup(key);
         if (inventory == null) {
             inventory = new Inventory();
             cache.put(inventory, key);
@@ -70,7 +70,7 @@ public class Inventory extends Node {
     }
 
     public static void clear(int key) {
-        Inventory inventory = (Inventory) cache.lookup(key);
+        Inventory inventory = cache.lookup(key);
         if (inventory != null) {
             for (int i = 0; i < inventory.ids.length; ++i) {
                 inventory.ids[i] = -1;
@@ -81,7 +81,7 @@ public class Inventory extends Node {
     }
 
     public static int getItemStackSizeAt(int key, int index) {
-        Inventory inventory = (Inventory) cache.lookup(key);
+        Inventory inventory = cache.lookup(key);
         if (inventory == null) {
             return 0;
         }
@@ -89,7 +89,7 @@ public class Inventory extends Node {
     }
 
     public static void delete(int key) {
-        Inventory inv = (Inventory) cache.lookup(key);
+        Inventory inv = cache.lookup(key);
         if (inv != null) {
             inv.unlink();
         }

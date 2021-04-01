@@ -26,9 +26,9 @@ public class AudioEnvelope {
     }
 
     public final void method1511(Buffer var1) {
-        this.anInt2027 = var1.readUByte();
-        this.start = var1.readInt();
-        this.end = var1.readInt();
+        this.anInt2027 = var1.g1();
+        this.start = var1.g4();
+        this.end = var1.g4();
         this.method1512(var1);
     }
 
@@ -41,13 +41,13 @@ public class AudioEnvelope {
     }
 
     public final void method1512(Buffer var1) {
-        this.anInt2028 = var1.readUByte();
+        this.anInt2028 = var1.g1();
         this.anIntArray2029 = new int[this.anInt2028];
         this.phases = new int[this.anInt2028];
 
         for (int var2 = 0; var2 < this.anInt2028; ++var2) {
-            this.anIntArray2029[var2] = var1.readUShort();
-            this.phases[var2] = var1.readUShort();
+            this.anIntArray2029[var2] = var1.g2();
+            this.phases[var2] = var1.g2();
         }
 
     }

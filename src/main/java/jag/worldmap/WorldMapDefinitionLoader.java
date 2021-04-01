@@ -17,7 +17,7 @@ public class WorldMapDefinitionLoader {
 
     public int method1310() {
         if (this.anInt1808 < 33) {
-            if (!this.aReferenceTable1807.method893(WorldMapCacheFeature.COMPOSITEMAP.name, this.aString1809)) {
+            if (!this.aReferenceTable1807.load(WorldMapCacheFeature.COMPOSITEMAP.name, this.aString1809)) {
                 return this.anInt1808;
             }
 
@@ -25,7 +25,7 @@ public class WorldMapDefinitionLoader {
         }
 
         if (this.anInt1808 == 33) {
-            if (this.aReferenceTable1807.method906(WorldMapCacheFeature.COMPOSITETEXTURE.name, this.aString1809) && !this.aReferenceTable1807.method893(WorldMapCacheFeature.COMPOSITETEXTURE.name, this.aString1809)) {
+            if (this.aReferenceTable1807.validate(WorldMapCacheFeature.COMPOSITETEXTURE.name, this.aString1809) && !this.aReferenceTable1807.load(WorldMapCacheFeature.COMPOSITETEXTURE.name, this.aString1809)) {
                 return this.anInt1808;
             }
 
@@ -33,7 +33,7 @@ public class WorldMapDefinitionLoader {
         }
 
         if (this.anInt1808 == 66) {
-            if (!this.aReferenceTable1807.method893(this.aString1809, WorldMapCacheFeature.LABELS.name)) {
+            if (!this.aReferenceTable1807.load(this.aString1809, WorldMapCacheFeature.LABELS.name)) {
                 return this.anInt1808;
             }
 
@@ -44,7 +44,7 @@ public class WorldMapDefinitionLoader {
         return this.anInt1808;
     }
 
-    public boolean method1308() {
+    public boolean isLoaded() {
         return this.aBoolean1810;
     }
 

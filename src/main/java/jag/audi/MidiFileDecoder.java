@@ -28,12 +28,12 @@ public class MidiFileDecoder {
     }
 
     int method783(int var1) {
-        byte var2 = this.aBuffer1120.payload[this.aBuffer1120.caret];
+        byte var2 = this.aBuffer1120.payload[this.aBuffer1120.pos];
         int var5;
         if (var2 < 0) {
             var5 = var2 & 255;
             this.anIntArray1113[var1] = var5;
-            ++this.aBuffer1120.caret;
+            ++this.aBuffer1120.pos;
         } else {
             var5 = this.anIntArray1113[var1];
         }
@@ -43,16 +43,16 @@ public class MidiFileDecoder {
         }
         int var3 = this.aBuffer1120.method1044();
         if (var5 == 247 && var3 > 0) {
-            int var4 = this.aBuffer1120.payload[this.aBuffer1120.caret] & 255;
+            int var4 = this.aBuffer1120.payload[this.aBuffer1120.pos] & 255;
             if (var4 >= 241 && var4 <= 243 || var4 == 246 || var4 == 248 || var4 >= 250 && var4 <= 252 || var4 == 254) {
-                ++this.aBuffer1120.caret;
+                ++this.aBuffer1120.pos;
                 this.anIntArray1113[var1] = var4;
                 return this.method781(var1, var4);
             }
         }
 
         Buffer var10000 = this.aBuffer1120;
-        var10000.caret += var3;
+        var10000.pos += var3;
         return 0;
     }
 
@@ -70,20 +70,20 @@ public class MidiFileDecoder {
 
     void method793(byte[] var1) {
         this.aBuffer1120.payload = var1;
-        this.aBuffer1120.caret = 10;
-        int var2 = this.aBuffer1120.readUShort();
-        this.anInt1121 = this.aBuffer1120.readUShort();
+        this.aBuffer1120.pos = 10;
+        int var2 = this.aBuffer1120.g2();
+        this.anInt1121 = this.aBuffer1120.g2();
         this.anInt1114 = 500000;
         this.anIntArray1117 = new int[var2];
 
         Buffer var10000;
         int var3;
         int var5;
-        for (var3 = 0; var3 < var2; var10000.caret += var5) {
-            int var4 = this.aBuffer1120.readInt();
-            var5 = this.aBuffer1120.readInt();
+        for (var3 = 0; var3 < var2; var10000.pos += var5) {
+            int var4 = this.aBuffer1120.g4();
+            var5 = this.aBuffer1120.g4();
             if (var4 == 1297379947) {
-                this.anIntArray1117[var3] = this.aBuffer1120.caret;
+                this.anIntArray1117[var3] = this.aBuffer1120.pos;
                 ++var3;
             }
 
@@ -102,7 +102,7 @@ public class MidiFileDecoder {
     }
 
     public void method789(int var1) {
-        this.aBuffer1120.caret = this.anIntArray1116[var1];
+        this.aBuffer1120.pos = this.anIntArray1116[var1];
     }
 
     public int method786() {
@@ -137,36 +137,36 @@ public class MidiFileDecoder {
     int method781(int var1, int var2) {
         int var4;
         if (var2 == 255) {
-            int var7 = this.aBuffer1120.readUByte();
+            int var7 = this.aBuffer1120.g1();
             var4 = this.aBuffer1120.method1044();
             Buffer var10000;
             if (var7 == 47) {
                 var10000 = this.aBuffer1120;
-                var10000.caret += var4;
+                var10000.pos += var4;
                 return 1;
             }
             if (var7 == 81) {
-                int var5 = this.aBuffer1120.readMediumInt();
+                int var5 = this.aBuffer1120.g3();
                 var4 -= 3;
                 int var6 = this.anIntArray1115[var1];
                 this.aLong1119 += (long) var6 * (long) (this.anInt1114 - var5);
                 this.anInt1114 = var5;
                 var10000 = this.aBuffer1120;
-                var10000.caret += var4;
+                var10000.pos += var4;
                 return 2;
             }
             var10000 = this.aBuffer1120;
-            var10000.caret += var4;
+            var10000.pos += var4;
             return 3;
         }
         byte var3 = aByteArray1118[var2 - 128];
         var4 = var2;
         if (var3 >= 1) {
-            var4 = var2 | this.aBuffer1120.readUByte() << 8;
+            var4 = var2 | this.aBuffer1120.g1() << 8;
         }
 
         if (var3 >= 2) {
-            var4 |= this.aBuffer1120.readUByte() << 16;
+            var4 |= this.aBuffer1120.g1() << 16;
         }
 
         return var4;
@@ -177,11 +177,11 @@ public class MidiFileDecoder {
     }
 
     public void method788() {
-        this.aBuffer1120.caret = -1;
+        this.aBuffer1120.pos = -1;
     }
 
     public void method787(int var1) {
-        this.anIntArray1116[var1] = this.aBuffer1120.caret;
+        this.anIntArray1116[var1] = this.aBuffer1120.pos;
     }
 
     public boolean method779() {
@@ -203,9 +203,9 @@ public class MidiFileDecoder {
         for (int var4 = 0; var4 < var3; ++var4) {
             this.anIntArray1115[var4] = 0;
             this.anIntArray1113[var4] = 0;
-            this.aBuffer1120.caret = this.anIntArray1117[var4];
+            this.aBuffer1120.pos = this.anIntArray1117[var4];
             this.method784(var4);
-            this.anIntArray1116[var4] = this.aBuffer1120.caret;
+            this.anIntArray1116[var4] = this.aBuffer1120.pos;
         }
 
     }

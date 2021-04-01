@@ -19,12 +19,12 @@ public class Statics47 {
         var0.anIntArray1405[var1] = Integer.MAX_VALUE;
     }
 
-    public static int method321(int var0) {
-        ChatLine var1 = (ChatLine) Statics53.A_ITERABLE_NODE_TABLE_523.lookup(var0);
-        if (var1 == null) {
+    public static int method321(int key) {
+        ChatLine line = Statics53.CHAT_LINE_TABLE.lookup(key);
+        if (line == null) {
             return -1;
         }
-        return var1.nextDoubly == Statics53.A_ITERABLE_DOUBLY_LINKED_NODE___522.aDoublyLinkedNode1534 ? -1 : ((ChatLine) var1.nextDoubly).index;
+        return line.nextDoubly == Statics53.CHAT_LINE_QUEUE.sentinel ? -1 : ((ChatLine) line.nextDoubly).index;
     }
 
     static char method322(char var0, ClientLocale var1) {

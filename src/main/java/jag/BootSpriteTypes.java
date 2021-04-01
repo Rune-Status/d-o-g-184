@@ -10,6 +10,6 @@ public class BootSpriteTypes {
     final int anInt1628;
 
     BootSpriteTypes() {
-        this.anInt1628 = 3;
+        anInt1628 = 3;
     }
 }

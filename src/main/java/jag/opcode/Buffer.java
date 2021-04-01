@@ -1,125 +1,138 @@
 package jag.opcode;
 
-import jag.EntityUID;
-import jag.LoginScreenEffect;
 import jag.commons.collection.Node;
 import jag.game.relationship.AssociateComparatorByName;
+import jag.statics.Statics35;
 import jag.statics.Statics54;
-import jag.statics.Statics56;
 import jag.statics.Statics7;
 import jag.worldmap.WorldMapIcon;
-import jag.game.stockmarket.Class46;
 
 import java.math.BigInteger;
 
+//p = put
+//n = negated
+//i = inverted
+//enc = encrypt
+//tab = table
+//pos = position
+//dec = decrypt
+//str = string
+//jstr = jagex string
+//tiny = TEA
+//b = used in signed values
 public class Buffer extends Node {
 
-    public static final int[] crc32;
-    static final long[] aLongArray1468;
+    public static final int[] CRC32TAB;
+    public static final long[] CRC64TAB;
+
+    public static final byte[][] SMALL;
+    public static final byte[][] MEDIUM;
+    public static final byte[][] LARGE;
+
+    public static byte[][][] variadic;
+
+    public static int[] variadicSizes;
+    public static int[] variadicIndices;
+
+    public static int smallCount;
+    public static int mediumCount;
+    public static int largeCount;
 
     static {
-        crc32 = new int[256];
+        CRC32TAB = new int[256];
 
-        int var2;
-        for (int var0 = 0; var0 < 256; ++var0) {
-            int var1 = var0;
+        for (int i = 0; i < 256; ++i) {
+            int crc = i;
 
-            for (var2 = 0; var2 < 8; ++var2) {
-                if ((var1 & 1) == 1) {
-                    var1 = var1 >>> 1 ^ -306674912;
+            for (int j = 0; j < 8; ++j) {
+                if ((crc & 1) == 1) {
+                    crc = crc >>> 1 ^ 0xedb88320;
                 } else {
-                    var1 >>>= 1;
+                    crc >>>= 1;
                 }
             }
 
-            crc32[var0] = var1;
+            CRC32TAB[i] = crc;
         }
 
-        aLongArray1468 = new long[256];
+        CRC64TAB = new long[256];
 
-        for (var2 = 0; var2 < 256; ++var2) {
-            long var3 = var2;
+        for (int i = 0; i < 256; ++i) {
+            long crc = i;
 
-            for (int var5 = 0; var5 < 8; ++var5) {
-                if ((var3 & 1L) == 1L) {
-                    var3 = var3 >>> 1 ^ -3932672073523589310L;
+            for (int j = 0; j < 8; ++j) {
+                if ((crc & 1L) == 1L) {
+                    crc = crc >>> 1 ^ 0xc96c5795d7870f42L;
                 } else {
-                    var3 >>>= 1;
+                    crc >>>= 1;
                 }
             }
 
-            aLongArray1468[var2] = var3;
+            CRC64TAB[i] = crc;
         }
 
+        smallCount = 0;
+        mediumCount = 0;
+        largeCount = 0;
+        SMALL = new byte[1000][];
+        MEDIUM = new byte[250][];
+        LARGE = new byte[50][];
     }
 
     public byte[] payload;
-    public int caret;
+    public int pos;
 
-    public Buffer(int var1) {
-        payload = newSyncPooledBuffer(var1);
-        caret = 0;
+    public Buffer(int size) {
+        payload = newSyncPooledBuffer(size);
+        pos = 0;
     }
 
     public Buffer(byte[] payload) {
         this.payload = payload;
-        caret = 0;
+        pos = 0;
     }
 
-    public static int stringLengthPlusOne(String var0) {
-        return var0.length() + 1;
+    public static int stringLengthPlusOne(String str) {
+        return str.length() + 1;
     }
 
-    public static synchronized byte[] newPooledBuffer(int var0) {
-        byte[] var2;
-        if (var0 != 100) {
-            if (var0 < 100) {
-            }
-        } else if (Statics56.anInt1641 > 0) {
-            var2 = Statics56.aByteArrayArray1639[--Statics56.anInt1641];
-            Statics56.aByteArrayArray1639[Statics56.anInt1641] = null;
-            return var2;
+    public static synchronized byte[] newPooledBuffer(int size) {
+        if (size == 100 && smallCount > 0) {
+            byte[] alloc = SMALL[--smallCount];
+            SMALL[smallCount] = null;
+            return alloc;
         }
 
-        if (var0 != 5000) {
-            if (var0 < 5000) {
-            }
-        } else if (Statics56.anInt1643 > 0) {
-            var2 = Statics56.aByteArrayArray1638[--Statics56.anInt1643];
-            Statics56.aByteArrayArray1638[Statics56.anInt1643] = null;
-            return var2;
+        if (size == 5000 && mediumCount > 0) {
+            byte[] alloc = MEDIUM[--mediumCount];
+            MEDIUM[mediumCount] = null;
+            return alloc;
         }
 
-        if (var0 != 30000) {
-            if (var0 < 30000) {
-            }
-        } else if (Statics56.anInt1640 > 0) {
-            var2 = Statics56.aByteArrayArray1636[--Statics56.anInt1640];
-            Statics56.aByteArrayArray1636[Statics56.anInt1640] = null;
-            return var2;
+        if (size == 30000 && largeCount > 0) {
+            byte[] alloc = LARGE[--largeCount];
+            LARGE[largeCount] = null;
+            return alloc;
         }
 
-        if (EntityUID.aByteArrayArrayArray547 != null) {
-            for (int var3 = 0; var3 < Statics56.anIntArray1637.length; ++var3) {
-                if (Statics56.anIntArray1637[var3] != var0) {
-                    if (var0 < Statics56.anIntArray1637[var3]) {
-                    }
-                } else if (Statics56.anIntArray1642[var3] > 0) {
-                    byte[] var4 = EntityUID.aByteArrayArrayArray547[var3][--Statics56.anIntArray1642[var3]];
-                    EntityUID.aByteArrayArrayArray547[var3][Statics56.anIntArray1642[var3]] = null;
-                    return var4;
+        if (variadic != null) {
+            for (int i = 0; i < variadicSizes.length; ++i) {
+                if (variadicSizes[i] == size && variadicIndices[i] > 0) {
+                    byte[] alloc = variadic[i][--variadicIndices[i]];
+                    variadic[i][variadicIndices[i]] = null;
+                    return alloc;
                 }
             }
         }
 
-        return new byte[var0];
+        return new byte[size];
     }
 
-    public static synchronized byte[] newSyncPooledBuffer(int var0) {
-        return newPooledBuffer(var0);
+    public static synchronized byte[] newSyncPooledBuffer(int size0) {
+        return newPooledBuffer(size0);
     }
 
-    public static int writeEscapedStringBytes(CharSequence sequence, int offset, int length, byte[] buffer, int caret) {
+    public static int pstrseq(CharSequence sequence, int offset, int length, byte[] buffer, int caret) {
         int size = length - offset;
 
         for (int i = 0; i < size; ++i) {
@@ -188,226 +201,304 @@ public class Buffer extends Node {
         return size;
     }
 
-    public long readLong() {
-        long a = (long) readInt() & 0xffffffffL;
-        long b = (long) readInt() & 0xffffffffL;
+    public static String readStringFromBytes(byte[] var0, int var1, int var2) {
+        char[] var3 = new char[var2];
+        int var4 = 0;
+
+        for (int var5 = 0; var5 < var2; ++var5) {
+            int var6 = var0[var5 + var1] & 255;
+            if (var6 != 0) {
+                if (var6 >= 128 && var6 < 160) {
+                    char var7 = Statics35.aCharArray1616[var6 - 128];
+                    if (var7 == 0) {
+                        var7 = '?';
+                    }
+
+                    var6 = var7;
+                }
+
+                var3[var4++] = (char) var6;
+            }
+        }
+
+        return new String(var3, 0, var4);
+    }
+
+    public static int crc32(byte[] var0, int var1) {
+        return crc32(var0, 0, var1);
+    }
+
+    public static int crc32(byte[] var0, int var1, int var2) {
+        int var3 = -1;
+
+        for (int var4 = var1; var4 < var2; ++var4) {
+            var3 = var3 >>> 8 ^ CRC32TAB[(var3 ^ var0[var4]) & 255];
+        }
+
+        var3 = ~var3;
+        return var3;
+    }
+
+    public boolean gbool() {
+        return (g1() & 1) == 1;
+    }
+
+    public int g1() {
+        return payload[pos++] & 0xff;
+    }
+
+    public byte g1b() {
+        return payload[pos++];
+    }
+
+    public int g2() {
+        return ((payload[pos++] & 0xff) << 8) + (payload[pos++] & 0xff);
+    }
+
+    public int g2b() {
+        int v = ((payload[pos++] & 0xff) << 8) + (payload[pos++] & 0xff);
+        if (v > 32767) {
+            v -= 65536;
+        }
+
+        return v;
+    }
+
+    public int g3() {
+        return ((payload[pos++] & 0xff) << 16)
+                + ((payload[pos++] & 0xff) << 8)
+                + (payload[pos++] & 0xff);
+    }
+
+    public int g4() {
+        return ((payload[pos++] & 0xff) << 24)
+                + ((payload[pos++] & 0xff) << 16)
+                + ((payload[pos++] & 0xff) << 8)
+                + (payload[pos++] & 0xff);
+    }
+
+    public long g8() {
+        long a = (long) g4() & 0xffffffffL;
+        long b = (long) g4() & 0xffffffffL;
         return b + (a << 32);
     }
 
-    public int readSmart() {
-        int ubyte = payload[caret] & 0xff;
-        return ubyte >= 128 ? readUShort() - 32768 : readUByte();
+    public int gsmartsseq() {
+        int v = 0;
+
+        int inc = gsmarts();
+        while (inc == 32767) {
+            v += 32767;
+            inc = gsmarts();
+        }
+
+        v += inc;
+        return v;
     }
 
-    public void writeCString(String var1) {
-        int var2 = var1.indexOf(0);
-        if (var2 >= 0) {
+    public int gsmarts() {
+        int ubyte = payload[pos] & 0xff;
+        return ubyte >= 128 ? g2() - 32768 : g1();
+    }
+
+    public int gsmart() {
+        int ubyte = payload[pos] & 0xff;
+        return ubyte < 128 ? g1() - 64 : g2() - 49152;
+    }
+
+    public void pbool(boolean v) {
+        p1(v ? 1 : 0);
+    }
+
+    public void p1(int v) {
+        payload[pos++] = (byte) v;
+    }
+
+    public void p1n(int v) {
+        payload[pos++] = (byte) (0 - v);
+    }
+
+    public void p2(int v) {
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) v;
+    }
+
+    public void ip2(int v) {
+        payload[pos++] = (byte) v;
+        payload[pos++] = (byte) (v >> 8);
+    }
+
+    public void p3(int v) {
+        payload[pos++] = (byte) (v >> 16);
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) v;
+    }
+
+    public void p4(int v) {
+        payload[pos++] = (byte) (v >> 24);
+        payload[pos++] = (byte) (v >> 16);
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) v;
+    }
+
+    public void ip4(int v) {
+        payload[pos++] = (byte) v;
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) (v >> 16);
+        payload[pos++] = (byte) (v >> 24);
+    }
+
+    public void p8(long v) {
+        payload[pos++] = (byte) ((int) (v >> 56));
+        payload[pos++] = (byte) ((int) (v >> 48));
+        payload[pos++] = (byte) ((int) (v >> 40));
+        payload[pos++] = (byte) ((int) (v >> 32));
+        payload[pos++] = (byte) ((int) (v >> 24));
+        payload[pos++] = (byte) ((int) (v >> 16));
+        payload[pos++] = (byte) ((int) (v >> 8));
+        payload[pos++] = (byte) ((int) v);
+    }
+
+    public void pcstr(String str) {
+        int index = str.indexOf(0);
+        if (index >= 0) {
             throw new IllegalArgumentException("");
         }
-        caret += writeEscapedStringBytes(var1, 0, var1.length(), payload, caret);
-        payload[caret++] = 0;
+        pos += pstrseq(str, 0, str.length(), payload, pos);
+        payload[pos++] = 0;
     }
 
-    public String readString() {
-        int var1 = caret;
+    public String checkedgstr() {
+        byte validator = payload[pos++];
+        if (validator != 0) {
+            throw new IllegalStateException("");
+        }
 
-        while (payload[caret++] != 0) {
+        int src = pos;
+
+        while (payload[pos++] != 0) {
 
         }
 
-        int var2 = caret - var1 - 1;
-        return var2 == 0 ? "" : Class46.readStringFromBytes(payload, var1, var2);
+        int dst = pos - src - 1;
+        return dst == 0 ? "" : readStringFromBytes(payload, src, dst);
     }
 
-    public int readInt() {
-        return ((payload[caret++] & 0xff) << 24)
-                + ((payload[caret++] & 0xff) << 16)
-                + ((payload[caret++] & 0xff) << 8)
-                + (payload[caret++] & 0xff);
+    public String fastgstr() {
+        if (payload[pos] == 0) {
+            pos++;
+            return null;
+        }
+        return gstr();
     }
 
-    public int readUByte() {
-        return payload[caret++] & 0xff;
-    }
+    public String gstr() {
+        int src = pos;
+        while (payload[pos++] != 0) {
 
-    public void writeByte(int var1) {
-        payload[caret++] = (byte) var1;
-    }
+        }
 
-    public int readMediumInt() {
-        return ((payload[caret++] & 0xff) << 16)
-                + ((payload[caret++] & 0xff) << 8)
-                + (payload[caret++] & 0xff);
+        int dst = pos - src - 1;
+        return dst == 0 ? "" : readStringFromBytes(payload, src, dst);
     }
 
     public int method1051() {
-        if (payload[caret] < 0) {
-            return readInt() & Integer.MAX_VALUE;
+        if (payload[pos] < 0) {
+            return g4() & Integer.MAX_VALUE;
         }
-        int var1 = readUShort();
-        return var1 == 32767 ? -1 : var1;
+        int v = g2();
+        return v == 32767 ? -1 : v;
     }
 
     public int method1044() {
-        byte var1 = payload[caret++];
+        byte v = payload[pos++];
 
-        int var2;
-        for (var2 = 0; var1 < 0; var1 = payload[caret++]) {
-            var2 = (var2 | var1 & 127) << 7;
+        int operand = 0;
+        while (v < 0) {
+            operand = (operand | v & 127) << 7;
+            v = payload[pos++];
         }
 
-        return var2 | var1;
+        return operand | v;
     }
 
-    public void writeLong(long var1) {
-        payload[caret++] = (byte) ((int) (var1 >> 56));
-        payload[caret++] = (byte) ((int) (var1 >> 48));
-        payload[caret++] = (byte) ((int) (var1 >> 40));
-        payload[caret++] = (byte) ((int) (var1 >> 32));
-        payload[caret++] = (byte) ((int) (var1 >> 24));
-        payload[caret++] = (byte) ((int) (var1 >> 16));
-        payload[caret++] = (byte) ((int) (var1 >> 8));
-        payload[caret++] = (byte) ((int) var1);
-    }
-
-    public byte readByte() {
-        return payload[caret++];
-    }
-
-    public void writeInt(int value) {
-        payload[caret++] = (byte) (value >> 24);
-        payload[caret++] = (byte) (value >> 16);
-        payload[caret++] = (byte) (value >> 8);
-        payload[caret++] = (byte) value;
-    }
-
-    public int readUShort() {
-        return ((payload[caret++] & 0xff) << 8) + (payload[caret++] & 0xff);
-    }
-
-    public void readBytes(byte[] var1, int var2, int var3) {
-        for (int var4 = var2; var4 < var3 + var2; ++var4) {
-            var1[var4] = payload[caret++];
+    public void gdata(byte[] data, int src, int offset) {
+        for (int i = src; i < offset + src; ++i) {
+            data[i] = payload[pos++];
         }
-
     }
 
     public int method1060() {
-        return (payload[caret++] - 128 & 0xff) + ((payload[caret++] & 0xff) << 8);
-    }
-
-    public void writeShort(int value) {
-        payload[caret++] = (byte) (value >> 8);
-        payload[caret++] = (byte) value;
+        return (payload[pos++] - 128 & 0xff) + ((payload[pos++] & 0xff) << 8);
     }
 
     public int readLEUShortA() {
-        return (payload[caret++] & 0xff) + ((payload[caret++] & 0xff) << 8);
+        return (payload[pos++] & 0xff) + ((payload[pos++] & 0xff) << 8);
     }
 
     public int method1074() {
-        return 128 - payload[caret++] & 0xff;
+        return 128 - payload[pos++] & 0xff;
     }
 
-    public int method1029() {
-        int var1 = ((payload[caret++] & 0xff) << 8) + (payload[caret++] & 0xff);
-        if (var1 > 32767) {
-            var1 -= 65536;
-        }
-
-        return var1;
-    }
-
-    public String readCString() {
-        byte var1 = payload[caret++];
-        if (var1 != 0) {
-            throw new IllegalStateException("");
-        }
-        int var2 = caret;
-
-        while (payload[caret++] != 0) {
-        }
-
-        int var3 = caret - var2 - 1;
-        return var3 == 0 ? "" : Class46.readStringFromBytes(payload, var2, var3);
-    }
-
-    public void writeFlags(int flags) {
-        if ((flags & -128) != 0) {
-            if ((flags & -16384) != 0) {
-                if ((flags & -2097152) != 0) {
-                    if ((flags & -268435456) != 0) {
-                        writeByte(flags >>> 28 | 128);
+    public void pflag(int flag) {
+        if ((flag & -128) != 0) {
+            if ((flag & -16384) != 0) {
+                if ((flag & -2097152) != 0) {
+                    if ((flag & -268435456) != 0) {
+                        p1(flag >>> 28 | 128);
                     }
-                    writeByte(flags >>> 21 | 128);
+                    p1(flag >>> 21 | 128);
                 }
-                writeByte(flags >>> 14 | 128);
+                p1(flag >>> 14 | 128);
             }
-            writeByte(flags >>> 7 | 128);
+            p1(flag >>> 7 | 128);
         }
-        writeByte(flags & 127);
+        p1(flag & 127);
     }
 
-    public int writeCrc(int var1) {
-        int crc = LoginScreenEffect.crc32(payload, var1, caret);
-        writeInt(crc);
+    public int pcrc(int v) {
+        int crc = crc32(payload, v, pos);
+        p4(crc);
         return crc;
     }
 
-    public void writeBytes(byte[] var1, int var2, int var3) {
-        for (int var4 = var2; var4 < var3 + var2; ++var4) {
-            payload[caret++] = var1[var4];
+    public void p(byte[] data, int src, int offset) {
+        for (int i = src; i < offset + src; ++i) {
+            payload[pos++] = data[i];
         }
     }
 
-    public int method1035() {
-        return payload[caret] < 0 ? readInt() & Integer.MAX_VALUE : readUShort();
+    public int g2else4() {
+        return payload[pos] < 0 ? g4() & Integer.MAX_VALUE : g2();
     }
 
-    public void method1069(int[] keys, int start, int end) {
-        int var4 = caret;
-        caret = start;
-        int var5 = (end - start) / 8;
+    public void tinyenc(int[] keys, int start, int end) {
+        int src = pos;
+        pos = start;
+        int dst = (end - start) / 8;
 
-        for (int var6 = 0; var6 < var5; ++var6) {
-            int var7 = readInt();
-            int var8 = readInt();
+        for (int i = 0; i < dst; ++i) {
+            int l = g4();
+            int r = g4();
             int var9 = 0xc6ef3720;
             int var10 = 0x9e3779b9;
 
-            for (int var11 = 32; var11-- > 0; var7 -= var8 + (var8 << 4 ^ var8 >>> 5) ^ var9 + keys[var9 & 3]) {
-                var8 -= var7 + (var7 << 4 ^ var7 >>> 5) ^ keys[var9 >>> 11 & 3] + var9;
+            for (int var11 = 32; var11-- > 0; l -= r + (r << 4 ^ r >>> 5) ^ var9 + keys[var9 & 3]) {
+                r -= l + (l << 4 ^ l >>> 5) ^ keys[var9 >>> 11 & 3] + var9;
                 var9 -= var10;
             }
 
-            caret -= 8;
-            writeInt(var7);
-            writeInt(var8);
+            pos -= 8;
+            p4(l);
+            p4(r);
         }
 
-        caret = var4;
+        pos = src;
     }
 
-    public void writeLEInt(int var1) {
-        payload[caret++] = (byte) var1;
-        payload[caret++] = (byte) (var1 >> 8);
-        payload[caret++] = (byte) (var1 >> 16);
-        payload[caret++] = (byte) (var1 >> 24);
-    }
-
-    public void writeLEShortA(int var1) {
-        payload[caret++] = (byte) (var1 + 128);
-        payload[caret++] = (byte) (var1 >> 8);
-    }
-
-    public void writeBoolean(boolean var1) {
-        writeByte(var1 ? 1 : 0);
-    }
-
-    public void writeMediumInt(int var1) {
-        payload[caret++] = (byte) (var1 >> 16);
-        payload[caret++] = (byte) (var1 >> 8);
-        payload[caret++] = (byte) var1;
+    public void ip2a(int v) {
+        payload[pos++] = (byte) (v + 128);
+        payload[pos++] = (byte) (v >> 8);
     }
 
     public void cache() {
@@ -418,259 +509,221 @@ public class Buffer extends Node {
         payload = null;
     }
 
-    public void writeLEShort(int var1) {
-        payload[caret++] = (byte) var1;
-        payload[caret++] = (byte) (var1 >> 8);
-    }
-
-    public int method1072() {
-        return 0 - payload[caret++] & 0xff;
+    public int ig1() {
+        return 0 - payload[pos++] & 0xff;
     }
 
     public int method1055() {
-        return ((payload[caret++] & 0xff) << 8) + (payload[caret++] - 128 & 0xff);
+        return ((payload[pos++] & 0xff) << 8) + (payload[pos++] - 128 & 0xff);
     }
 
-    public String readCheckedString() {
-        if (payload[caret] == 0) {
-            caret++;
-            return null;
-        }
-        return readString();
+    public void pirf4(int v) {
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) v;
+        payload[pos++] = (byte) (v >> 24);
+        payload[pos++] = (byte) (v >> 16);
     }
 
-    public boolean readBoolean() {
-        return (readUByte() & 1) == 1;
-    }
-
-    public int method1046() {
-        int ubyte = payload[caret] & 0xff;
-        return ubyte < 128 ? readUByte() - 64 : readUShort() - 49152;
-    }
-
-    public void writeIMEInt(int var1) {
-        payload[caret++] = (byte) (var1 >> 8);
-        payload[caret++] = (byte) var1;
-        payload[caret++] = (byte) (var1 >> 24);
-        payload[caret++] = (byte) (var1 >> 16);
-    }
-
-    public void method1027(String var1) {
-        int var2 = var1.indexOf(0);
-        if (var2 >= 0) {
+    public void pstr(String str) {
+        int validator = str.indexOf(0);
+        if (validator >= 0) {
             throw new IllegalArgumentException("");
         }
-        payload[caret++] = 0;
-        caret += writeEscapedStringBytes(var1, 0, var1.length(), payload, caret);
-        payload[caret++] = 0;
+        payload[pos++] = 0;
+        pos += pstrseq(str, 0, str.length(), payload, pos);
+        payload[pos++] = 0;
     }
 
-    public void method1014(int var1) {
-        payload[caret++] = (byte) (var1 >> 16);
-        payload[caret++] = (byte) (var1 >> 24);
-        payload[caret++] = (byte) var1;
-        payload[caret++] = (byte) (var1 >> 8);
+    public void pif4(int v) {
+        payload[pos++] = (byte) (v >> 16);
+        payload[pos++] = (byte) (v >> 24);
+        payload[pos++] = (byte) v;
+        payload[pos++] = (byte) (v >> 8);
     }
 
-    public void method1050(int var1) {
-        if (var1 >= 0 && var1 <= 255) {
-            payload[caret - var1 - 1] = (byte) var1;
+    public void psize1(int v) {
+        if (v >= 0 && v <= 255) {
+            payload[pos - v - 1] = (byte) v;
         } else {
             throw new IllegalArgumentException();
         }
     }
 
     public int method1070() {
-        int var1 = (payload[caret++] - 128 & 0xff) + ((payload[caret++] & 0xff) << 8);
-        if (var1 > 32767) {
-            var1 -= 65536;
+        int v = (payload[pos++] - 128 & 0xff) + ((payload[pos++] & 0xff) << 8);
+        if (v > 32767) {
+            v -= 65536;
         }
 
-        return var1;
+        return v;
     }
 
     public int method1015() {
-        return (payload[caret++] & 0xff)
-                + ((payload[caret++] & 0xff) << 8)
-                + ((payload[caret++] & 0xff) << 16)
-                + ((payload[caret++] & 0xff) << 24);
+        return (payload[pos++] & 0xff)
+                + ((payload[pos++] & 0xff) << 8)
+                + ((payload[pos++] & 0xff) << 16)
+                + ((payload[pos++] & 0xff) << 24);
     }
 
     public int method1056() {
-        return payload[caret++] - 128 & 0xff;
+        return payload[pos++] - 128 & 0xff;
     }
 
-    public void writeShortA(int var1) {
-        payload[caret++] = (byte) (var1 >> 8);
-        payload[caret++] = (byte) (var1 + 128);
-    }
-
-    public void writeNegatedByte(int var1) {
-        payload[caret++] = (byte) (0 - var1);
+    public void p2a(int v) {
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) (v + 128);
     }
 
     public byte method1075() {
-        return (byte) (0 - payload[caret++]);
+        return (byte) (0 - payload[pos++]);
     }
 
-    public void method1058(int var1) {
-        payload[caret++] = (byte) (var1 + 128);
+    public void p1a(int v) {
+        payload[pos++] = (byte) (v + 128);
     }
 
-    public void writeByteS(int var1) {
-        payload[caret++] = (byte) (128 - var1);
+    public void writeByteS(int v) {
+        payload[pos++] = (byte) (128 - v);
     }
 
     public byte method1063() {
-        return (byte) (payload[caret++] - 128);
+        return (byte) (payload[pos++] - 128);
     }
 
     public int method1019() {
-        return ((payload[caret++] & 0xff) << 8)
-                + (payload[caret++] & 0xff)
-                + ((payload[caret++] & 0xff) << 24)
-                + ((payload[caret++] & 0xff) << 16);
+        return ((payload[pos++] & 0xff) << 8)
+                + (payload[pos++] & 0xff)
+                + ((payload[pos++] & 0xff) << 24)
+                + ((payload[pos++] & 0xff) << 16);
     }
 
     public boolean matchCrcs() {
-        caret -= 4;
-        int var1 = LoginScreenEffect.crc32(payload, 0, caret);
-        int var2 = readInt();
-        return var2 == var1;
+        pos -= 4;
+        int l = crc32(payload, 0, pos);
+        int r = g4();
+        return r == l;
     }
 
     public int method1067() {
-        int var1 = ((payload[caret++] & 0xff) << 8) + (payload[caret++] - 128 & 0xff);
-        if (var1 > 32767) {
-            var1 -= 65536;
+        int v = ((payload[pos++] & 0xff) << 8) + (payload[pos++] - 128 & 0xff);
+        if (v > 32767) {
+            v -= 65536;
         }
 
-        return var1;
+        return v;
     }
 
     public int method1011() {
-        return ((payload[caret++] & 0xff) << 16)
-                + ((payload[caret++] & 0xff) << 24)
-                + (payload[caret++] & 0xff)
-                + ((payload[caret++] & 0xff) << 8);
+        return ((payload[pos++] & 0xff) << 16)
+                + ((payload[pos++] & 0xff) << 24)
+                + (payload[pos++] & 0xff)
+                + ((payload[pos++] & 0xff) << 8);
     }
 
     public String method1045() {
-        byte var1 = payload[caret++];
-        if (var1 != 0) {
+        byte validator = payload[pos++];
+        if (validator != 0) {
             throw new IllegalStateException("");
         }
-        int var2 = method1044();
-        if (var2 + caret > payload.length) {
+        int offset = method1044();
+        if (offset + pos > payload.length) {
             throw new IllegalStateException("");
         }
-        String var3 = AssociateComparatorByName.method719(payload, caret, var2);
-        caret += var2;
-        return var3;
+        String str = AssociateComparatorByName.method719(payload, pos, offset);
+        pos += offset;
+        return str;
     }
 
     public byte method1059() {
-        return (byte) (128 - payload[caret++]);
+        return (byte) (128 - payload[pos++]);
     }
 
-    public void method1041(int var1) {
-        if (var1 >= 0 && var1 <= 65535) {
-            payload[caret - var1 - 2] = (byte) (var1 >> 8);
-            payload[caret - var1 - 1] = (byte) var1;
+    public void psize2(int v) {
+        if (v >= 0 && v <= 65535) {
+            payload[pos - v - 2] = (byte) (v >> 8);
+            payload[pos - v - 1] = (byte) v;
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public void writeRSA(BigInteger var1, BigInteger var2) {
-        int var3 = caret;
-        caret = 0;
+    public void prsa(BigInteger exponent, BigInteger modulus) {
+        int var3 = pos;
+        pos = 0;
         byte[] var4 = new byte[var3];
-        readBytes(var4, 0, var3);
+        gdata(var4, 0, var3);
         BigInteger var5 = new BigInteger(var4);
-        BigInteger var6 = var5.modPow(var1, var2);
+        BigInteger var6 = var5.modPow(exponent, modulus);
         byte[] var7 = var6.toByteArray();
-        caret = 0;
-        writeShort(var7.length);
-        writeBytes(var7, 0, var7.length);
+        pos = 0;
+        p2(var7.length);
+        p(var7, 0, var7.length);
     }
 
-    public void method1062(int var1) {
-        payload[caret++] = (byte) var1;
-        payload[caret++] = (byte) (var1 >> 8);
-        payload[caret++] = (byte) (var1 >> 16);
+    public void ip3(int v) {
+        payload[pos++] = (byte) v;
+        payload[pos++] = (byte) (v >> 8);
+        payload[pos++] = (byte) (v >> 16);
     }
 
     public int method1078() {
-        int var1 = (payload[caret++] & 0xff) + ((payload[caret++] & 0xff) << 8);
-        if (var1 > 32767) {
-            var1 -= 65536;
+        int v = (payload[pos++] & 0xff) + ((payload[pos++] & 0xff) << 8);
+        if (v > 32767) {
+            v -= 65536;
         }
 
-        return var1;
+        return v;
     }
 
-    public int readSmarts() {
-        int var1 = 0;
-
-        int var2;
-        for (var2 = readSmart(); var2 == 32767; var2 = readSmart()) {
-            var1 += 32767;
-        }
-
-        var1 += var2;
-        return var1;
+    public void method1052(CharSequence seq) {
+        int flag = Statics7.method702(seq);
+        payload[pos++] = 0;
+        pflag(flag);
+        pos += WorldMapIcon.method202(payload, pos, seq);
     }
 
-    public void method1052(CharSequence var1) {
-        int var2 = Statics7.method702(var1);
-        payload[caret++] = 0;
-        writeFlags(var2);
-        caret += WorldMapIcon.method202(payload, caret, var1);
-    }
-
-    public void method1032(int var1) {
-        if (var1 < 0) {
+    public void psize4(int v) {
+        if (v < 0) {
             throw new IllegalArgumentException();
         }
-        payload[caret - var1 - 4] = (byte) (var1 >> 24);
-        payload[caret - var1 - 3] = (byte) (var1 >> 16);
-        payload[caret - var1 - 2] = (byte) (var1 >> 8);
-        payload[caret - var1 - 1] = (byte) var1;
+        payload[pos - v - 4] = (byte) (v >> 24);
+        payload[pos - v - 3] = (byte) (v >> 16);
+        payload[pos - v - 2] = (byte) (v >> 8);
+        payload[pos - v - 1] = (byte) v;
     }
 
-    public void writeSmart(int var1) {
-        if (var1 >= 0 && var1 < 128) {
-            writeByte(var1);
-        } else if (var1 >= 0 && var1 < 32768) {
-            writeShort(var1 + 32768);
+    public void psmart(int v) {
+        if (v >= 0 && v < 128) {
+            p1(v);
+        } else if (v >= 0 && v < 32768) {
+            p2(v + 32768);
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public void method1022(long var1) {
-        payload[caret++] = (byte) ((int) (var1 >> 40));
-        payload[caret++] = (byte) ((int) (var1 >> 32));
-        payload[caret++] = (byte) ((int) (var1 >> 24));
-        payload[caret++] = (byte) ((int) (var1 >> 16));
-        payload[caret++] = (byte) ((int) (var1 >> 8));
-        payload[caret++] = (byte) ((int) var1);
+    public void p48(long v) {
+        payload[pos++] = (byte) ((int) (v >> 40));
+        payload[pos++] = (byte) ((int) (v >> 32));
+        payload[pos++] = (byte) ((int) (v >> 24));
+        payload[pos++] = (byte) ((int) (v >> 16));
+        payload[pos++] = (byte) ((int) (v >> 8));
+        payload[pos++] = (byte) ((int) v);
     }
 
     public int method1017() {
-        return (payload[caret++] & 0xff)
-                + ((payload[caret++] & 0xff) << 8)
-                + ((payload[caret++] & 0xff) << 16);
+        return (payload[pos++] & 0xff)
+                + ((payload[pos++] & 0xff) << 8)
+                + ((payload[pos++] & 0xff) << 16);
     }
 
-    public void method1076(int[] keys) {
-        int var2 = caret / 8;
-        caret = 0;
+    public void tinyenc(int[] keys) {
+        int var2 = pos / 8;
+        pos = 0;
 
         for (int var3 = 0; var3 < var2; ++var3) {
-            int var4 = readInt();
-            int var5 = readInt();
+            int var4 = g4();
+            int var5 = g4();
             int var6 = 0;
             int var7 = 0x9e3779b9;
 
@@ -679,44 +732,44 @@ public class Buffer extends Node {
                 var6 += var7;
             }
 
-            caret -= 8;
-            writeInt(var4);
-            writeInt(var5);
+            pos -= 8;
+            p4(var4);
+            p4(var5);
         }
 
     }
 
-    public void method1076(int[] var1, int var2, int var3) {
-        int var4 = caret;
-        caret = var2;
+    public void tinyenc2(int[] var1, int var2, int var3) {
+        int var4 = pos;
+        pos = var2;
         int var5 = (var3 - var2) / 8;
 
         for (int var6 = 0; var6 < var5; ++var6) {
-            int var7 = readInt();
-            int var8 = readInt();
+            int var7 = g4();
+            int var8 = g4();
             int var9 = 0;
-            int var10 = 0x9e3779b9;
+            int var10 = -1640531527;
 
             for (int var11 = 32; var11-- > 0; var8 += var7 + (var7 << 4 ^ var7 >>> 5) ^ var1[var9 >>> 11 & 3] + var9) {
                 var7 += var8 + (var8 << 4 ^ var8 >>> 5) ^ var9 + var1[var9 & 3];
                 var9 += var10;
             }
 
-            caret -= 8;
-            writeInt(var7);
-            writeInt(var8);
+            pos -= 8;
+            p4(var7);
+            p4(var8);
         }
 
-        caret = var4;
+        pos = var4;
     }
 
-    public void method1065(int[] var1) {
-        int var2 = caret / 8;
-        caret = 0;
+    public void tinydec(int[] var1) {
+        int var2 = pos / 8;
+        pos = 0;
 
         for (int var3 = 0; var3 < var2; ++var3) {
-            int var4 = readInt();
-            int var5 = readInt();
+            int var4 = g4();
+            int var5 = g4();
             int var6 = -957401312;
             int var7 = -1640531527;
 
@@ -725,23 +778,23 @@ public class Buffer extends Node {
                 var6 -= var7;
             }
 
-            caret -= 8;
-            writeInt(var4);
-            writeInt(var5);
+            pos -= 8;
+            p4(var4);
+            p4(var5);
         }
 
     }
 
-    public void method1016(byte[] var1, int var2, int var3) {
+    public void igdataa(byte[] var1, int var2, int var3) {
         for (int var4 = var3 + var2 - 1; var4 >= var2; --var4) {
-            var1[var4] = (byte) (payload[caret++] - 128);
+            var1[var4] = (byte) (payload[pos++] - 128);
         }
 
     }
 
-    public void method1012(byte[] var1, int var2, int var3) {
+    public void igdata(byte[] var1, int var2, int var3) {
         for (int var4 = var2; var4 < var3 + var2; ++var4) {
-            var1[var4] = (byte) (payload[caret++] - 128);
+            var1[var4] = (byte) (payload[pos++] - 128);
         }
 
     }

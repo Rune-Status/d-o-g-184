@@ -5,7 +5,7 @@ import jag.opcode.Buffer;
 
 public class PreciseWorldMapAreaChunk implements WorldMapAreaChunk {
 
-    public static ClientParameter aClientParameter_343;
+    public static ClientParameter nameLengthParameter;
 
     int anInt279;
     int minLevel;
@@ -29,21 +29,21 @@ public class PreciseWorldMapAreaChunk implements WorldMapAreaChunk {
         return false;
     }
 
-    public void method93(WorldMapArea area) {
-        if (area.anInt134 > this.anInt279) {
-            area.anInt134 = this.anInt279;
+    public void method93(WorldMapCacheArea area) {
+        if (area.regionMinX > this.anInt279) {
+            area.regionMinX = this.anInt279;
         }
 
-        if (area.anInt131 < this.anInt279) {
-            area.anInt131 = this.anInt279;
+        if (area.regionMaxX < this.anInt279) {
+            area.regionMaxX = this.anInt279;
         }
 
-        if (area.anInt138 > this.anInt277) {
-            area.anInt138 = this.anInt277;
+        if (area.regionMinY > this.anInt277) {
+            area.regionMinY = this.anInt277;
         }
 
-        if (area.anInt129 < this.anInt277) {
-            area.anInt129 = this.anInt277;
+        if (area.regionMaxY < this.anInt277) {
+            area.regionMaxY = this.anInt277;
         }
 
     }
@@ -72,12 +72,12 @@ public class PreciseWorldMapAreaChunk implements WorldMapAreaChunk {
     }
 
     public void decode(Buffer buffer) {
-        minLevel = buffer.readUByte();
-        levelCount = buffer.readUByte();
-        x = buffer.readUShort();
-        y = buffer.readUShort();
-        anInt279 = buffer.readUShort();
-        anInt277 = buffer.readUShort();
+        minLevel = buffer.g1();
+        levelCount = buffer.g1();
+        x = buffer.g2();
+        y = buffer.g2();
+        anInt279 = buffer.g2();
+        anInt277 = buffer.g2();
         method148();
     }
 }

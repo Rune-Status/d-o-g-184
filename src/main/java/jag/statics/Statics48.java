@@ -10,7 +10,7 @@ import jag.opcode.OutgoingPacketMeta;
 import java.awt.*;
 
 public final class Statics48 {
-    public static Connection aConnection140;
+    public static Connection js5connection;
 
     public static void method95(Component var0) {
         var0.addMouseListener(Mouse.instance);
@@ -39,26 +39,20 @@ public final class Statics48 {
         }
 
         if (var1 == 324) {
-            client.renderedAppearance.method1431(false);
+            client.renderedAppearance.setGender(false);
         }
 
         if (var1 == 325) {
-            client.renderedAppearance.method1431(true);
+            client.renderedAppearance.setGender(true);
         }
 
         if (var1 == 326) {
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.anOutgoingPacketMeta22, client.connectionContext.encryptor);
-            client.renderedAppearance.method1430(packet.buffer);
-            client.connectionContext.writeLater(packet);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PLAYER_APPEARANCE_BUTTON, client.netWriter.encryptor);
+            client.renderedAppearance.writeAppearanceTo(packet.buffer);
+            client.netWriter.writeLater(packet);
             return true;
         }
         return false;
     }
 
-    public static String method97(int var0) {
-        if (var0 < 100000) {
-            return "<col=ffff00>" + var0 + "</col>";
-        }
-        return var0 < 10000000 ? "<col=ffffff>" + var0 / 1000 + "K" + "</col>" : "<col=00ff80>" + var0 / 1000000 + "M" + "</col>";
-    }
 }

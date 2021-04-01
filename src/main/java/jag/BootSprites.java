@@ -19,45 +19,45 @@ public class BootSprites {
     public int anInt1651;
 
     public BootSprites() {
-        this.anInt1656 = -1;
-        this.anInt1658 = -1;
-        this.anInt1653 = -1;
-        this.anInt1652 = -1;
-        this.anInt1650 = -1;
-        this.anInt1648 = -1;
-        this.anInt1649 = -1;
-        this.anInt1657 = -1;
-        this.anInt1654 = -1;
-        this.anInt1655 = -1;
-        this.anInt1651 = -1;
+        anInt1656 = -1;
+        anInt1658 = -1;
+        anInt1653 = -1;
+        anInt1652 = -1;
+        anInt1650 = -1;
+        anInt1648 = -1;
+        anInt1649 = -1;
+        anInt1657 = -1;
+        anInt1654 = -1;
+        anInt1655 = -1;
+        anInt1651 = -1;
     }
 
     public void method1190(ReferenceTable var1) {
-        byte[] var2 = var1.method904(BootSpriteTypes.A_BOOT_SPRITE_TYPES___1627.anInt1628);
-        Buffer var3 = new Buffer(var2);
+        byte[] var2 = var1.unpack(BootSpriteTypes.A_BOOT_SPRITE_TYPES___1627.anInt1628);
+        Buffer buffer = new Buffer(var2);
 
         while (true) {
-            int var4 = var3.readUByte();
-            if (var4 == 0) {
+            int opcode = buffer.g1();
+            if (opcode == 0) {
                 return;
             }
 
-            switch (var4) {
+            switch (opcode) {
                 case 1:
-                    var3.readMediumInt();
+                    buffer.g3();
                     break;
                 case 2:
-                    this.anInt1656 = var3.method1051();
-                    this.anInt1658 = var3.method1051();
-                    this.anInt1653 = var3.method1051();
-                    this.anInt1652 = var3.method1051();
-                    this.anInt1650 = var3.method1051();
-                    this.anInt1648 = var3.method1051();
-                    this.anInt1649 = var3.method1051();
-                    this.anInt1657 = var3.method1051();
-                    this.anInt1654 = var3.method1051();
-                    this.anInt1655 = var3.method1051();
-                    this.anInt1651 = var3.method1051();
+                    anInt1656 = buffer.method1051();
+                    anInt1658 = buffer.method1051();
+                    anInt1653 = buffer.method1051();
+                    anInt1652 = buffer.method1051();
+                    anInt1650 = buffer.method1051();
+                    anInt1648 = buffer.method1051();
+                    anInt1649 = buffer.method1051();
+                    anInt1657 = buffer.method1051();
+                    anInt1654 = buffer.method1051();
+                    anInt1655 = buffer.method1051();
+                    anInt1651 = buffer.method1051();
             }
         }
     }

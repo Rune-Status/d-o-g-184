@@ -9,93 +9,95 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class URLRequestProcessor implements Runnable {
-    public static int anInt797;
+
     public static String[] aStringArray794;
-    final Thread aThread796;
-    final java.util.Queue aQueue795;
-    volatile boolean aBoolean798;
+
+    final Thread thread;
+    final java.util.Queue queue;
+    volatile boolean killed;
 
     public URLRequestProcessor() {
-        this.aQueue795 = new java.util.LinkedList();
-        this.aThread796 = new Thread(this);
-        this.aThread796.setPriority(1);
-        this.aThread796.start();
+        queue = new java.util.LinkedList();
+        thread = new Thread(this);
+        thread.setPriority(1);
+        thread.start();
     }
 
-    public static char method646(char var0) {
-        return var0 != 181 && var0 != 402 ? Character.toTitleCase(var0) : var0;
+    public static char toTitleCase(char c) {
+        return c != 181 && c != 402 ? Character.toTitleCase(c) : c;
     }
 
-    public URLRequest method647(URL var1) {
-        URLRequest var2 = new URLRequest(var1);
+    public URLRequest enqueue(URL url) {
+        URLRequest request = new URLRequest(url);
         synchronized (this) {
-            this.aQueue795.add(var2);
-            this.notify();
-            return var2;
+            queue.add(request);
+            notify();
+            return request;
         }
     }
 
     public void release() {
-        this.aBoolean798 = true;
+        killed = true;
 
         try {
             synchronized (this) {
-                this.notify();
+                notify();
             }
 
-            this.aThread796.join();
+            thread.join();
         } catch (InterruptedException ignored) {
-        }
 
+        }
     }
 
     public void run() {
-        while (!this.aBoolean798) {
+        while (!killed) {
             try {
-                URLRequest var2;
+                URLRequest current;
                 synchronized (this) {
-                    var2 = (URLRequest) this.aQueue795.poll();
-                    if (var2 == null) {
+                    current = (URLRequest) queue.poll();
+                    if (current == null) {
                         try {
-                            this.wait();
+                            wait();
                         } catch (InterruptedException ignored) {
+
                         }
                         continue;
                     }
                 }
 
-                DataInputStream var1 = null;
-                URLConnection var3 = null;
+                DataInputStream input = null;
+                URLConnection connection = null;
 
                 try {
-                    var3 = var2.anURL778.openConnection();
-                    var3.setConnectTimeout(5000);
-                    var3.setReadTimeout(5000);
-                    var3.setUseCaches(false);
-                    var3.setRequestProperty("Connection", "close");
-                    int var5 = var3.getContentLength();
-                    if (var5 >= 0) {
-                        byte[] var6 = new byte[var5];
-                        var1 = new DataInputStream(var3.getInputStream());
-                        var1.readFully(var6);
-                        var2.aByteArray776 = var6;
+                    connection = current.target.openConnection();
+                    connection.setConnectTimeout(5000);
+                    connection.setReadTimeout(5000);
+                    connection.setUseCaches(false);
+                    connection.setRequestProperty("Connection", "close");
+                    int len = connection.getContentLength();
+                    if (len >= 0) {
+                        byte[] data = new byte[len];
+                        input = new DataInputStream(connection.getInputStream());
+                        input.readFully(data);
+                        current.data = data;
                     }
 
-                    var2.aBoolean779 = true;
-                } catch (IOException var14) {
-                    var2.aBoolean779 = true;
+                    current.complete = true;
+                } catch (IOException e) {
+                    current.complete = true;
                 } finally {
-                    if (var1 != null) {
-                        var1.close();
+                    if (input != null) {
+                        input.close();
                     }
 
-                    if (var3 instanceof HttpURLConnection) {
-                        ((HttpURLConnection) var3).disconnect();
+                    if (connection instanceof HttpURLConnection) {
+                        ((HttpURLConnection) connection).disconnect();
                     }
 
                 }
-            } catch (Exception var17) {
-                client.sendError(null, var17);
+            } catch (Exception e) {
+                client.sendError(null, e);
             }
         }
 

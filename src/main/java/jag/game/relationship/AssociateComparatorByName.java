@@ -2,10 +2,9 @@ package jag.game.relationship;
 
 import jag.URLRequestProcessor;
 import jag.game.client;
-import jag.statics.Statics1;
 import jag.statics.Statics7;
-import jag.worldmap.WorldMapRenderRules;
 import jag.worldmap.WorldMapDecor;
+import jag.worldmap.WorldMapRenderRules;
 
 public class AssociateComparatorByName extends AssociateComparator {
 
@@ -13,44 +12,6 @@ public class AssociateComparatorByName extends AssociateComparator {
 
     public AssociateComparatorByName(boolean var1) {
         this.aBoolean764 = var1;
-    }
-
-    public static void openMenu(int var0, int var1) {
-        int var2 = Statics7.aFont863.method1145("Choose Option");
-
-        int var3;
-        int var4;
-        for (var3 = 0; var3 < client.menuRowCount; ++var3) {
-            var4 = Statics7.aFont863.method1145(WorldMapRenderRules.method131(var3));
-            if (var4 > var2) {
-                var2 = var4;
-            }
-        }
-
-        var2 += 8;
-        var3 = client.menuRowCount * 15 + 22;
-        var4 = var0 - var2 / 2;
-        if (var4 + var2 > client.canvasWidth) {
-            var4 = client.canvasWidth - var2;
-        }
-
-        if (var4 < 0) {
-            var4 = 0;
-        }
-
-        int var5 = var1;
-        if (var1 + var3 > client.canvasHeight) {
-            var5 = client.canvasHeight - var3;
-        }
-
-        if (var5 < 0) {
-            var5 = 0;
-        }
-
-        URLRequestProcessor.anInt797 = var4;
-        Statics1.anInt321 = var5;
-        RelationshipSystem.anInt319 = var2;
-        WorldMapDecor.anInt543 = client.menuRowCount * 15 + 22;
     }
 
     public static String method719(byte[] var0, int var1, int var2) {

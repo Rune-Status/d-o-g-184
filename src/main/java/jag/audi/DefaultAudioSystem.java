@@ -1,7 +1,7 @@
 package jag.audi;
 
-import jag.GameStateEvent;
 import jag.URLRequest;
+import jag.commons.collection.IterableNodeTable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.DataLine.Info;
@@ -49,7 +49,7 @@ public class DefaultAudioSystem extends AudioSystem {
             var3 += var3 >>> 16;
             int var4 = var3 & 255;
             if (var4 != 1) {
-                this.method1090(GameStateEvent.nextPowerOfTwo(var1));
+                this.method1090(IterableNodeTable.nextPowerOfTwo(var1));
             } else {
                 this.sourceDataLine = null;
                 throw var5;

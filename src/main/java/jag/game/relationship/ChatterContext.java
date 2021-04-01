@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public abstract class ChatterContext {
+public abstract class ChatterContext<T extends Chatter> {
 
     public final int capacity;
 
-    public final Chatter[] chatters;
-    public final HashMap displayNameCache;
-    public final HashMap previousNameCache;
+    public final T[] chatters;
+    public final HashMap<NamePair, T> displayNameCache;
+    public final HashMap<NamePair, T> previousNameCache;
+
     public Comparator comparator;
 
     public int count;
@@ -20,37 +21,36 @@ public abstract class ChatterContext {
         comparator = null;
         this.capacity = capacity;
         chatters = newArray(capacity);
-        displayNameCache = new HashMap(capacity / 8);
-        previousNameCache = new HashMap(capacity / 8);
+        displayNameCache = new HashMap<>(capacity / 8);
+        previousNameCache = new HashMap<>(capacity / 8);
     }
 
-    public Chatter getChatterByAnyName(NamePair name) {
-        Chatter chatter = getChatterByDisplayName(name);
+    public T getChatterByAnyName(NamePair name) {
+        T chatter = getChatterByDisplayName(name);
         return chatter != null ? chatter : getChatterByPreviousName(name);
     }
 
-    public Chatter addAndCache(NamePair displayName, NamePair previousName) {
+    public T addAndCache(NamePair displayName, NamePair previousName) {
         if (getChatterByDisplayName(displayName) != null) {
             throw new IllegalStateException();
         }
-        Chatter chatter = newChatter();
+        T chatter = newChatter();
         chatter.setName(displayName, previousName);
         add(chatter);
         cache(chatter);
         return chatter;
     }
 
-    public final int indexOf(Chatter chatter) {
+    public final int indexOf(T chatter) {
         for (int i = 0; i < count; ++i) {
             if (chatters[i] == chatter) {
                 return i;
             }
         }
-
         return -1;
     }
 
-    public final void uncache(Chatter chatter) {
+    public final void uncache(T chatter) {
         if (displayNameCache.remove(chatter.displayName) == null) {
             throw new IllegalStateException();
         }
@@ -61,11 +61,11 @@ public abstract class ChatterContext {
 
     }
 
-    public Chatter getChatterByDisplayName(NamePair name) {
-        return !name.isFormattedPresent() ? null : (Chatter) displayNameCache.get(name);
+    public T getChatterByDisplayName(NamePair name) {
+        return !name.isFormattedPresent() ? null : displayNameCache.get(name);
     }
 
-    public int getCount() {
+    public int getMemberCount() {
         return count;
     }
 
@@ -89,11 +89,11 @@ public abstract class ChatterContext {
         return displayNameCache.containsKey(name) || previousNameCache.containsKey(name);
     }
 
-    public Chatter getChatterByPreviousName(NamePair name) {
-        return !name.isFormattedPresent() ? null : (Chatter) previousNameCache.get(name);
+    public T getChatterByPreviousName(NamePair name) {
+        return !name.isFormattedPresent() ? null : previousNameCache.get(name);
     }
 
-    abstract Chatter newChatter();
+    abstract T newChatter();
 
     public void clear() {
         count = 0;
@@ -110,7 +110,7 @@ public abstract class ChatterContext {
 
     }
 
-    public final void remove(Chatter chatter) {
+    public final void remove(T chatter) {
         int index = indexOf(chatter);
         if (index != -1) {
             remove(index);
@@ -118,17 +118,17 @@ public abstract class ChatterContext {
         }
     }
 
-    public final Chatter getChatter(int index) {
+    public final T getChatter(int index) {
         if (index >= 0 && index < count) {
             return chatters[index];
         }
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
-    public final void cache(Chatter chatter) {
+    public final void cache(T chatter) {
         displayNameCache.put(chatter.displayName, chatter);
         if (chatter.previousName != null) {
-            Chatter previouslyMapped = (Chatter) previousNameCache.put(chatter.previousName, chatter);
+            T previouslyMapped = previousNameCache.put(chatter.previousName, chatter);
             if (previouslyMapped != null && previouslyMapped != chatter) {
                 previouslyMapped.previousName = null;
             }
@@ -136,10 +136,10 @@ public abstract class ChatterContext {
 
     }
 
-    abstract Chatter[] newArray(int size);
+    abstract T[] newArray(int size);
 
     public final boolean remove(NamePair name) {
-        Chatter chatter = getChatterByDisplayName(name);
+        T chatter = getChatterByDisplayName(name);
         if (chatter == null) {
             return false;
         }
@@ -147,15 +147,15 @@ public abstract class ChatterContext {
         return true;
     }
 
-    public final void add(Chatter chatter) {
+    public final void add(T chatter) {
         chatters[++count - 1] = chatter;
     }
 
-    public Chatter addAndCache(NamePair name) {
+    public T addAndCache(NamePair name) {
         return addAndCache(name, null);
     }
 
-    public final void update(Chatter chatter, NamePair displayName, NamePair previousName) {
+    public final void update(T chatter, NamePair displayName, NamePair previousName) {
         uncache(chatter);
         chatter.setName(displayName, previousName);
         cache(chatter);

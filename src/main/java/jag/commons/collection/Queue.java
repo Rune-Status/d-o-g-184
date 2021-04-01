@@ -1,39 +1,39 @@
 package jag.commons.collection;
 
-public final class Queue {
+public final class Queue<T extends DoublyLinkedNode> {
 
     public final DoublyLinkedNode root;
 
     public Queue() {
-        this.root = new DoublyLinkedNode();
-        this.root.nextDoubly = this.root;
-        this.root.previousDoubly = this.root;
+        root = new DoublyLinkedNode();
+        root.nextDoubly = root;
+        root.previousDoubly = root;
     }
 
-    public void method301(DoublyLinkedNode var1) {
-        if (var1.previousDoubly != null) {
-            var1.unlinkDoubly();
+    public T head() {
+        DoublyLinkedNode node = root.nextDoubly;
+        return node == root ? null : (T) node;
+    }
+
+    public void add(T node) {
+        if (node.previousDoubly != null) {
+            node.unlinkDoubly();
         }
 
-        var1.previousDoubly = this.root;
-        var1.nextDoubly = this.root.nextDoubly;
-        var1.previousDoubly.nextDoubly = var1;
-        var1.nextDoubly.previousDoubly = var1;
+        node.previousDoubly = this.root;
+        node.nextDoubly = this.root.nextDoubly;
+        node.previousDoubly.nextDoubly = node;
+        node.nextDoubly.previousDoubly = node;
     }
 
-    public DoublyLinkedNode method299() {
-        DoublyLinkedNode var1 = this.root.nextDoubly;
-        return var1 == this.root ? null : var1;
-    }
-
-    public void method300(DoublyLinkedNode var1) {
-        if (var1.previousDoubly != null) {
-            var1.unlinkDoubly();
+    public void insert(T node) {
+        if (node.previousDoubly != null) {
+            node.unlinkDoubly();
         }
 
-        var1.previousDoubly = this.root.previousDoubly;
-        var1.nextDoubly = this.root;
-        var1.previousDoubly.nextDoubly = var1;
-        var1.nextDoubly.previousDoubly = var1;
+        node.previousDoubly = root.previousDoubly;
+        node.nextDoubly = root;
+        node.previousDoubly.nextDoubly = node;
+        node.nextDoubly.previousDoubly = node;
     }
 }

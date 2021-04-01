@@ -1,22 +1,26 @@
 package jag.game.stockmarket;
 
-import jag.*;
+import jag.Login;
+import jag.LoginScreenEffect;
 import jag.audi.ObjectSound;
-import jag.game.GameEngine;
+import jag.game.GameShell;
 import jag.game.InterfaceComponent;
 import jag.game.client;
 import jag.game.scene.CollisionMap;
 import jag.game.scene.SceneGraph;
 import jag.game.scene.entity.DynamicObject;
 import jag.game.scene.entity.Entity;
+import jag.game.scene.entity.EntityUID;
 import jag.game.scene.entity.Model;
 import jag.game.type.ObjectDefinition;
 import jag.graphics.BaseFont;
-import jag.js5.CacheRequestWorker;
 import jag.js5.BufferedFile;
-import jag.js5.Archive;
+import jag.js5.CacheRequestWorker;
 import jag.opcode.Buffer;
-import jag.statics.*;
+import jag.statics.Base64;
+import jag.statics.Statics24;
+import jag.statics.Statics45;
+import jag.statics.Statics54;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,20 +30,18 @@ import java.net.URLConnection;
 import java.util.Comparator;
 import java.util.Random;
 
-public final class StockMarketOfferLifetimeComparator implements Comparator {
-    public static Archive sprites;
+public final class StockMarketOfferLifetimeComparator implements Comparator<StockMarketEvent> {
     public static boolean aBoolean584;
-    public static Archive aArchive586;
     public static InterfaceComponent anInterfaceComponent585;
 
     public static void method411() {
         Login.username = Login.username.trim();
         if (Login.username.length() == 0) {
-            PlayerAccountType.setLoginMessages("Please enter your username.", "If you created your account after November", "2010, this will be the creation email address.");
+            Login.setMessages("Please enter your username.", "If you created your account after November", "2010, this will be the creation email address.");
         } else {
             long var6;
             try {
-                URL var0 = new URL(GameEngine.method611("services", false) + "m=accountappeal/login.ws");
+                URL var0 = new URL(GameShell.method611("services", false) + "m=accountappeal/login.ws");
                 URLConnection var1 = var0.openConnection();
                 var1.setRequestProperty("connection", "close");
                 var1.setDoInput(true);
@@ -52,15 +54,15 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                 Buffer var4 = new Buffer(new byte[1000]);
 
                 while (true) {
-                    int var5 = var3.read(var4.payload, var4.caret, 1000 - var4.caret);
+                    int var5 = var3.read(var4.payload, var4.pos, 1000 - var4.pos);
                     if (var5 == -1) {
-                        var4.caret = 0;
-                        var6 = var4.readLong();
+                        var4.pos = 0;
+                        var6 = var4.g8();
                         break;
                     }
 
-                    var4.caret += var5;
-                    if (var4.caret >= 1000) {
+                    var4.pos += var5;
+                    if (var4.pos >= 1000) {
                         var6 = 0L;
                         break;
                     }
@@ -78,33 +80,33 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                 Buffer var13 = new Buffer(128);
                 Buffer var14 = new Buffer(128);
                 int[] var15 = new int[]{var48.nextInt(), var48.nextInt(), (int) (var6 >> 32), (int) var6};
-                var13.writeByte(10);
+                var13.p1(10);
 
                 int var16;
                 for (var16 = 0; var16 < 4; ++var16) {
-                    var13.writeInt(var48.nextInt());
+                    var13.p4(var48.nextInt());
                 }
 
-                var13.writeInt(var15[0]);
-                var13.writeInt(var15[1]);
-                var13.writeLong(var6);
-                var13.writeLong(0L);
+                var13.p4(var15[0]);
+                var13.p4(var15[1]);
+                var13.p8(var6);
+                var13.p8(0L);
 
                 for (var16 = 0; var16 < 4; ++var16) {
-                    var13.writeInt(var48.nextInt());
+                    var13.p4(var48.nextInt());
                 }
 
-                var13.writeRSA(Statics54.aBigInteger628, Statics54.aBigInteger626);
-                var14.writeByte(10);
+                var13.prsa(Statics54.aBigInteger628, Statics54.aBigInteger626);
+                var14.p1(10);
 
                 for (var16 = 0; var16 < 3; ++var16) {
-                    var14.writeInt(var48.nextInt());
+                    var14.p4(var48.nextInt());
                 }
 
-                var14.writeLong(var48.nextLong());
-                var14.method1022(var48.nextLong());
+                var14.p8(var48.nextLong());
+                var14.p48(var48.nextLong());
                 if (client.random != null) {
-                    var14.writeBytes(client.random, 0, client.random.length);
+                    var14.p(client.random, 0, client.random.length);
                 } else {
                     byte[] var17 = new byte[24];
 
@@ -125,49 +127,49 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                         }
                     }
 
-                    var14.writeBytes(var17, 0, var17.length);
+                    var14.p(var17, 0, var17.length);
                 }
 
-                var14.writeLong(var48.nextLong());
-                var14.writeRSA(Statics54.aBigInteger628, Statics54.aBigInteger626);
+                var14.p8(var48.nextLong());
+                var14.prsa(Statics54.aBigInteger628, Statics54.aBigInteger626);
                 var16 = Buffer.stringLengthPlusOne(var47);
                 if (var16 % 8 != 0) {
                     var16 += 8 - var16 % 8;
                 }
 
                 Buffer var49 = new Buffer(var16);
-                var49.writeCString(var47);
-                var49.caret = var16;
-                var49.method1076(var15);
-                Buffer var19 = new Buffer(var49.caret + var13.caret + var14.caret + 5);
-                var19.writeByte(2);
-                var19.writeByte(var13.caret);
-                var19.writeBytes(var13.payload, 0, var13.caret);
-                var19.writeByte(var14.caret);
-                var19.writeBytes(var14.payload, 0, var14.caret);
-                var19.writeShort(var49.caret);
-                var19.writeBytes(var49.payload, 0, var49.caret);
+                var49.pcstr(var47);
+                var49.pos = var16;
+                var49.tinyenc(var15);
+                Buffer var19 = new Buffer(var49.pos + var13.pos + var14.pos + 5);
+                var19.p1(2);
+                var19.p1(var13.pos);
+                var19.p(var13.payload, 0, var13.pos);
+                var19.p1(var14.pos);
+                var19.p(var14.payload, 0, var14.pos);
+                var19.p2(var49.pos);
+                var19.p(var49.payload, 0, var49.pos);
                 byte[] var22 = var19.payload;
 
                 byte var43;
                 try {
-                    URL var25 = new URL(GameEngine.method611("services", false) + "m=accountappeal/login.ws");
+                    URL var25 = new URL(GameShell.method611("services", false) + "m=accountappeal/login.ws");
                     URLConnection var26 = var25.openConnection();
                     var26.setDoInput(true);
                     var26.setDoOutput(true);
                     var26.setConnectTimeout(5000);
                     OutputStreamWriter var27 = new OutputStreamWriter(var26.getOutputStream());
-                    int var29 = SerializableProcessor.method458(var22, 0, var22.length).length();
+                    int var29 = Base64.encode(var22, 0, var22.length).length();
                     StringBuilder var30 = new StringBuilder(var29);
 
                     int var34;
                     for (int var31 = 0; var31 < var29; ++var31) {
-                        char var32 = SerializableProcessor.method458(var22, 0, var22.length).charAt(var31);
+                        char var32 = Base64.encode(var22, 0, var22.length).charAt(var31);
                         if ((var32 < 'a' || var32 > 'z') && (var32 < 'A' || var32 > 'Z') && (var32 < '0' || var32 > '9') && var32 != '.' && var32 != '-' && var32 != '*' && var32 != '_') {
                             if (var32 == ' ') {
                                 var30.append('+');
                             } else {
-                                byte var33 = BaseFont.method10(var32);
+                                byte var33 = BaseFont.toCp1252Byte(var32);
                                 var30.append('%');
                                 var34 = var33 >> 4 & 15;
                                 if (var34 >= 10) {
@@ -199,7 +201,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                             if (var38 == ' ') {
                                 var37.append('+');
                             } else {
-                                byte var39 = BaseFont.method10(var38);
+                                byte var39 = BaseFont.toCp1252Byte(var38);
                                 var37.append('%');
                                 int var40 = var39 >> 4 & 15;
                                 if (var40 >= 10) {
@@ -227,7 +229,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                     var19 = new Buffer(new byte[1000]);
 
                     while (true) {
-                        int var52 = var42.read(var19.payload, var19.caret, 1000 - var19.caret);
+                        int var52 = var42.read(var19.payload, var19.pos, 1000 - var19.pos);
                         if (var52 == -1) {
                             var27.close();
                             var42.close();
@@ -241,15 +243,15 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                             } else if (var53.startsWith("Not permitted for social network accounts.")) {
                                 var43 = 6;
                             } else {
-                                var19.method1065(var15);
+                                var19.tinydec(var15);
 
-                                while (var19.caret > 0 && var19.payload[var19.caret - 1] == 0) {
-                                    --var19.caret;
+                                while (var19.pos > 0 && var19.payload[var19.pos - 1] == 0) {
+                                    --var19.pos;
                                 }
 
-                                var53 = new String(var19.payload, 0, var19.caret);
+                                var53 = new String(var19.payload, 0, var19.pos);
                                 if (LoginScreenEffect.method286(var53)) {
-                                    CacheRequestWorker.method1006(var53, true, false);
+                                    CacheRequestWorker.openURL(var53, true, false);
                                     var43 = 2;
                                 } else {
                                     var43 = 5;
@@ -258,8 +260,8 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                             break;
                         }
 
-                        var19.caret += var52;
-                        if (var19.caret >= 1000) {
+                        var19.pos += var52;
+                        if (var19.pos >= 1000) {
                             var43 = 5;
                             break;
                         }
@@ -274,21 +276,21 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
 
             switch (var12) {
                 case 2:
-                    PlayerAccountType.setLoginMessages(Statics24.aString1416, Statics24.aString1418, Statics24.aString1415);
+                    Login.setMessages(Statics24.aString1416, Statics24.aString1418, Statics24.aString1415);
                     Login.step = 6;
                     break;
                 case 3:
                 case 6:
-                    PlayerAccountType.setLoginMessages("", "Error connecting to server.", "");
+                    Login.setMessages("", "Error connecting to server.", "");
                     break;
                 case 4:
-                    PlayerAccountType.setLoginMessages("The part of the website you are trying", "to connect to is offline at the moment.", "Please try again later.");
+                    Login.setMessages("The part of the website you are trying", "to connect to is offline at the moment.", "Please try again later.");
                     break;
                 case 5:
-                    PlayerAccountType.setLoginMessages("Sorry, there was an error trying to", "log you in to this part of the website.", "Please try again later.");
+                    Login.setMessages("Sorry, there was an error trying to", "log you in to this part of the website.", "Please try again later.");
                     break;
                 case 7:
-                    PlayerAccountType.setLoginMessages("You must enter a valid login to proceed. For accounts", "created after 24th November 2010, please use your", "email address. Otherwise please use your username.");
+                    Login.setMessages("You must enter a valid login to proceed. For accounts", "created after 24th November 2010, please use your", "email address. Otherwise please use your username.");
             }
 
         }
@@ -357,18 +359,18 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
 
                 var22.anInt380 = (var23 + var1) * 128;
                 var22.anInt375 = (var24 + var2) * 128;
-                var22.anInt379 = var8.ambientSoundId;
+                var22.ambientSoundId = var8.ambientSoundId;
                 var22.anInt372 = var8.anInt1344 * 128;
                 var22.anInt368 = var8.anInt1508;
                 var22.anInt367 = var8.anInt1510;
-                var22.anIntArray374 = var8.anIntArray1509;
+                var22.effects = var8.soundEffects;
                 if (var8.transformIds != null) {
-                    var22.anObjectDefinition376 = var8;
+                    var22.definition = var8;
                     var22.method254();
                 }
 
-                ObjectSound.aNodeDeque373.add(var22);
-                if (var22.anIntArray374 != null) {
+                ObjectSound.OBJECT_SOUNDS.add(var22);
+                if (var22.effects != null) {
                     var22.anInt366 = var22.anInt368 + (int) (Math.random() * (double) (var22.anInt367 - var22.anInt368));
                 }
             }
@@ -589,7 +591,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                         Entity var31;
                         if (var5 == 5) {
                             var26 = 16;
-                            var29 = var6.method1456(var0, var1, var2);
+                            var29 = var6.getBoundaryUidAt(var0, var1, var2);
                             if (0L != var29) {
                                 var26 = ObjectDefinition.get(EntityUID.getObjectId(var29)).anInt1369;
                             }
@@ -603,7 +605,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                             var6.addBoundaryDecor(var0, var1, var2, var16, var31, null, Statics45.anIntArray406[var4], 0, var26 * Statics45.anIntArray402[var4], var26 * Statics45.anIntArray394[var4], var19, var21);
                         } else if (var5 == 6) {
                             var26 = 8;
-                            var29 = var6.method1456(var0, var1, var2);
+                            var29 = var6.getBoundaryUidAt(var0, var1, var2);
                             if (0L != var29) {
                                 var26 = ObjectDefinition.get(EntityUID.getObjectId(var29)).anInt1369 / 2;
                             }
@@ -626,7 +628,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                             var6.addBoundaryDecor(var0, var1, var2, var16, var34, null, 256, var23, 0, 0, var19, var21);
                         } else if (var5 == 8) {
                             var26 = 8;
-                            var29 = var6.method1456(var0, var1, var2);
+                            var29 = var6.getBoundaryUidAt(var0, var1, var2);
                             if (0L != var29) {
                                 var26 = ObjectDefinition.get(EntityUID.getObjectId(var29)).anInt1369 / 2;
                             }
@@ -655,7 +657,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
                 if (var34 != null && var6.method1470(var0, var1, var2, var16, var9, var10, var34, var5 == 11 ? 256 : 0, var19, var21) && var8.clipped) {
                     var23 = 15;
                     if (var34 instanceof Model) {
-                        var23 = ((Model) var34).method305() / 4;
+                        var23 = ((Model) var34).radius() / 4;
                         if (var23 > 30) {
                             var23 = 30;
                         }
@@ -706,7 +708,7 @@ public final class StockMarketOfferLifetimeComparator implements Comparator {
         return super.equals(var1);
     }
 
-    public int compare(Object var1, Object var2) {
-        return this.method413((StockMarketEvent) var1, (StockMarketEvent) var2);
+    public int compare(StockMarketEvent var1, StockMarketEvent var2) {
+        return this.method413(var1, var2);
     }
 }

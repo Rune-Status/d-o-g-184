@@ -7,21 +7,21 @@ import jag.opcode.Buffer;
 
 public class InventoryDefinition extends DoublyLinkedNode {
 
-    public static final ReferenceCache cache;
+    public static final ReferenceCache<InventoryDefinition> cache;
     public static ReferenceTable table;
 
     static {
-        cache = new ReferenceCache(64);
+        cache = new ReferenceCache<>(64);
     }
 
     public int capacity;
 
     public InventoryDefinition() {
-        this.capacity = 0;
+        capacity = 0;
     }
 
     public static InventoryDefinition lookup(int key) {
-        InventoryDefinition definition = (InventoryDefinition) cache.get(key);
+        InventoryDefinition definition = cache.get(key);
         if (definition != null) {
             return definition;
         }
@@ -36,21 +36,25 @@ public class InventoryDefinition extends DoublyLinkedNode {
         return definition;
     }
 
-    public void decodeOpcode(Buffer buffer, int opcode) {
+    public static void setTable(ReferenceTable table) {
+        InventoryDefinition.table = table;
+    }
+
+    public void decode(Buffer buffer, int opcode) {
         if (opcode == 2) {
-            this.capacity = buffer.readUShort();
+            capacity = buffer.g2();
         }
 
     }
 
     public void decode(Buffer buffer) {
         while (true) {
-            int opcode = buffer.readUByte();
+            int opcode = buffer.g1();
             if (opcode == 0) {
                 return;
             }
 
-            this.decodeOpcode(buffer, opcode);
+            decode(buffer, opcode);
         }
     }
 }

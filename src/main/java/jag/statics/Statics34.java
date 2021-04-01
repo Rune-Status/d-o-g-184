@@ -6,8 +6,9 @@ import jag.opcode.GPI;
 import jag.opcode.PacketBuffer;
 
 public final class Statics34 {
+
     public static boolean method1168(PacketBuffer var0, int var1) {
-        int var2 = var0.method1398(2);
+        int var2 = var0.g(2);
         int var3;
         int var4;
         int var7;
@@ -15,13 +16,13 @@ public final class Statics34 {
         int var9;
         int var10;
         if (var2 == 0) {
-            if (var0.method1398(1) != 0) {
+            if (var0.g(1) != 0) {
                 method1168(var0, var1);
             }
 
-            var3 = var0.method1398(13);
-            var4 = var0.method1398(13);
-            boolean var12 = var0.method1398(1) == 1;
+            var3 = var0.g(13);
+            var4 = var0.g(13);
+            boolean var12 = var0.g(1) == 1;
             if (var12) {
                 GPI.anIntArray588[++GPI.anInt594 - 1] = var1;
             }
@@ -42,13 +43,13 @@ public final class Statics34 {
             var9 = var7 >> 14 & 255;
             var10 = var7 & 255;
             var6.pathQueueTraversed[0] = GPI.aByteArray596[var1];
-            var6.anInt1473 = (byte) var8;
+            var6.floorLevel = (byte) var8;
             var6.method1414((var9 << 13) + var3 - client.baseX, (var10 << 13) + var4 - client.baseY);
             var6.aBoolean1904 = false;
             return true;
         }
         if (var2 == 1) {
-            var3 = var0.method1398(2);
+            var3 = var0.g(2);
             var4 = GPI.playerLocations[var1];
             GPI.playerLocations[var1] = (var4 & 268435455) + (((var4 >> 28) + var3 & 3) << 28);
             return false;
@@ -56,7 +57,7 @@ public final class Statics34 {
         int var5;
         int var11;
         if (var2 == 2) {
-            var3 = var0.method1398(5);
+            var3 = var0.g(5);
             var4 = var3 >> 3;
             var5 = var3 & 7;
             var11 = GPI.playerLocations[var1];
@@ -102,7 +103,7 @@ public final class Statics34 {
             GPI.playerLocations[var1] = (var8 << 14) + var9 + (var7 << 28);
             return false;
         }
-        var3 = var0.method1398(18);
+        var3 = var0.g(18);
         var4 = var3 >> 16;
         var5 = var3 >> 8 & 255;
         var11 = var3 & 255;

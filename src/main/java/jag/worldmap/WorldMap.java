@@ -1,9 +1,9 @@
 package jag.worldmap;
 
-import jag.graphics.NamedFont;
 import jag.commons.input.Keyboard;
-import jag.game.GameEngine;
+import jag.commons.time.Clock;
 import jag.game.client;
+import jag.game.menu.ContextMenuBuilder;
 import jag.graphics.*;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
@@ -19,6 +19,7 @@ public class WorldMap {
     static final NamedFont VERDANA11;
     static final NamedFont VERDANA13;
     static final NamedFont VERDANA15;
+    public static WorldMapHeatMap heatmap;
 
     static {
         VERDANA11 = NamedFont.VERDANA11;
@@ -29,50 +30,50 @@ public class WorldMap {
     final int[] actionOpcodes;
     public boolean drawMouseOverPosition;
     IndexedSprite[] mapSceneSprites;
-    boolean aBoolean1691;
-    HashSet<Integer> aHashSet1692;
-    int anInt1685;
+    boolean forceRefresh;
+    HashSet<Integer> toggledCategories;
+    int refreshLimit;
     int anInt1678;
-    int anInt1690;
-    HashSet<Integer> aHashSet1677;
-    int anInt1693;
-    boolean aBoolean1687;
-    int anInt1671;
-    HashMap<String, WorldMapArea> areas;
-    HashSet<Integer> aHashSet1675;
-    HashSet<Integer> aHashSet1686;
+    int panelHeight;
+    HashSet<Integer> toggledFunctions;
+    int panelWidth;
+    boolean disableFunctions;
+    int refreshRate;
+    HashMap<String, WorldMapCacheArea> areas;
+    HashSet<Integer> toggledFeatures;
+    HashSet<Integer> indicativeFunctions;
     WorldMapDefinitionLoader definitionLoader;
-    Iterator<WorldMapIcon> anIterator1703;
-    int anInt1709;
-    float aFloat1672;
+    Iterator<WorldMapIcon> iconIterator;
+    int destinationX;
+    float desiredZoom;
     Sprite aSprite1695;
-    int anInt1711;
-    WorldMapArea activeArea;
+    int centerX;
+    WorldMapCacheArea activeArea;
     int anInt1676;
     ReferenceTable table;
-    int anInt1717;
+    int destinationY;
     WorldMapPosition mouseOver;
-    int anInt1715;
-    float aFloat1716;
+    int centerY;
+    float zoom;
     WorldMapController controller;
     HashMap<WorldMapLabelSize, BaseFont> sizeToFont;
-    int anInt1670;
-    int anInt1682;
-    WorldMapArea aWorldMapArea_1724;
+    int panelX;
+    int indicationLimit;
+    WorldMapCacheArea aWorldMapCacheArea_1724;
     ReferenceTable scenery;
-    WorldMapArea mainland;
+    WorldMapCacheArea mainland;
     int anInt1681;
     ReferenceTable ground;
-    int anInt1679;
-    HashSet aHashSet1688;
+    int indicationRate;
+    HashSet<Integer> toggledCategoryObjects;
     int anInt1673;
     Font font;
     int anInt1699;
-    int anInt1683;
-    List<WorldMapIcon> aList1700;
+    int panelY;
+    List<WorldMapIcon> icons;
     int anInt1697;
-    int anInt1694;
-    int anInt1701;
+    int minPositionX;
+    int minPositionY;
     boolean aBoolean1689;
     HashSet<WorldMapIcon> aHashSet1698;
     int anInt1680;
@@ -81,168 +82,168 @@ public class WorldMap {
     long aLong1684;
 
     public WorldMap() {
-        anInt1709 = -1;
-        anInt1717 = -1;
-        anInt1693 = -1;
-        anInt1690 = -1;
-        anInt1670 = -1;
-        anInt1683 = -1;
-        anInt1685 = 3;
-        anInt1671 = 50;
-        aBoolean1691 = false;
-        aHashSet1686 = null;
-        anInt1682 = -1;
-        anInt1679 = -1;
+        destinationX = -1;
+        destinationY = -1;
+        panelWidth = -1;
+        panelHeight = -1;
+        panelX = -1;
+        panelY = -1;
+        refreshLimit = 3;
+        refreshRate = 50;
+        forceRefresh = false;
+        indicativeFunctions = null;
+        indicationLimit = -1;
+        indicationRate = -1;
         anInt1673 = -1;
         anInt1681 = -1;
         anInt1676 = -1;
         anInt1678 = -1;
         aBoolean1689 = true;
-        aHashSet1677 = new HashSet<>();
-        aHashSet1692 = new HashSet<>();
-        aHashSet1688 = new HashSet<>();
-        aHashSet1675 = new HashSet<>();
-        aBoolean1687 = false;
+        toggledFunctions = new HashSet<>();
+        toggledCategories = new HashSet<>();
+        toggledCategoryObjects = new HashSet<>();
+        toggledFeatures = new HashSet<>();
+        disableFunctions = false;
         anInt1704 = 0;
         actionOpcodes = new int[]{1008, 1009, 1010, 1011, 1012};
         aHashSet1698 = new HashSet<>();
         mouseOver = null;
         drawMouseOverPosition = false;
-        anInt1694 = -1;
-        anInt1701 = -1;
+        minPositionX = -1;
+        minPositionY = -1;
         anInt1697 = -1;
     }
 
-    boolean method1267() {
-        return anInt1709 != -1 && anInt1717 != -1;
+    boolean isDestinationPresent() {
+        return destinationX != -1 && destinationY != -1;
     }
 
-    public WorldMapArea getAreaAt(int level, int x, int y) {
-        Iterator<WorldMapArea> var4 = areas.values().iterator();
+    public WorldMapCacheArea getAreaAt(int level, int x, int y) {
+        Iterator<WorldMapCacheArea> iterator = areas.values().iterator();
 
-        WorldMapArea var5;
+        WorldMapCacheArea area;
         do {
-            if (!var4.hasNext()) {
+            if (!iterator.hasNext()) {
                 return null;
             }
 
-            var5 = var4.next();
-        } while (!var5.contains(level, x, y));
+            area = iterator.next();
+        } while (!area.contains(level, x, y));
 
-        return var5;
+        return area;
     }
 
-    float method1239(int var1) {
-        if (var1 == 25) {
+    float getZoom(int percent) {
+        if (percent == 25) {
             return 1.0F;
         }
-        if (var1 == 37) {
+        if (percent == 37) {
             return 1.5F;
         }
-        if (var1 == 50) {
+        if (percent == 50) {
             return 2.0F;
         }
-        if (var1 == 75) {
+        if (percent == 75) {
             return 3.0F;
         }
-        return var1 == 100 ? 4.0F : 8.0F;
+        return percent == 100 ? 4.0F : 8.0F;
     }
 
-    public WorldMapArea getArea(int id) {
-        Iterator<WorldMapArea> var2 = areas.values().iterator();
+    public WorldMapCacheArea getArea(int id) {
+        Iterator<WorldMapCacheArea> iterator = areas.values().iterator();
 
-        WorldMapArea var3;
+        WorldMapCacheArea area;
         do {
-            if (!var2.hasNext()) {
+            if (!iterator.hasNext()) {
                 return null;
             }
 
-            var3 = var2.next();
-        } while (var3.getId() != id);
+            area = iterator.next();
+        } while (area.getId() != id);
 
-        return var3;
+        return area;
     }
 
-    void method1266(WorldMapArea var1) {
-        activeArea = var1;
+    void method1266(WorldMapCacheArea activeArea) {
+        this.activeArea = activeArea;
         controller = new WorldMapController(mapSceneSprites, sizeToFont, scenery, ground);
         definitionLoader.method1309(activeArea.getJagName());
     }
 
-    void setArea(WorldMapArea var1) {
-        if (activeArea == null || var1 != activeArea) {
-            method1266(var1);
-            method1265(-1, -1, -1);
+    void setArea(WorldMapCacheArea area) {
+        if (activeArea == null || area != activeArea) {
+            method1266(area);
+            setArea(-1, -1, -1);
         }
     }
 
-    public int method1232() {
-        return activeArea == null ? -1 : anInt1711 + activeArea.method66() * 64;
+    public int getPanelX() {
+        return activeArea == null ? -1 : centerX + activeArea.getMinRegionX() * 64;
     }
 
-    void method1274() {
-        if (client.class69 != null) {
-            aFloat1716 = aFloat1672;
+    void zoomSmoothly() {
+        if (heatmap != null) {
+            zoom = desiredZoom;
         } else {
-            if (aFloat1716 < aFloat1672) {
-                aFloat1716 = Math.min(aFloat1672, aFloat1716 + aFloat1716 / 30.0F);
+            if (zoom < desiredZoom) {
+                zoom = Math.min(desiredZoom, zoom + zoom / 30.0F);
             }
 
-            if (aFloat1716 > aFloat1672) {
-                aFloat1716 = Math.max(aFloat1672, aFloat1716 - aFloat1716 / 30.0F);
+            if (zoom > desiredZoom) {
+                zoom = Math.max(desiredZoom, zoom - zoom / 30.0F);
             }
 
         }
     }
 
-    void method1256() {
-        aHashSet1675.clear();
-        aHashSet1675.addAll(aHashSet1677);
-        aHashSet1675.addAll(aHashSet1688);
+    void mapToggledFeatures() {
+        toggledFeatures.clear();
+        toggledFeatures.addAll(toggledFunctions);
+        toggledFeatures.addAll(toggledCategoryObjects);
     }
 
-    void method1265(int var1, int var2, int var3) {
+    void setArea(int floor, int x, int y) {
         if (activeArea != null) {
-            int[] var4 = activeArea.method81(var1, var2, var3);
-            if (var4 == null) {
-                var4 = activeArea.method81(activeArea.getLevel(), activeArea.getBaseX(), activeArea.getBaseY());
+            int[] position = activeArea.toScreen(floor, x, y);
+            if (position == null) {
+                position = activeArea.toScreen(activeArea.getLevel(), activeArea.getBaseX(), activeArea.getBaseY());
             }
 
-            method1271(var4[0] - activeArea.method66() * 64, var4[1] - activeArea.method85() * 64, true);
-            anInt1709 = -1;
-            anInt1717 = -1;
-            aFloat1716 = method1239(activeArea.method78());
-            aFloat1672 = aFloat1716;
-            aList1700 = null;
-            anIterator1703 = null;
-            controller.method136();
+            setPosition(position[0] - activeArea.getMinRegionX() * 64, position[1] - activeArea.getMinRegionY() * 64, true);
+            destinationX = -1;
+            destinationY = -1;
+            zoom = getZoom(activeArea.getZoomPercent());
+            desiredZoom = zoom;
+            icons = null;
+            iconIterator = null;
+            controller.clearIcons();
         }
     }
 
-    public int method1236() {
-        return anInt1693;
+    public int getPanelWidth() {
+        return panelWidth;
     }
 
-    public int method1234() {
-        return activeArea == null ? -1 : anInt1715 + activeArea.method85() * 64;
+    public int getPanelY() {
+        return activeArea == null ? -1 : centerY + activeArea.getMinRegionY() * 64;
     }
 
-    void method1275() {
-        if (method1267()) {
-            int var1 = anInt1709 - anInt1711;
-            int var2 = anInt1717 - anInt1715;
-            if (var1 != 0) {
-                var1 /= Math.min(8, Math.abs(var1));
+    void panToDestination() {
+        if (isDestinationPresent()) {
+            int dx = destinationX - centerX;
+            int dy = destinationY - centerY;
+            if (dx != 0) {
+                dx /= Math.min(8, Math.abs(dx));
             }
 
-            if (var2 != 0) {
-                var2 /= Math.min(8, Math.abs(var2));
+            if (dy != 0) {
+                dy /= Math.min(8, Math.abs(dy));
             }
 
-            method1271(var1 + anInt1711, var2 + anInt1715, true);
-            if (anInt1709 == anInt1711 && anInt1715 == anInt1717) {
-                anInt1709 = -1;
-                anInt1717 = -1;
+            setPosition(dx + centerX, dy + centerY, true);
+            if (destinationX == centerX && centerY == destinationY) {
+                destinationX = -1;
+                destinationY = -1;
             }
 
         }
@@ -255,30 +256,30 @@ public class WorldMap {
         anInt1673 = -1;
     }
 
-    public void method1235(int var1, int var2) {
+    public void setPositionRegional(int x, int y) {
         if (activeArea != null) {
-            method1271(var1 - activeArea.method66() * 64, var2 - activeArea.method85() * 64, true);
-            anInt1709 = -1;
-            anInt1717 = -1;
+            setPosition(x - activeArea.getMinRegionX() * 64, y - activeArea.getMinRegionY() * 64, true);
+            destinationX = -1;
+            destinationY = -1;
         }
     }
 
-    public void method1238(int var1, int var2) {
-        if (activeArea != null && activeArea.method83(var1, var2)) {
-            anInt1709 = var1 - activeArea.method66() * 64;
-            anInt1717 = var2 - activeArea.method85() * 64;
+    public void setDestination(int x, int y) {
+        if (activeArea != null && activeArea.contains(x, y)) {
+            destinationX = x - activeArea.getMinRegionX() * 64;
+            destinationY = y - activeArea.getMinRegionY() * 64;
         }
     }
 
     void method1276(int var1, int var2, boolean var3, long var4) {
         if (activeArea != null) {
-            int var6 = (int) ((float) anInt1711 + ((float) (var1 - anInt1670) - (float) method1236() * aFloat1716 / 2.0F) / aFloat1716);
-            int var7 = (int) ((float) anInt1715 - ((float) (var2 - anInt1683) - (float) method1228() * aFloat1716 / 2.0F) / aFloat1716);
-            mouseOver = activeArea.getPosition(var6 + activeArea.method66() * 64, var7 + activeArea.method85() * 64);
+            int var6 = (int) ((float) centerX + ((float) (var1 - panelX) - (float) getPanelWidth() * zoom / 2.0F) / zoom);
+            int var7 = (int) ((float) centerY - ((float) (var2 - panelY) - (float) getPanelHeight() * zoom / 2.0F) / zoom);
+            mouseOver = activeArea.getPosition(var6 + activeArea.getMinRegionX() * 64, var7 + activeArea.getMinRegionY() * 64);
             if (mouseOver != null && var3) {
-                boolean var8 = client.rights >= 2;
-                if (var8 && Keyboard.heldKeys[82] && Keyboard.heldKeys[81]) {
-                    Statics35.method1171(mouseOver.x, mouseOver.y, mouseOver.floorLevel, false);
+                boolean jmod = client.rights >= 2;
+                if (jmod && Keyboard.heldKeys[82] && Keyboard.heldKeys[81]) {
+                    Statics35.teleport(mouseOver.x, mouseOver.y, mouseOver.floorLevel, false);
                 } else {
                     boolean var9 = true;
                     if (aBoolean1689) {
@@ -290,9 +291,9 @@ public class WorldMap {
                     }
 
                     if (var9) {
-                        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.anOutgoingPacketMeta51, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(mouseOver.getHash());
-                        client.connectionContext.writeLater(packet);
+                        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.WORLD_MAP_DRAG, client.netWriter.encryptor);
+                        packet.buffer.p4(mouseOver.getHash());
+                        client.netWriter.writeLater(packet);
                         aLong1684 = 0L;
                     }
                 }
@@ -303,34 +304,33 @@ public class WorldMap {
 
     }
 
-    final void method1271(int var1, int var2, boolean var3) {
-        anInt1711 = var1;
-        anInt1715 = var2;
-        GameEngine.currentTime();
+    final void setPosition(int var1, int var2, boolean var3) {
+        centerX = var1;
+        centerY = var2;
+        Clock.now();
         if (var3) {
             method1281();
         }
 
     }
 
-    public int method1228() {
-        return anInt1690;
+    public int getPanelHeight() {
+        return panelHeight;
     }
 
-    public WorldMapIcon method1255() {
-        if (anIterator1703 == null) {
+    public WorldMapIcon getNextIcon() {
+        if (iconIterator == null) {
             return null;
         }
-        WorldMapIcon var1;
+        WorldMapIcon icon;
         do {
-            if (!anIterator1703.hasNext()) {
+            if (!iconIterator.hasNext()) {
                 return null;
             }
 
-            var1 = anIterator1703.next();
-        } while (var1.getMapFunction() == -1);
-
-        return var1;
+            icon = iconIterator.next();
+        } while (icon.getMapFunction() == -1);
+        return icon;
     }
 
     boolean method1263(int var1, int var2, int var3, int var4, int var5, int var6) {
@@ -352,7 +352,7 @@ public class WorldMap {
         return true;
     }
 
-    void method1224(int var1, int var2, int var3, int var4, int var5) {
+    void drawLoadingScreen(int var1, int var2, int var3, int var4, int var5) {
         byte var6 = 20;
         int var7 = var3 / 2 + var1;
         int var8 = var4 / 2 + var2 - 18 - var6;
@@ -362,30 +362,29 @@ public class WorldMap {
         font.method1154("Loading...", var7, var6 + var8, -1, -1);
     }
 
-    public void method1279(int var1, int var2, boolean var3, int var4, int var5, int var6, int var7) {
-        if (definitionLoader.method1308()) {
-            method1274();
-            method1275();
+    public void poll(int var1, int var2, boolean var3, int var4, int var5, int var6, int var7) {
+        if (definitionLoader.isLoaded()) {
+            zoomSmoothly();
+            panToDestination();
             if (var3) {
-                int var8 = (int) Math.ceil((float) var6 / aFloat1716);
-                int var9 = (int) Math.ceil((float) var7 / aFloat1716);
-                List<WorldMapIcon> var10 = controller.method138(anInt1711 - var8 / 2 - 1, anInt1715 - var9 / 2 - 1, var8 / 2 + anInt1711 + 1, var9 / 2 + anInt1715 + 1, var4, var5, var6, var7, var1, var2);
+                int var8 = (int) Math.ceil((float) var6 / zoom);
+                int var9 = (int) Math.ceil((float) var7 / zoom);
+                List<WorldMapIcon> icons = controller.getIcons(centerX - var8 / 2 - 1, centerY - var9 / 2 - 1, var8 / 2 + centerX + 1, var9 / 2 + centerY + 1, var4, var5, var6, var7, var1, var2);
                 HashSet<WorldMapIcon> var11 = new HashSet<>();
-
                 Iterator<WorldMapIcon> var12;
                 WorldMapIcon var13;
                 ScriptEvent var14;
                 WorldMapScriptEvent var15;
-                for (var12 = var10.iterator(); var12.hasNext(); ScriptEvent.fire(var14)) {
+                for (var12 = icons.iterator(); var12.hasNext(); ScriptEvent.fire(var14)) {
                     var13 = var12.next();
                     var11.add(var13);
                     var14 = new ScriptEvent();
                     var15 = new WorldMapScriptEvent(var13.getMapFunction(), var13.min, var13.max);
-                    var14.method1304(new Object[]{var15, var1, var2});
+                    var14.setArgs(new Object[]{var15, var1, var2});
                     if (aHashSet1698.contains(var13)) {
-                        var14.method1193(17);
+                        var14.setType(17);
                     } else {
-                        var14.method1193(15);
+                        var14.setType(15);
                     }
                 }
 
@@ -396,8 +395,8 @@ public class WorldMap {
                     if (!var11.contains(var13)) {
                         var14 = new ScriptEvent();
                         var15 = new WorldMapScriptEvent(var13.getMapFunction(), var13.min, var13.max);
-                        var14.method1304(new Object[]{var15, var1, var2});
-                        var14.method1193(16);
+                        var14.setArgs(new Object[]{var15, var1, var2});
+                        var14.setType(16);
                         ScriptEvent.fire(var14);
                     }
                 }
@@ -407,35 +406,35 @@ public class WorldMap {
         }
     }
 
-    public void method1253(int var1, int var2, WorldMapPosition var3, WorldMapPosition var4) {
+    public void processAction(int var1, int var2, WorldMapPosition var3, WorldMapPosition var4) {
         ScriptEvent var5 = new ScriptEvent();
         WorldMapScriptEvent var6 = new WorldMapScriptEvent(var2, var3, var4);
-        var5.method1304(new Object[]{var6});
+        var5.setArgs(new Object[]{var6});
         switch (var1) {
             case 1008:
-                var5.method1193(10);
+                var5.setType(10);
                 break;
             case 1009:
-                var5.method1193(11);
+                var5.setType(11);
                 break;
             case 1010:
-                var5.method1193(12);
+                var5.setType(12);
                 break;
             case 1011:
-                var5.method1193(13);
+                var5.setType(13);
                 break;
             case 1012:
-                var5.method1193(14);
+                var5.setType(14);
         }
 
         ScriptEvent.fire(var5);
     }
 
-    public void method1259(int var1, int var2, int var3, int var4, int var5, int var6) {
-        if (definitionLoader.method1308()) {
-            int var7 = (int) Math.ceil((float) var3 / aFloat1716);
-            int var8 = (int) Math.ceil((float) var4 / aFloat1716);
-            List<WorldMapIcon> var9 = controller.method138(anInt1711 - var7 / 2 - 1, anInt1715 - var8 / 2 - 1, var7 / 2 + anInt1711 + 1, var8 / 2 + anInt1715 + 1, var1, var2, var3, var4, var5, var6);
+    public void buildMenuActions(int var1, int var2, int var3, int var4, int var5, int var6) {
+        if (definitionLoader.isLoaded()) {
+            int var7 = (int) Math.ceil((float) var3 / zoom);
+            int var8 = (int) Math.ceil((float) var4 / zoom);
+            List<WorldMapIcon> var9 = controller.getIcons(centerX - var7 / 2 - 1, centerY - var8 / 2 - 1, var7 / 2 + centerX + 1, var8 / 2 + centerY + 1, var1, var2, var3, var4, var5, var6);
             if (!var9.isEmpty()) {
                 Iterator<WorldMapIcon> var10 = var9.iterator();
 
@@ -450,8 +449,8 @@ public class WorldMap {
                     var13 = false;
 
                     for (int var14 = actionOpcodes.length - 1; var14 >= 0; --var14) {
-                        if (var12.aStringArray1470[var14] != null) {
-                            WorldMapTileDecor_Sub1.insertMenuItem(var12.aStringArray1470[var14], var12.aString1476, actionOpcodes[var14], var11.getMapFunction(), var11.min.getHash(), var11.max.getHash());
+                        if (var12.menuActions[var14] != null) {
+                            ContextMenuBuilder.insertRow(var12.menuActions[var14], var12.aString1476, actionOpcodes[var14], var11.getMapFunction(), var11.min.getHash(), var11.max.getHash());
                             var13 = true;
                         }
                     }
@@ -461,18 +460,18 @@ public class WorldMap {
         }
     }
 
-    void method1270(int var1, int var2, int var3, int var4, int var5, int var6) {
-        if (client.class69 != null) {
+    void renderHeatMap(int var1, int var2, int var3, int var4, int var5, int var6) {
+        if (heatmap != null) {
             int var7 = 512 / (controller.tileScale * 2);
             int var8 = var3 + 512;
             int var9 = var4 + 512;
             float var10 = 1.0F;
             var8 = (int) ((float) var8 / var10);
             var9 = (int) ((float) var9 / var10);
-            int var11 = method1232() - var5 / 2 - var7;
-            int var12 = method1234() - var6 / 2 - var7;
-            int var13 = var1 - (var11 + var7 - anInt1694) * controller.tileScale;
-            int var14 = var2 - controller.tileScale * (var7 - (var12 - anInt1701));
+            int var11 = getPanelX() - var5 / 2 - var7;
+            int var12 = getPanelY() - var6 / 2 - var7;
+            int var13 = var1 - (var11 + var7 - minPositionX) * controller.tileScale;
+            int var14 = var2 - controller.tileScale * (var7 - (var12 - minPositionY));
             if (method1263(var8, var9, var13, var14, var3, var4)) {
                 if (aSprite1695 != null && aSprite1695.width == var8 && aSprite1695.height == var9) {
                     Arrays.fill(aSprite1695.pixels, 0);
@@ -480,13 +479,13 @@ public class WorldMap {
                     aSprite1695 = new Sprite(var8, var9);
                 }
 
-                anInt1694 = method1232() - var5 / 2 - var7;
-                anInt1701 = method1234() - var6 / 2 - var7;
+                minPositionX = getPanelX() - var5 / 2 - var7;
+                minPositionY = getPanelY() - var6 / 2 - var7;
                 anInt1699 = controller.tileScale;
-                client.class69.method992(anInt1694, anInt1701, aSprite1695, (float) anInt1699 / var10);
+                heatmap.method992(minPositionX, minPositionY, aSprite1695, (float) anInt1699 / var10);
                 anInt1697 = client.anInt929;
-                var13 = var1 - (var7 + var11 - anInt1694) * controller.tileScale;
-                var14 = var2 - controller.tileScale * (var7 - (var12 - anInt1701));
+                var13 = var1 - (var7 + var11 - minPositionX) * controller.tileScale;
+                var14 = var2 - controller.tileScale * (var7 - (var12 - minPositionY));
             }
 
             JagGraphics.method1370(var1, var2, var3, var4, 0, 128);
@@ -500,20 +499,20 @@ public class WorldMap {
     }
 
     public void method1278(int var1, int var2, boolean var3, boolean var4) {
-        long var5 = GameEngine.currentTime();
+        long var5 = Clock.now();
         method1276(var1, var2, var4, var5);
-        if (!method1267() && (var4 || var3)) {
+        if (!isDestinationPresent() && (var4 || var3)) {
             if (var4) {
                 anInt1676 = var1;
                 anInt1678 = var2;
-                anInt1673 = anInt1711;
-                anInt1681 = anInt1715;
+                anInt1673 = centerX;
+                anInt1681 = centerY;
             }
 
             if (anInt1673 != -1) {
                 int var7 = var1 - anInt1676;
                 int var8 = var2 - anInt1678;
-                method1271(anInt1673 - (int) ((float) var7 / aFloat1672), (int) ((float) var8 / aFloat1672) + anInt1681, false);
+                setPosition(anInt1673 - (int) ((float) var7 / desiredZoom), (int) ((float) var8 / desiredZoom) + anInt1681, false);
             }
         } else {
             method1281();
@@ -534,70 +533,70 @@ public class WorldMap {
         JagGraphics.fillRect(var1, var2, var3, var4, -16777216);
         int var7 = definitionLoader.method1307();
         if (var7 < 100) {
-            method1224(var1, var2, var3, var4, var7);
+            drawLoadingScreen(var1, var2, var3, var4, var7);
         } else {
-            if (!controller.method135()) {
+            if (!controller.isLoaded()) {
                 controller.method145(table, activeArea.getJagName(), client.membersWorld);
-                if (!controller.method135()) {
+                if (!controller.isLoaded()) {
                     return;
                 }
             }
 
-            if (aHashSet1686 != null) {
-                ++anInt1679;
-                if (anInt1679 % anInt1671 == 0) {
-                    anInt1679 = 0;
-                    ++anInt1682;
+            if (indicativeFunctions != null) {
+                ++indicationRate;
+                if (indicationRate % refreshRate == 0) {
+                    indicationRate = 0;
+                    ++indicationLimit;
                 }
 
-                if (anInt1682 >= anInt1685 && !aBoolean1691) {
-                    aHashSet1686 = null;
+                if (indicationLimit >= refreshLimit && !forceRefresh) {
+                    indicativeFunctions = null;
                 }
             }
 
-            int var8 = (int) Math.ceil((float) var3 / aFloat1716);
-            int var9 = (int) Math.ceil((float) var4 / aFloat1716);
-            controller.method142(anInt1711 - var8 / 2, anInt1715 - var9 / 2, var8 / 2 + anInt1711, var9 / 2 + anInt1715, var1, var3 + var1, var2 + var4);
+            int var8 = (int) Math.ceil((float) var3 / zoom);
+            int var9 = (int) Math.ceil((float) var4 / zoom);
+            controller.method142(centerX - var8 / 2, centerY - var9 / 2, var8 / 2 + centerX, var9 / 2 + centerY, var1, var3 + var1, var2 + var4);
             boolean var10;
-            if (!aBoolean1687) {
+            if (!disableFunctions) {
                 var10 = false;
                 if (var5 - anInt1704 > 100) {
                     anInt1704 = var5;
                     var10 = true;
                 }
 
-                controller.method141(anInt1711 - var8 / 2, anInt1715 - var9 / 2, var8 / 2 + anInt1711, var9 / 2 + anInt1715, var1, var3 + var1, var2 + var4, aHashSet1675, aHashSet1686, anInt1679, anInt1671, var10);
+                controller.method141(centerX - var8 / 2, centerY - var9 / 2, var8 / 2 + centerX, var9 / 2 + centerY, var1, var3 + var1, var2 + var4, toggledFeatures, indicativeFunctions, indicationRate, refreshRate, var10);
             }
 
-            method1270(var1, var2, var3, var4, var8, var9);
+            renderHeatMap(var1, var2, var3, var4, var8, var9);
             var10 = client.rights >= 2;
             if (var10 && drawMouseOverPosition && mouseOver != null) {
                 font.drawString("Coord: " + mouseOver, JagGraphics.drawingAreaLeft + 10, JagGraphics.drawingAreaTop + 20, 16776960, -1);
             }
 
-            anInt1693 = var8;
-            anInt1690 = var9;
-            anInt1670 = var1;
-            anInt1683 = var2;
+            panelWidth = var8;
+            panelHeight = var9;
+            panelX = var1;
+            panelY = var2;
             JagGraphics.method1373(var6);
         }
     }
 
     public void method1269(int var1, int var2, int var3, int var4) {
-        if (definitionLoader.method1308()) {
-            if (!controller.method135()) {
+        if (definitionLoader.isLoaded()) {
+            if (!controller.isLoaded()) {
                 controller.method145(table, activeArea.getJagName(), client.membersWorld);
-                if (!controller.method135()) {
+                if (!controller.isLoaded()) {
                     return;
                 }
             }
 
-            controller.method140(var1, var2, var3, var4, aHashSet1686, anInt1679, anInt1671);
+            controller.method140(var1, var2, var3, var4, indicativeFunctions, indicationRate, refreshRate);
         }
     }
 
     public void method1272() {
-        WorldMapChunkDefinition.A_REFERENCE_NODE_TABLE___118.method666(5);
+        WorldMapChunkDefinition.A_REFERENCE_NODE_TABLE___118.relegate(5);
     }
 
     public void initialize(ReferenceTable table, ReferenceTable scenery, ReferenceTable ground,
@@ -614,51 +613,50 @@ public class WorldMap {
         this.sizeToFont.put(WorldMapLabelSize.LARGE, namedFonts.get(VERDANA15));
         this.definitionLoader = new WorldMapDefinitionLoader(table);
 
-        int var7 = table.get(WorldMapCacheFeature.DETAILS.name);
+        int var7 = table.getGroup(WorldMapCacheFeature.DETAILS.name);
         int[] ids = table.getFileIds(var7);
 
         this.areas = new HashMap<>(ids.length);
 
         for (int id : ids) {
             Buffer buffer = new Buffer(table.unpack(var7, id));
-            WorldMapArea area = new WorldMapArea();
+            WorldMapCacheArea area = new WorldMapCacheArea();
             area.decode(buffer, id);
             areas.put(area.getJagName(), area);
             if (area.isMainland()) {
-               mainland = area;
+                mainland = area;
             }
         }
 
         setArea(mainland);
-        aWorldMapArea_1724 = null;
+        aWorldMapCacheArea_1724 = null;
     }
 
     public void setArea(int id) {
-        WorldMapArea area = getArea(id);
+        WorldMapCacheArea area = getArea(id);
         if (area != null) {
             setArea(area);
         }
-
     }
 
-    public int getZoom() {
-        if (1.0D == (double) aFloat1672) {
+    public int getDesiredZoom() {
+        if ((double) desiredZoom == 1.0D) {
             return 25;
         }
-        if ((double) aFloat1672 == 1.5D) {
+        if ((double) desiredZoom == 1.5D) {
             return 37;
         }
-        if (2.0D == (double) aFloat1672) {
+        if ((double) desiredZoom == 2.0D) {
             return 50;
         }
-        if ((double) aFloat1672 == 3.0D) {
+        if ((double) desiredZoom == 3.0D) {
             return 75;
         }
-        return (double) aFloat1672 == 4.0D ? 100 : 200;
+        return (double) desiredZoom == 4.0D ? 100 : 200;
     }
 
     public void method1261(int var1, int var2, int var3, boolean var4) {
-        WorldMapArea var5 = getAreaAt(var1, var2, var3);
+        WorldMapCacheArea var5 = getAreaAt(var1, var2, var3);
         if (var5 == null) {
             if (!var4) {
                 return;
@@ -668,35 +666,35 @@ public class WorldMap {
         }
 
         boolean var6 = false;
-        if (var5 != aWorldMapArea_1724 || var4) {
-            aWorldMapArea_1724 = var5;
+        if (var5 != aWorldMapCacheArea_1724 || var4) {
+            aWorldMapCacheArea_1724 = var5;
             setArea(var5);
             var6 = true;
         }
 
         if (var6 || var4) {
-            method1265(var1, var2, var3);
+            setArea(var1, var2, var3);
         }
 
     }
 
     public void method1226(int var1) {
-        aFloat1672 = method1239(var1);
+        desiredZoom = getZoom(var1);
     }
 
     public boolean method1246() {
-        return definitionLoader.method1308();
+        return definitionLoader.isLoaded();
     }
 
     public WorldMapPosition method1240() {
-        return activeArea == null ? null : activeArea.getPosition(method1232(), method1234());
+        return activeArea == null ? null : activeArea.getPosition(getPanelX(), getPanelY());
     }
 
     public void method1227(int var1, int var2, int var3) {
         if (activeArea != null) {
-            int[] var4 = activeArea.method81(var1, var2, var3);
+            int[] var4 = activeArea.toScreen(var1, var2, var3);
             if (var4 != null) {
-                method1238(var4[0], var4[1]);
+                setDestination(var4[0], var4[1]);
             }
 
         }
@@ -704,9 +702,9 @@ public class WorldMap {
 
     public void method1237(int var1, int var2, int var3) {
         if (activeArea != null) {
-            int[] var4 = activeArea.method81(var1, var2, var3);
+            int[] var4 = activeArea.toScreen(var1, var2, var3);
             if (var4 != null) {
-                method1235(var4[0], var4[1]);
+                setPositionRegional(var4[0], var4[1]);
             }
 
         }
@@ -717,159 +715,159 @@ public class WorldMap {
     }
 
     public void method1231() {
-        anInt1685 = 3;
+        refreshLimit = 3;
     }
 
-    public WorldMapArea getActiveArea() {
+    public WorldMapCacheArea getActiveArea() {
         return activeArea;
     }
 
     public void method1233() {
-        anInt1671 = 50;
+        refreshRate = 50;
     }
 
     public void method1245(int var1) {
         if (var1 >= 1) {
-            anInt1685 = var1;
+            refreshLimit = var1;
         }
 
     }
 
     public void method1243() {
-        aHashSet1686 = null;
+        indicativeFunctions = null;
     }
 
     public void method1230(int var1) {
         if (var1 >= 1) {
-            anInt1671 = var1;
+            refreshRate = var1;
         }
 
     }
 
     public void method1244(int var1) {
-        aHashSet1686 = new HashSet<>();
-        aHashSet1686.add(var1);
-        anInt1682 = 0;
-        anInt1679 = 0;
+        indicativeFunctions = new HashSet<>();
+        indicativeFunctions.add(var1);
+        indicationLimit = 0;
+        indicationRate = 0;
     }
 
-    public void method1247(boolean var1) {
-        aBoolean1691 = var1;
+    public void setForceRefresh(boolean forceRefresh) {
+        this.forceRefresh = forceRefresh;
     }
 
-    public void method1229(int var1) {
-        aHashSet1686 = new HashSet<>();
-        anInt1682 = 0;
-        anInt1679 = 0;
+    public void setCategoryIndicative(int category) {
+        indicativeFunctions = new HashSet<>();
+        indicationLimit = 0;
+        indicationRate = 0;
 
-        for (int var2 = 0; var2 < WorldMapFunction.anInt378; ++var2) {
-            if (WorldMapFunction.get(var2) != null && WorldMapFunction.get(var2).anInt1473 == var1) {
-                aHashSet1686.add(WorldMapFunction.get(var2).anInt574);
+        for (int i = 0; i < WorldMapFunction.count; ++i) {
+            if (WorldMapFunction.get(i) != null && WorldMapFunction.get(i).category == category) {
+                indicativeFunctions.add(WorldMapFunction.get(i).objectId);
             }
         }
 
     }
 
-    public WorldMapIcon method1248() {
-        if (!definitionLoader.method1308()) {
+    public WorldMapIcon getFirstIcon() {
+        if (!definitionLoader.isLoaded()) {
             return null;
         }
 
-        if (!controller.method135()) {
+        if (!controller.isLoaded()) {
             return null;
         }
 
-        HashMap<Integer, List<WorldMapIcon>> var1 = controller.method144();
-        aList1700 = new java.util.LinkedList<>();
+        HashMap<Integer, List<WorldMapIcon>> icons = controller.defineIcons();
+        this.icons = new java.util.LinkedList<>();
 
-        for (List<WorldMapIcon> o : var1.values()) {
-            aList1700.addAll(o);
+        for (List<WorldMapIcon> o : icons.values()) {
+            this.icons.addAll(o);
         }
 
-        anIterator1703 = aList1700.iterator();
-        return method1255();
+        this.iconIterator = this.icons.iterator();
+        return getNextIcon();
     }
 
     public void method1258(boolean var1) {
-        aBoolean1687 = !var1;
+        disableFunctions = !var1;
     }
 
     public boolean method1254() {
-        return !aBoolean1687;
+        return !disableFunctions;
     }
 
-    public void method1251(int var1, boolean var2) {
-        if (!var2) {
-            aHashSet1677.add(var1);
+    public void method1251(int function, boolean disable) {
+        if (!disable) {
+            toggledFunctions.add(function);
         } else {
-            aHashSet1677.remove(var1);
+            toggledFunctions.remove(function);
         }
 
-        method1256();
+        mapToggledFeatures();
     }
 
-    public void method1250(int var1, boolean var2) {
-        if (!var2) {
-            aHashSet1692.add(var1);
+    public void method1250(int category, boolean disable) {
+        if (!disable) {
+            toggledCategories.add(category);
         } else {
-            aHashSet1692.remove(var1);
+            toggledCategories.remove(category);
         }
 
-        for (int var3 = 0; var3 < WorldMapFunction.anInt378; ++var3) {
-            if (WorldMapFunction.get(var3) != null && WorldMapFunction.get(var3).anInt1473 == var1) {
-                int var4 = WorldMapFunction.get(var3).anInt574;
-                if (!var2) {
-                    aHashSet1688.add(var4);
+        for (int function = 0; function < WorldMapFunction.count; ++function) {
+            if (WorldMapFunction.get(function) != null && WorldMapFunction.get(function).category == category) {
+                int objectId = WorldMapFunction.get(function).objectId;
+                if (!disable) {
+                    toggledCategoryObjects.add(objectId);
                 } else {
-                    aHashSet1688.remove(var4);
+                    toggledCategoryObjects.remove(objectId);
                 }
             }
         }
 
-        method1256();
+        mapToggledFeatures();
     }
 
-    public boolean method1257(int var1) {
-        return !aHashSet1677.contains(var1);
+    public boolean isFunctionDisabled(int id) {
+        return !toggledFunctions.contains(id);
     }
 
-    public void method1277(WorldMapArea var1, WorldMapPosition var2, WorldMapPosition var3, boolean var4) {
+    public void method1277(WorldMapCacheArea var1, WorldMapPosition var2, WorldMapPosition var3, boolean var4) {
         if (var1 != null) {
             if (activeArea == null || var1 != activeArea) {
                 method1266(var1);
             }
 
             if (!var4 && activeArea.contains(var2.floorLevel, var2.x, var2.y)) {
-                method1265(var2.floorLevel, var2.x, var2.y);
+                setArea(var2.floorLevel, var2.x, var2.y);
             } else {
-                method1265(var3.floorLevel, var3.x, var3.y);
+                setArea(var3.floorLevel, var3.x, var3.y);
             }
         }
     }
 
-    public boolean method1252(int var1) {
-        return !aHashSet1692.contains(var1);
+    public boolean isCategoryDisabled(int id) {
+        return !toggledCategories.contains(id);
     }
 
     public WorldMapPosition method1249(int var1, WorldMapPosition var2) {
-        if (!definitionLoader.method1308()) {
+        if (!definitionLoader.isLoaded()) {
             return null;
         }
 
-        if (!controller.method135()) {
+        if (!controller.isLoaded()) {
             return null;
         }
 
-        if (!activeArea.method83(var2.x, var2.y)) {
+        if (!activeArea.contains(var2.x, var2.y)) {
             return null;
         }
 
-        HashMap var3 = controller.method144();
-        List var4 = (List) var3.get(var1);
+        HashMap<Integer, List<WorldMapIcon>> var3 = controller.defineIcons();
+        List<WorldMapIcon> var4 = var3.get(var1);
         if (var4 != null && !var4.isEmpty()) {
             WorldMapIcon var5 = null;
             int var6 = -1;
-            Iterator var7 = var4.iterator();
+            Iterator<WorldMapIcon> var7 = var4.iterator();
 
             while (true) {
                 WorldMapIcon var8;
@@ -879,7 +877,7 @@ public class WorldMap {
                         return var5.max;
                     }
 
-                    var8 = (WorldMapIcon) var7.next();
+                    var8 = var7.next();
                     int var9 = var8.max.x - var2.x;
                     int var10 = var8.max.y - var2.y;
                     var11 = var10 * var10 + var9 * var9;

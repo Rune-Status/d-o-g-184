@@ -1,95 +1,116 @@
 package jag.js5;
 
+import jag.ByteBufferProvider;
 import jag.game.client;
-import jag.game.stockmarket.StockMarketMediator;
 import jag.graphics.DefaultMaterialProvider;
 import jag.opcode.Buffer;
+import jag.worldmap.WorldMap;
+import jag.worldmap.WorldMapCacheArea;
 import jag.worldmap.WorldMapIcon;
-import jag.worldmap.WorldMapDecor;
-import jag.worldmap.WorldMapArea;
 
 import java.util.zip.CRC32;
 
 public class Archive extends ReferenceTable {
 
-    static final CRC32 aCRC32_674;
-    public static DefaultMaterialProvider textureProvider;
+    static final CRC32 crc32;
+    public static DefaultMaterialProvider materialProvider;
+
+    public static Archive bootSprites;
+    public static Archive huffman;
+    public static Archive models;
+    public static Archive config;
+    public static Archive interfaces;
+    public static Archive skeletons;
+    public static Archive landscape;
+    public static Archive fonts;
+    public static Archive audioTracks2;
+    public static Archive textures;
+    public static Archive cs2;
+    public static Archive audioEffects;
+    public static Archive sprites;
+    public static Archive mapscene;
+    public static Archive audioEffects3;
+    public static Archive audioTracks;
+    public static Archive worldmap;
+    public static Archive skins;
+    public static Archive audioEffects2;
+    public static Archive mapland;
 
     static {
-        aCRC32_674 = new CRC32();
+        crc32 = new CRC32();
     }
 
     ResourceCache meta;
-    int anInt669;
+    int crc;
     ResourceCache cache;
-    volatile boolean aBoolean677;
-    volatile boolean[] aBooleanArray675;
-    int anInt678;
-    int anInt679;
+    volatile boolean loaded;
+    volatile boolean[] valid;
+    int index;
+    int version;
     int anInt670;
-    boolean aBoolean671;
+    boolean forceRequest;
 
-    public Archive(ResourceCache cache, ResourceCache meta, int var3, boolean var4, boolean var5, boolean var6) {
-        super(var4, var5);
-        this.aBoolean677 = false;
-        this.aBoolean671 = false;
-        this.anInt670 = -1;
+    public Archive(ResourceCache cache, ResourceCache meta, int index, boolean soft, boolean shallow, boolean forceRequest) {
+        super(soft, shallow);
         this.cache = cache;
         this.meta = meta;
-        this.anInt678 = var3;
-        this.aBoolean671 = var6;
-        int var8 = this.anInt678;
+        loaded = false;
+        this.forceRequest = false;
+        anInt670 = -1;
+        this.index = index;
+        this.forceRequest = forceRequest;
+        int var8 = this.index;
         if (WorldMapIcon.aBuffer314 != null) {
-            WorldMapIcon.aBuffer314.caret = var8 * 8 + 5;
-            int var9 = WorldMapIcon.aBuffer314.readInt();
-            int var10 = WorldMapIcon.aBuffer314.readInt();
-            this.method493(var9, var10);
+            WorldMapIcon.aBuffer314.pos = var8 * 8 + 5;
+            int var9 = WorldMapIcon.aBuffer314.g4();
+            int var10 = WorldMapIcon.aBuffer314.g4();
+            method493(var9, var10);
         } else {
-            WorldMapDecor.method377(null, 255, 255, 0, (byte) 0, true);
-            NetWorker.A_ARCHIVE_RESOURCE_PROVIDER_ARRAY_1498[var8] = this;
+            Js5Worker.request(null, 255, 255, 0, (byte) 0, true);
+            Js5Worker.ARCHIVES[var8] = this;
         }
 
     }
 
     public static void method485() {
-        if (client.class69 != null) {
+        if (WorldMap.heatmap != null) {
             client.anInt929 = client.engineCycle;
-            client.class69.method993();
+            WorldMap.heatmap.method993();
 
             for (int var0 = 0; var0 < client.players.length; ++var0) {
                 if (client.players[var0] != null) {
-                    client.class69.method994(client.baseX + (client.players[var0].fineX >> 7), client.baseY + (client.players[var0].fineY >> 7));
+                    WorldMap.heatmap.method994(client.baseX + (client.players[var0].absoluteX >> 7), client.baseY + (client.players[var0].absoluteY >> 7));
                 }
             }
         }
 
     }
 
-    void method492(int var1) {
-        if (this.cache != null && aBooleanArray675 != null && aBooleanArray675[var1]) {
-            WorldMapArea.method77(var1, cache, this);
+    void load(int var1) {
+        if (cache != null && valid != null && valid[var1]) {
+            WorldMapCacheArea.method77(var1, cache, this);
         } else {
-            WorldMapDecor.method377(this, anInt678, var1, super.anIntArray1245[var1], (byte) 2, true);
+            Js5Worker.request(this, index, var1, super.groupCrcs[var1], (byte) 2, true);
         }
 
     }
 
-    public boolean method496(int var1) {
-        return getFileIds(var1) != null;
+    public boolean isPresent(int file) {
+        return getFileIds(file) != null;
     }
 
-    int method497(int var1) {
-        if (super.anObjectArray1239[var1] != null) {
+    int getLoadingPercent(int var1) {
+        if (super.groups[var1] != null) {
             return 100;
         }
-        if (aBooleanArray675[var1]) {
+        if (valid[var1]) {
             return 100;
         }
-        int var2 = anInt678;
+        int var2 = index;
         long var3 = (var2 << 16) + var1;
         int var5;
-        if (NetWorker.current != null && NetWorker.current.key == var3) {
-            var5 = CacheRequestWorker.buffer.caret * 99 / (CacheRequestWorker.buffer.payload.length - NetWorker.current.aByte1220) + 1;
+        if (Js5Worker.current != null && Js5Worker.current.key == var3) {
+            var5 = Js5Worker.archiveBuffer.pos * 99 / (Js5Worker.archiveBuffer.payload.length - Js5Worker.current.padding) + 1;
         } else {
             var5 = 0;
         }
@@ -98,19 +119,19 @@ public class Archive extends ReferenceTable {
     }
 
     void method487() {
-        aBooleanArray675 = new boolean[super.anObjectArray1239.length];
+        valid = new boolean[super.groups.length];
 
         int var1;
-        for (var1 = 0; var1 < aBooleanArray675.length; ++var1) {
-            aBooleanArray675[var1] = false;
+        for (var1 = 0; var1 < valid.length; ++var1) {
+            valid[var1] = false;
         }
 
         if (cache == null) {
-            aBoolean677 = true;
+            loaded = true;
         } else {
             anInt670 = -1;
 
-            for (var1 = 0; var1 < aBooleanArray675.length; ++var1) {
+            for (var1 = 0; var1 < valid.length; ++var1) {
                 if (super.childrenCounts[var1] > 0) {
                     ResourceCache cache = this.cache;
                     CacheRequest req = new CacheRequest();
@@ -122,15 +143,15 @@ public class Archive extends ReferenceTable {
                         CacheRequestWorker.requests.add(req);
                     }
 
-                    synchronized (CacheRequestWorker.anObject1463) {
-                        if (CacheRequestWorker.anInt1464 == 0) {
+                    synchronized (CacheRequestWorker.mutex) {
+                        if (CacheRequestWorker.state == 0) {
                             CacheRequestWorker.thread = new Thread(new CacheRequestWorker());
                             CacheRequestWorker.thread.setDaemon(true);
                             CacheRequestWorker.thread.start();
                             CacheRequestWorker.thread.setPriority(5);
                         }
 
-                        CacheRequestWorker.anInt1464 = 600;
+                        CacheRequestWorker.state = 600;
                     }
 
                     anInt670 = var1;
@@ -138,59 +159,58 @@ public class Archive extends ReferenceTable {
             }
 
             if (anInt670 == -1) {
-                aBoolean677 = true;
+                loaded = true;
             }
 
         }
     }
 
     void method490(int var1) {
-        int var2 = anInt678;
+        int var2 = index;
         long var3 = (var2 << 16) + var1;
-        ResourceRequest var5 = (ResourceRequest) NetWorker.aNodeTable1503.lookup(var3);
+        ResourceRequest var5 = Js5Worker.pending.lookup(var3);
         if (var5 != null) {
-            NetWorker.extras.method301(var5);
+            Js5Worker.pendingQueue.add(var5);
         }
-
     }
 
-    public boolean method495(int var1) {
-        return aBooleanArray675[var1];
+    public boolean isValid(int var1) {
+        return valid[var1];
     }
 
     public void method486(ResourceCache var1, int var2, byte[] var3, boolean var4) {
         int var5;
         if (var1 == meta) {
-            if (aBoolean677) {
+            if (loaded) {
                 throw new RuntimeException();
             }
 
             if (var3 == null) {
-                WorldMapDecor.method377(this, 255, anInt678, anInt669, (byte) 0, true);
+                Js5Worker.request(this, 255, index, crc, (byte) 0, true);
                 return;
             }
 
-            aCRC32_674.reset();
-            aCRC32_674.update(var3, 0, var3.length);
-            var5 = (int) aCRC32_674.getValue();
-            if (var5 != anInt669) {
-                WorldMapDecor.method377(this, 255, anInt678, anInt669, (byte) 0, true);
+            crc32.reset();
+            crc32.update(var3, 0, var3.length);
+            var5 = (int) crc32.getValue();
+            if (var5 != crc) {
+                Js5Worker.request(this, 255, index, crc, (byte) 0, true);
                 return;
             }
 
             Buffer buffer = new Buffer(decodeContainer(var3));
-            int format = buffer.readUByte();
+            int format = buffer.g1();
             if (format != 5 && format != 6) {
-                throw new RuntimeException(format + "," + anInt678 + "," + var2);
+                throw new RuntimeException(format + "," + index + "," + var2);
             }
 
             int version = 0;
             if (format >= 6) {
-                version = buffer.readInt();
+                version = buffer.g4();
             }
 
-            if (version != anInt679) {
-                WorldMapDecor.method377(this, 255, anInt678, anInt669, (byte) 0, true);
+            if (version != this.version) {
+                Js5Worker.request(this, 255, index, crc, (byte) 0, true);
                 return;
             }
 
@@ -198,89 +218,89 @@ public class Archive extends ReferenceTable {
             method487();
         } else {
             if (!var4 && var2 == anInt670) {
-                aBoolean677 = true;
+                loaded = true;
             }
 
             if (var3 == null || var3.length <= 2) {
-                aBooleanArray675[var2] = false;
-                if (aBoolean671 || var4) {
-                    WorldMapDecor.method377(this, anInt678, var2, super.anIntArray1245[var2], (byte) 2, var4);
+                valid[var2] = false;
+                if (forceRequest || var4) {
+                    Js5Worker.request(this, index, var2, super.groupCrcs[var2], (byte) 2, var4);
                 }
 
                 return;
             }
 
-            aCRC32_674.reset();
-            aCRC32_674.update(var3, 0, var3.length - 2);
-            var5 = (int) aCRC32_674.getValue();
+            crc32.reset();
+            crc32.update(var3, 0, var3.length - 2);
+            var5 = (int) crc32.getValue();
             int var6 = ((var3[var3.length - 2] & 255) << 8) + (var3[var3.length - 1] & 255);
-            if (var5 != super.anIntArray1245[var2] || var6 != super.anIntArray1246[var2]) {
-                aBooleanArray675[var2] = false;
-                if (aBoolean671 || var4) {
-                    WorldMapDecor.method377(this, anInt678, var2, super.anIntArray1245[var2], (byte) 2, var4);
+            if (var5 != super.groupCrcs[var2] || var6 != super.groupVersions[var2]) {
+                valid[var2] = false;
+                if (forceRequest || var4) {
+                    Js5Worker.request(this, index, var2, super.groupCrcs[var2], (byte) 2, var4);
                 }
 
                 return;
             }
 
-            aBooleanArray675[var2] = true;
+            valid[var2] = true;
             if (var4) {
-                super.anObjectArray1239[var2] = StockMarketMediator.method422(var3);
+                super.groups[var2] = ByteBufferProvider.allocateDirect(var3);
             }
         }
 
     }
 
-    public void method493(int var1, int var2) {
-        anInt669 = var1;
-        anInt679 = var2;
+    public void method493(int crc, int version) {
+        this.crc = crc;
+        this.version = version;
         if (meta != null) {
-            WorldMapArea.method77(anInt678, meta, this);
+            WorldMapCacheArea.method77(index, meta, this);
         } else {
-            WorldMapDecor.method377(this, 255, anInt678, anInt669, (byte) 0, true);
+            Js5Worker.request(this, 255, index, this.crc, (byte) 0, true);
         }
 
     }
 
     public void method498(int var1, byte[] var2, boolean var3, boolean var4) {
         if (var3) {
-            if (aBoolean677) {
+            if (loaded) {
                 throw new RuntimeException();
             }
 
             if (meta != null) {
-                CacheRequest.write(anInt678, var2, meta);
+                CacheRequest.write(index, var2, meta);
             }
 
             decode(var2);
             method487();
         } else {
-            var2[var2.length - 2] = (byte) (super.anIntArray1246[var1] >> 8);
-            var2[var2.length - 1] = (byte) super.anIntArray1246[var1];
+            var2[var2.length - 2] = (byte) (super.groupVersions[var1] >> 8);
+            var2[var2.length - 1] = (byte) super.groupVersions[var1];
             if (cache != null) {
-                CacheRequest.write(var1, var2, this.cache);
-                aBooleanArray675[var1] = true;
+                CacheRequest.write(var1, var2, cache);
+                valid[var1] = true;
             }
 
             if (var4) {
-                super.anObjectArray1239[var1] = StockMarketMediator.method422(var2);
+                super.groups[var1] = ByteBufferProvider.allocateDirect(var2);
             }
         }
 
     }
 
     public int method494() {
-        if (aBoolean677) {
+        if (loaded) {
             return 100;
         }
-        if (super.anObjectArray1239 != null) {
+        if (super.groups != null) {
             return 99;
         }
-        int var1 = anInt678;
+        int var1 = index;
         long var2 = var1 + 16711680;
         int var4;
-        if (NetWorker.current != null && NetWorker.current.key == var2) {
-            var4 = CacheRequestWorker.buffer.caret * 99 / (CacheRequestWorker.buffer.payload.length - NetWorker.current.aByte1220) + 1;
+        if (Js5Worker.current != null && Js5Worker.current.key == var2) {
+            var4 = Js5Worker.archiveBuffer.pos * 99 / (Js5Worker.archiveBuffer.payload.length - Js5Worker.current.padding) + 1;
         } else {
             var4 = 0;
         }
@@ -298,10 +318,10 @@ public class Archive extends ReferenceTable {
         int var2 = 0;
 
         int var3;
-        for (var3 = 0; var3 < super.anObjectArray1239.length; ++var3) {
+        for (var3 = 0; var3 < super.groups.length; ++var3) {
             if (super.childrenCounts[var3] > 0) {
                 var1 += 100;
-                var2 += method497(var3);
+                var2 += getLoadingPercent(var3);
             }
         }
 
@@ -312,7 +332,7 @@ public class Archive extends ReferenceTable {
         return var3;
     }
 
-    public boolean method491() {
-        return aBoolean677;
+    public boolean isLoaded() {
+        return loaded;
     }
 }

@@ -2,20 +2,30 @@ package jag.audi;
 
 import jag.URLRequest;
 import jag.audi.vorbis.VorbisNode;
-import jag.commons.Jagception;
-import jag.game.GameEngine;
+import jag.commons.Jagexception;
+import jag.commons.time.Clock;
 import jag.game.scene.entity.DynamicObject;
-import jag.game.stockmarket.Class76;
+import jag.js5.ReferenceTable;
 import jag.statics.Statics31;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class AudioSystem {
+
     public static boolean useTwoChannels;
-    public static ScheduledExecutorService aScheduledExecutorService1839;
-    public static AudioSystemProvider aAudioSystemProvider_1840;
+    public static ScheduledExecutorService service;
+    public static AudioSystemProvider provider;
     public static AudioSystem anAudioSystem1236;
+    public static AudioSystem anAudioSystem599;
+    public static int state;
+    public static ReferenceTable tracks;
+    public static int trackGroup;
+    public static int trackFile;
+    public static int volume;
+    public static boolean aBoolean620;
+    public static int pcmSampleLength;
+
     public final PcmStream[] aPcmStreamArray1845;
     public final int anInt1846;
     public final PcmStream[] aPcmStreamArray1830;
@@ -35,7 +45,7 @@ public class AudioSystem {
 
     public AudioSystem() {
         this.anInt1846 = 32;
-        this.aLong1844 = GameEngine.currentTime();
+        this.aLong1844 = Clock.now();
         this.aLong1843 = 0L;
         this.anInt1833 = 0;
         this.anInt1836 = 0;
@@ -48,8 +58,8 @@ public class AudioSystem {
     }
 
     public static void process() {
-        if (Class76.anAudioSystem599 != null) {
-            Class76.anAudioSystem599.poll();
+        if (anAudioSystem599 != null) {
+            anAudioSystem599.poll();
         }
 
         if (anAudioSystem1236 != null) {
@@ -66,7 +76,7 @@ public class AudioSystem {
 
     public final synchronized void poll() {
         if (this.samples != null) {
-            long var1 = GameEngine.currentTime();
+            long var1 = Clock.now();
 
             try {
                 if (this.aLong1843 != 0L) {
@@ -165,7 +175,7 @@ public class AudioSystem {
             this.method1085();
         } catch (Exception var2) {
             this.method1086();
-            this.aLong1843 = GameEngine.currentTime() + 2000L;
+            this.aLong1843 = Clock.now() + 2000L;
         }
 
     }
@@ -183,23 +193,23 @@ public class AudioSystem {
     }
 
     public final synchronized void destroy() {
-        if (Jagception.anAudioRunnable1880 != null) {
+        if (Jagexception.anAudioRunnable1880 != null) {
             boolean var1 = true;
 
             for (int var2 = 0; var2 < 2; ++var2) {
-                if (this == Jagception.anAudioRunnable1880.systems[var2]) {
-                    Jagception.anAudioRunnable1880.systems[var2] = null;
+                if (this == Jagexception.anAudioRunnable1880.systems[var2]) {
+                    Jagexception.anAudioRunnable1880.systems[var2] = null;
                 }
 
-                if (Jagception.anAudioRunnable1880.systems[var2] != null) {
+                if (Jagexception.anAudioRunnable1880.systems[var2] != null) {
                     var1 = false;
                 }
             }
 
             if (var1) {
-                aScheduledExecutorService1839.shutdownNow();
-                aScheduledExecutorService1839 = null;
-                Jagception.anAudioRunnable1880 = null;
+                service.shutdownNow();
+                service = null;
+                Jagexception.anAudioRunnable1880 = null;
             }
         }
 
@@ -332,7 +342,7 @@ public class AudioSystem {
             this.aPcmStream_1832.method311(var1, 0, 256);
         }
 
-        this.aLong1844 = GameEngine.currentTime();
+        this.aLong1844 = Clock.now();
     }
 
     public void method1087() {

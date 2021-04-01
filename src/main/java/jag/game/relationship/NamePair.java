@@ -9,13 +9,9 @@ public class NamePair implements Comparable {
     public final String raw;
     public final String formatted;
 
-    public NamePair(String var1, ClientParameter var2) {
+    public NamePair(String var1, ClientParameter nameLengthParameter) {
         this.raw = var1;
-        this.formatted = ScriptEvent.format(var1, var2);
-    }
-
-    public static int crc32(byte[] var0, int var1) {
-        return LoginScreenEffect.crc32(var0, 0, var1);
+        this.formatted = ScriptEvent.format(var1, nameLengthParameter);
     }
 
     public int compare0(NamePair var1) {

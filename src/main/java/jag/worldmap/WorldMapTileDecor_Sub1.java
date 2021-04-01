@@ -1,12 +1,8 @@
 package jag.worldmap;
 
-import jag.game.client;
-import jag.js5.Archive;
 import jag.opcode.Buffer;
 
 public class WorldMapTileDecor_Sub1 extends WorldMapTileDecor {
-
-    public static Archive aArchive166;
 
     int anInt163;
     int anInt164;
@@ -15,10 +11,6 @@ public class WorldMapTileDecor_Sub1 extends WorldMapTileDecor {
 
     WorldMapTileDecor_Sub1() {
 
-    }
-
-    public static void insertMenuItem(String action, String target, int opcode, int primary, int secondary, int tertiary) {
-        client.insertMenuItem(action, target, opcode, primary, secondary, tertiary, false);
     }
 
     int method110() {
@@ -40,14 +32,14 @@ public class WorldMapTileDecor_Sub1 extends WorldMapTileDecor {
         aByteArrayArrayArray506 = new byte[levelCount][64][64];
         aByteArrayArrayArray505 = new byte[levelCount][64][64];
         aWorldMapDecorArrayArrayArrayArray511 = new WorldMapDecor[levelCount][64][64][];
-        int var2 = var1.readUByte();
+        int var2 = var1.g1();
         if (var2 != WorldMapGroundDecorType2.A_WORLD_MAP_GROUND_DECOR_TYPE_2___302.index) {
             throw new IllegalStateException("");
         }
-        int var3 = var1.readUByte();
-        int var4 = var1.readUByte();
-        int var5 = var1.readUByte();
-        int var6 = var1.readUByte();
+        int var3 = var1.g1();
+        int var4 = var1.g1();
+        int var5 = var1.g1();
+        int var6 = var1.g1();
         if (var3 == anInt517 && var4 == anInt516 && var5 == anInt165 && var6 == anInt167) {
             for (int var7 = 0; var7 < 8; ++var7) {
                 for (int var8 = 0; var8 < 8; ++var8) {
@@ -61,20 +53,20 @@ public class WorldMapTileDecor_Sub1 extends WorldMapTileDecor {
     }
 
     public void method109(Buffer buffer) {
-        int var2 = buffer.readUByte();
+        int var2 = buffer.g1();
         if (var2 != WorldMapGroundDecorType.A_WORLD_MAP_TYPE___312.index) {
             throw new IllegalStateException("");
         }
-        anInt515 = buffer.readUByte();
-        levelCount = buffer.readUByte();
-        anInt519 = buffer.readUShort() * 4096;
-        anInt510 = buffer.readUShort() * 64;
-        anInt164 = buffer.readUByte();
-        anInt163 = buffer.readUByte();
-        anInt517 = buffer.readUShort();
-        anInt516 = buffer.readUShort();
-        anInt165 = buffer.readUByte();
-        anInt167 = buffer.readUByte();
+        anInt515 = buffer.g1();
+        levelCount = buffer.g1();
+        anInt519 = buffer.g2() * 4096;
+        anInt510 = buffer.g2() * 64;
+        anInt164 = buffer.g1();
+        anInt163 = buffer.g1();
+        anInt517 = buffer.g2();
+        anInt516 = buffer.g2();
+        anInt165 = buffer.g1();
+        anInt167 = buffer.g1();
         anInt514 = buffer.method1051();
         anInt509 = buffer.method1051();
     }

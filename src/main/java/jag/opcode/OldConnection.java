@@ -2,23 +2,22 @@ package jag.opcode;
 
 import jag.EnumType;
 import jag.URLRequestProcessor;
-import jag.Vertex;
+import jag.audi.AudioSystem;
 import jag.audi.ObjectSound;
 import jag.game.InterfaceComponent;
 import jag.game.SubInterface;
 import jag.game.Vars;
 import jag.game.client;
 import jag.game.option.AttackOptionPriority;
-import jag.game.scene.entity.Pickable;
 import jag.game.type.ItemDefinition;
 import jag.game.type.TileUnderlay;
+import jag.game.type.VarDefinition;
 import jag.graphics.DefaultMaterialProvider;
 import jag.graphics.JagGraphics3D;
-import jag.statics.Statics15;
+import jag.js5.Archive;
 import jag.statics.Statics50;
 import jag.statics.Statics51;
 import jag.statics.Statics57;
-import jag.worldmap.WorldMapTileDecor;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -27,7 +26,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public final class OldConnection extends Connection implements Runnable {
-    public static InterfaceComponent anInterfaceComponent873;
+    public static InterfaceComponent hoveredComponent;
     final int anInt871;
     final int anInt870;
     final OldConnectionTaskProcessor aOldConnectionTaskProcessor_878;
@@ -58,17 +57,6 @@ public final class OldConnection extends Connection implements Runnable {
         this.output = this.socket.getOutputStream();
     }
 
-    public static EnumType method716(EnumType[] var0, int var1) {
-
-        for (EnumType var4 : var0) {
-            if (var1 == var4.getOrdinal()) {
-                return var4;
-            }
-        }
-
-        return null;
-    }
-
     public static boolean parseInt(CharSequence var0) {
         return MouseRecorder.parseInt(var0);
     }
@@ -76,37 +64,37 @@ public final class OldConnection extends Connection implements Runnable {
     public static void method712(int var0) {
         SubInterface.process();
 
-        for (ObjectSound var1 = (ObjectSound) ObjectSound.aNodeDeque373.head(); var1 != null; var1 = (ObjectSound) ObjectSound.aNodeDeque373.next()) {
-            if (var1.anObjectDefinition376 != null) {
+        for (ObjectSound var1 = ObjectSound.OBJECT_SOUNDS.head(); var1 != null; var1 = ObjectSound.OBJECT_SOUNDS.next()) {
+            if (var1.definition != null) {
                 var1.method254();
             }
         }
 
-        int var2 = WorldMapTileDecor.method360(var0).anInt377;
+        int var2 = VarDefinition.get(var0).anInt377;
         if (var2 != 0) {
             int var3 = Vars.values[var0];
             if (var2 == 1) {
                 if (var3 == 1) {
                     JagGraphics3D.method634(0.9D);
-                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).method1519(0.9D);
+                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).setBrightness(0.9D);
                 }
 
                 if (var3 == 2) {
                     JagGraphics3D.method634(0.8D);
-                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).method1519(0.8D);
+                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).setBrightness(0.8D);
                 }
 
                 if (var3 == 3) {
                     JagGraphics3D.method634(0.7D);
-                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).method1519(0.7D);
+                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).setBrightness(0.7D);
                 }
 
                 if (var3 == 4) {
                     JagGraphics3D.method634(0.6D);
-                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).method1519(0.6D);
+                    ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).setBrightness(0.6D);
                 }
 
-                ItemDefinition.aReferenceCache716.clear();
+                ItemDefinition.sprites.clear();
             }
 
             if (var2 == 3) {
@@ -133,13 +121,13 @@ public final class OldConnection extends Connection implements Runnable {
 
                 if (var4 != client.anInt900) {
                     if (client.anInt900 == 0 && client.anInt898 != -1) {
-                        Statics51.method344(Statics15.aArchive1234, client.anInt898, 0, var4, false);
+                        Statics51.method344(Archive.audioTracks, client.anInt898, 0, var4, false);
                         client.aBoolean904 = false;
                     } else if (var4 == 0) {
-                        Vertex.method533();
+                        Statics57.method533();
                         client.aBoolean904 = false;
-                    } else if (Statics57.anInt1157 != 0) {
-                        Pickable.anInt379 = var4;
+                    } else if (AudioSystem.state != 0) {
+                        AudioSystem.volume = var4;
                     } else {
                         Statics50.aClass5_Sub6_Sub3_326.method703(var4);
                     }
@@ -209,9 +197,9 @@ public final class OldConnection extends Connection implements Runnable {
             }
 
             if (var2 == 18) {
-                client.playerAttackOptionPriority = (AttackOptionPriority) method716(TileUnderlay.method1109(), var3);
+                client.playerAttackOptionPriority = (AttackOptionPriority) EnumType.getByOrdinal(TileUnderlay.method1109(), var3);
                 if (client.playerAttackOptionPriority == null) {
-                    client.playerAttackOptionPriority = AttackOptionPriority.anActionPrioritySetting333;
+                    client.playerAttackOptionPriority = AttackOptionPriority.DEPENDS;
                 }
             }
 
@@ -224,9 +212,9 @@ public final class OldConnection extends Connection implements Runnable {
             }
 
             if (var2 == 22) {
-                client.npcAttackOptionPriority = (AttackOptionPriority) method716(TileUnderlay.method1109(), var3);
+                client.npcAttackOptionPriority = (AttackOptionPriority) EnumType.getByOrdinal(TileUnderlay.method1109(), var3);
                 if (client.npcAttackOptionPriority == null) {
-                    client.npcAttackOptionPriority = AttackOptionPriority.anActionPrioritySetting333;
+                    client.npcAttackOptionPriority = AttackOptionPriority.DEPENDS;
                 }
             }
 
@@ -243,7 +231,7 @@ public final class OldConnection extends Connection implements Runnable {
             if (var3 == 0) {
                 var5 = Character.toLowerCase(var5);
             } else if (var3 == 2 || Character.isUpperCase(var5)) {
-                var5 = URLRequestProcessor.method646(var5);
+                var5 = URLRequestProcessor.toTitleCase(var5);
             }
 
             if (Character.isLetter(var5)) {
@@ -302,16 +290,16 @@ public final class OldConnection extends Connection implements Runnable {
             }
 
             if (this.aOldConnectionTask_876 != null) {
-                while (this.aOldConnectionTask_876.anInt885 == 0) {
+                while (this.aOldConnectionTask_876.state == 0) {
                     try {
                         Thread.sleep(1L);
                     } catch (InterruptedException ignored) {
                     }
                 }
 
-                if (this.aOldConnectionTask_876.anInt885 == 1) {
+                if (this.aOldConnectionTask_876.state == 1) {
                     try {
-                        ((Thread) this.aOldConnectionTask_876.anObject886).join();
+                        ((Thread) this.aOldConnectionTask_876.result).join();
                     } catch (InterruptedException ignored) {
                     }
                 }
@@ -328,7 +316,7 @@ public final class OldConnection extends Connection implements Runnable {
         return this.input.available() >= amount;
     }
 
-    public int readBytes(byte[] payload, int caret, int length) throws IOException {
+    public int read(byte[] payload, int caret, int length) throws IOException {
         if (this.aBoolean879) {
             return 0;
         }
@@ -346,15 +334,15 @@ public final class OldConnection extends Connection implements Runnable {
         return var4;
     }
 
-    public void writeBytes(byte[] payload, int caret, int length) throws IOException {
+    public void write(byte[] payload, int caret, int length) throws IOException {
         this.method715(payload, caret, length);
     }
 
-    public int readable() throws IOException {
+    public int available() throws IOException {
         return this.aBoolean879 ? 0 : this.input.available();
     }
 
-    public int readByte() throws IOException {
+    public int read() throws IOException {
         return this.aBoolean879 ? 0 : this.input.read();
     }
 

@@ -1,97 +1,96 @@
 package jag.opcode;
 
-import jag.game.World;
+import jag.game.Server;
 import jag.game.client;
-import jag.statics.Statics1;
-import jag.worldmap.WorldMapTileDecor_Sub2;
-import jag.worldmap.WorldMapChunkType;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 
 public class AsyncConnection extends Connection {
+
     public static int anInt1210;
     final Socket socket;
     AsyncOutputStream output;
     AsyncInputStream input;
 
-    public AsyncConnection(Socket var1, int var2, int var3) throws IOException {
-        this.socket = var1;
-        this.socket.setSoTimeout(30000);
-        this.socket.setTcpNoDelay(true);
-        this.socket.setReceiveBufferSize(65536);
-        this.socket.setSendBufferSize(65536);
-        this.input = new AsyncInputStream(this.socket.getInputStream(), var2);
-        this.output = new AsyncOutputStream(this.socket.getOutputStream(), var3);
+    public AsyncConnection(Socket socket, int inputCapacity, int outputCapacity) throws IOException {
+        this.socket = socket;
+        socket.setSoTimeout(30000);
+        socket.setTcpNoDelay(true);
+        socket.setReceiveBufferSize(65536);
+        socket.setSendBufferSize(65536);
+        input = new AsyncInputStream(socket.getInputStream(), inputCapacity);
+        output = new AsyncOutputStream(socket.getOutputStream(), outputCapacity);
     }
 
-    public static boolean loadWorlds() {
+    public static boolean loadServers() {
         try {
-            if (Statics1.aURLRequest_322 == null) {
-                Statics1.aURLRequest_322 = client.urlRequestProcessor.method647(new URL(WorldMapChunkType.aString623));
-            } else if (Statics1.aURLRequest_322.method616()) {
-                byte[] var1 = Statics1.aURLRequest_322.method618();
-                Buffer var2 = new Buffer(var1);
-                var2.readInt();
-                World.anInt1871 = var2.readUShort();
-                World.worlds = new World[World.anInt1871];
+            if (Server.request == null) {
+                Server.request = client.urlRequestProcessor.enqueue(new URL(Server.slu));
+            } else if (Server.request.isComplete()) {
+                byte[] data = Server.request.getData();
+                Buffer buffer = new Buffer(data);
+                buffer.g4();
+                Server.count = buffer.g2();
+                Server.servers = new Server[Server.count];
 
-                World var4;
-                for (int var3 = 0; var3 < World.anInt1871; var4.anInt1873 = var3++) {
-                    var4 = World.worlds[var3] = new World();
-                    var4.anInt1875 = var2.readUShort();
-                    var4.mask = var2.readInt();
-                    var4.domain = var2.readString();
-                    var4.activity = var2.readString();
-                    var4.location = var2.readUByte();
-                    var4.population = var2.method1029();
+                int i = 0;
+                while (i < Server.count) {
+                    Server server = Server.servers[i] = new Server();
+                    server.id = buffer.g2();
+                    server.mask = buffer.g4();
+                    server.domain = buffer.gstr();
+                    server.activity = buffer.gstr();
+                    server.location = buffer.g1();
+                    server.population = buffer.g2b();
+                    server.index = i++;
                 }
 
-                WorldMapTileDecor_Sub2.method471(World.worlds, 0, World.worlds.length - 1, World.anIntArray1874, World.anIntArray1870);
-                Statics1.aURLRequest_322 = null;
+                Server.sort(Server.servers, 0, Server.servers.length - 1, Server.indexComparator, Server.populationComparator);
+                Server.request = null;
                 return true;
             }
-        } catch (Exception var5) {
-            var5.printStackTrace();
-            Statics1.aURLRequest_322 = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Server.request = null;
         }
 
         return false;
     }
 
     public void stop() {
-        this.output.method12();
+        output.close();
 
         try {
-            this.socket.close();
+            socket.close();
         } catch (IOException ignored) {
         }
 
-        this.input.method1195();
+        input.close();
     }
 
     public boolean available(int amount) throws IOException {
-        return this.input.method1198(amount);
+        return input.available(amount);
     }
 
-    public int readBytes(byte[] payload, int caret, int length) throws IOException {
-        return this.input.method1196(payload, caret, length);
+    public int read(byte[] payload, int caret, int length) throws IOException {
+        return input.read(payload, caret, length);
     }
 
-    public void writeBytes(byte[] payload, int caret, int length) throws IOException {
-        this.output.method16(payload, caret, length);
+    public void write(byte[] payload, int caret, int length) throws IOException {
+        output.write(payload, caret, length);
     }
 
-    public int readable() throws IOException {
-        return this.input.method1199();
+    public int available() throws IOException {
+        return input.available();
     }
 
-    public int readByte() throws IOException {
-        return this.input.method1197();
+    public int read() throws IOException {
+        return input.read();
     }
 
     protected void finalize() {
-        this.stop();
+        stop();
     }
 }

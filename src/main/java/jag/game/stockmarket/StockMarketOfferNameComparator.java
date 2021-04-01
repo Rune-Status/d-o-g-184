@@ -1,10 +1,10 @@
 package jag.game.stockmarket;
 
-import jag.MenuItemNode;
+import jag.Login;
 import jag.URLRequest;
 import jag.audi.AudioRunnable;
 import jag.audi.AudioSystem;
-import jag.commons.Jagception;
+import jag.commons.Jagexception;
 import jag.game.type.Varbit;
 import jag.js5.ReferenceTable;
 
@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public final class StockMarketOfferNameComparator implements Comparator {
+public final class StockMarketOfferNameComparator implements Comparator<StockMarketEvent> {
 
     public static ReferenceTable aReferenceTable480;
 
@@ -27,7 +27,7 @@ public final class StockMarketOfferNameComparator implements Comparator {
             }
 
             try {
-                AudioSystem var3 = AudioSystem.aAudioSystemProvider_1840.provide();
+                AudioSystem var3 = AudioSystem.provider.provide();
                 var3.samples = new int[256 * (AudioSystem.useTwoChannels ? 2 : 1)];
                 var3.anInt1847 = var2;
                 var3.method1089();
@@ -37,18 +37,18 @@ public final class StockMarketOfferNameComparator implements Comparator {
                 }
 
                 var3.method1090(var3.anInt1834);
-                if (MenuItemNode.anInt603 > 0 && Jagception.anAudioRunnable1880 == null) {
-                    Jagception.anAudioRunnable1880 = new AudioRunnable();
-                    AudioSystem.aScheduledExecutorService1839 = Executors.newScheduledThreadPool(1);
-                    AudioSystem.aScheduledExecutorService1839.scheduleAtFixedRate(Jagception.anAudioRunnable1880, 0L, 10L, TimeUnit.MILLISECONDS);
+                if (Login.anInt603 > 0 && Jagexception.anAudioRunnable1880 == null) {
+                    Jagexception.anAudioRunnable1880 = new AudioRunnable();
+                    AudioSystem.service = Executors.newScheduledThreadPool(1);
+                    AudioSystem.service.scheduleAtFixedRate(Jagexception.anAudioRunnable1880, 0L, 10L, TimeUnit.MILLISECONDS);
                 }
 
-                if (Jagception.anAudioRunnable1880 != null) {
-                    if (Jagception.anAudioRunnable1880.systems[var1] != null) {
+                if (Jagexception.anAudioRunnable1880 != null) {
+                    if (Jagexception.anAudioRunnable1880.systems[var1] != null) {
                         throw new IllegalArgumentException();
                     }
 
-                    Jagception.anAudioRunnable1880.systems[var1] = var3;
+                    Jagexception.anAudioRunnable1880.systems[var1] = var3;
                 }
 
                 return var3;
@@ -99,8 +99,8 @@ public final class StockMarketOfferNameComparator implements Comparator {
         return var1.method390().compareTo(var2.method390());
     }
 
-    public int compare(Object var1, Object var2) {
-        return this.method326((StockMarketEvent) var1, (StockMarketEvent) var2);
+    public int compare(StockMarketEvent var1, StockMarketEvent var2) {
+        return this.method326(var1, var2);
     }
 
     public boolean equals(Object var1) {

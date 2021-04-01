@@ -1,68 +1,66 @@
 package jag.commons.collection;
 
-public final class ReferenceCache {
+public final class ReferenceCache<T extends DoublyLinkedNode> {
 
-    public final IterableNodeTable table;
-    public final IterableDoublyLinkedNode iterable;
-    public final int anInt485;
-    public int anInt483;
+    public final IterableNodeTable<T> table;
+    public final IterableDoublyLinkedNodeQueue<T> queue;
+    public final int capacity;
+    public int remaining;
     public DoublyLinkedNode sentinel;
 
-    public ReferenceCache(int var1) {
+    public ReferenceCache(int capacity) {
         this.sentinel = new DoublyLinkedNode();
-        this.iterable = new IterableDoublyLinkedNode();
-        this.anInt485 = var1;
-        this.anInt483 = var1;
+        this.queue = new IterableDoublyLinkedNodeQueue<>();
+        this.capacity = capacity;
+        this.remaining = capacity;
 
-        int var2 = 1;
-        while (var2 + var2 < var1) {
-            var2 += var2;
+        int size = 1;
+        while (size + size < capacity) {
+            size += size;
         }
 
-        this.table = new IterableNodeTable(var2);
+        this.table = new IterableNodeTable<>(size);
     }
 
-    public DoublyLinkedNode get(long var1) {
-        DoublyLinkedNode var3 = (DoublyLinkedNode) this.table.lookup(var1);
-        if (var3 != null) {
-            this.iterable.method1134(var3);
+    public T get(long key) {
+        T value = table.lookup(key);
+        if (value != null) {
+            queue.insert(value);
         }
-
-        return var3;
+        return value;
     }
 
-    public void put(DoublyLinkedNode var1, long var2) {
-        if (this.anInt483 == 0) {
-            DoublyLinkedNode var4 = this.iterable.method1131();
-            var4.unlink();
-            var4.unlinkDoubly();
-            if (var4 == this.sentinel) {
-                var4 = this.iterable.method1131();
-                var4.unlink();
-                var4.unlinkDoubly();
+    public void put(T value, long key) {
+        if (remaining == 0) {
+            DoublyLinkedNode top = queue.pop();
+            top.unlink();
+            top.unlinkDoubly();
+            if (top == sentinel) {
+                top = queue.pop();
+                top.unlink();
+                top.unlinkDoubly();
             }
         } else {
-            --this.anInt483;
+            --remaining;
         }
 
-        this.table.method237(var1, var2);
-        this.iterable.method1134(var1);
+        table.put(value, key);
+        queue.insert(value);
     }
 
     public void clear() {
-        this.iterable.method1133();
-        this.table.method236();
-        this.sentinel = new DoublyLinkedNode();
-        this.anInt483 = this.anInt485;
+        queue.clear();
+        table.clear();
+        sentinel = new DoublyLinkedNode();
+        remaining = capacity;
     }
 
-    public void method337(long var1) {
-        DoublyLinkedNode var3 = (DoublyLinkedNode) this.table.lookup(var1);
-        if (var3 != null) {
-            var3.unlink();
-            var3.unlinkDoubly();
-            ++this.anInt483;
+    public void remove(long key) {
+        T value = table.lookup(key);
+        if (value != null) {
+            value.unlink();
+            value.unlinkDoubly();
+            ++remaining;
         }
-
     }
 }

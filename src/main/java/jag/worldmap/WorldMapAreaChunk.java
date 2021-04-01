@@ -8,7 +8,7 @@ public interface WorldMapAreaChunk {
 
     boolean contains(int level, int x, int y);
 
-    void method93(WorldMapArea var1);
+    void method93(WorldMapCacheArea var1);
 
     WorldMapPosition getPosition(int x, int y);
 

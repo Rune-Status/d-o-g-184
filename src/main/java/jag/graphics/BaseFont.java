@@ -288,7 +288,7 @@ public abstract class BaseFont extends JagGraphics {
         return Class97.method536(var0, 10);
     }
 
-    public static byte method10(char var0) {
+    public static byte toCp1252Byte(char var0) {
         byte var1;
         if (var0 > 0 && var0 < 128 || var0 >= 160 && var0 <= 255) {
             var1 = (byte) var0;
@@ -365,7 +365,7 @@ public abstract class BaseFont extends JagGraphics {
         anInt563 = 0;
     }
 
-    public int method1145(String var1) {
+    public int textWidth(String var1) {
         if (var1 == null) {
             return 0;
         }
@@ -405,7 +405,7 @@ public abstract class BaseFont extends JagGraphics {
                 }
 
                 if (var2 == -1) {
-                    var4 += this.anIntArray1574[(char) (method10(var6) & 255)];
+                    var4 += this.anIntArray1574[(char) (toCp1252Byte(var6) & 255)];
                     if (this.aByteArray1425 != null && var3 != -1) {
                         var4 += this.aByteArray1425[var6 + (var3 << 8)];
                     }
@@ -527,7 +527,7 @@ public abstract class BaseFont extends JagGraphics {
 
         for (int var6 = 0; var6 < var1.length(); ++var6) {
             if (var1.charAt(var6) != 0) {
-                char var7 = (char) (method10(var1.charAt(var6)) & 255);
+                char var7 = (char) (toCp1252Byte(var1.charAt(var6)) & 255);
                 if (var7 == '<') {
                     var4 = var6;
                 } else {
@@ -543,7 +543,7 @@ public abstract class BaseFont extends JagGraphics {
                                     try {
                                         var9 = method1501(var8.substring(4));
                                         IndexedSprite var10 = aDoublyNode_Sub24_Sub4Array1573[var9];
-                                        var10.method1324(var2, var3 + this.anInt375 - var10.anInt372);
+                                        var10.renderAt(var2, var3 + this.anInt375 - var10.anInt372);
                                         var2 += var10.anInt375;
                                         var5 = -1;
                                     } catch (Exception ignored) {
@@ -686,7 +686,7 @@ public abstract class BaseFont extends JagGraphics {
 
         for (int var9 = 0; var9 < var1.length(); ++var9) {
             if (var1.charAt(var9) != 0) {
-                char var10 = (char) (method10(var1.charAt(var9)) & 255);
+                char var10 = (char) (toCp1252Byte(var1.charAt(var9)) & 255);
                 if (var10 == '<') {
                     var6 = var9;
                 } else {
@@ -717,7 +717,7 @@ public abstract class BaseFont extends JagGraphics {
                                         ++var8;
                                         var14 = method1501(var11.substring(4));
                                         IndexedSprite var15 = aDoublyNode_Sub24_Sub4Array1573[var14];
-                                        var15.method1324(var12 + var2, var13 + (var3 + this.anInt375 - var15.anInt372));
+                                        var15.renderAt(var12 + var2, var13 + (var3 + this.anInt375 - var15.anInt372));
                                         var2 += var15.anInt375;
                                         var7 = -1;
                                     } catch (Exception ignored) {
@@ -799,7 +799,7 @@ public abstract class BaseFont extends JagGraphics {
             var1 = ' ';
         }
 
-        return this.anIntArray1574[method10(var1) & 255];
+        return this.anIntArray1574[toCp1252Byte(var1) & 255];
     }
 
     void method1162(String var1) {
@@ -879,9 +879,9 @@ public abstract class BaseFont extends JagGraphics {
             if (var8 == 0) {
                 this.method1165(aStringArray1572[var14], var2, var13);
             } else if (var8 == 1) {
-                this.method1165(aStringArray1572[var14], var2 + (var4 - this.method1145(aStringArray1572[var14])) / 2, var13);
+                this.method1165(aStringArray1572[var14], var2 + (var4 - this.textWidth(aStringArray1572[var14])) / 2, var13);
             } else if (var8 == 2) {
-                this.method1165(aStringArray1572[var14], var2 + var4 - this.method1145(aStringArray1572[var14]), var13);
+                this.method1165(aStringArray1572[var14], var2 + var4 - this.textWidth(aStringArray1572[var14]), var13);
             } else if (var14 == var12 - 1) {
                 this.method1165(aStringArray1572[var14], var2, var13);
             } else {
@@ -912,7 +912,7 @@ public abstract class BaseFont extends JagGraphics {
         }
 
         if (var3 > 0) {
-            anInt791 = (var2 - this.method1145(var1) << 8) / var3;
+            anInt791 = (var2 - this.textWidth(var1) << 8) / var3;
         }
 
     }
@@ -926,7 +926,7 @@ public abstract class BaseFont extends JagGraphics {
         int var4 = 0;
 
         for (int var5 = 0; var5 < var3; ++var5) {
-            int var6 = this.method1145(aStringArray1572[var5]);
+            int var6 = this.textWidth(aStringArray1572[var5]);
             if (var6 > var4) {
                 var4 = var6;
             }
@@ -938,7 +938,7 @@ public abstract class BaseFont extends JagGraphics {
     public void method1154(String var1, int var2, int var3, int var4, int var5) {
         if (var1 != null) {
             this.method1160(var4, var5);
-            this.method1165(var1, var2 - this.method1145(var1) / 2, var3);
+            this.method1165(var1, var2 - this.textWidth(var1) / 2, var3);
         }
     }
 
@@ -971,7 +971,7 @@ public abstract class BaseFont extends JagGraphics {
     public void method1151(String var1, int var2, int var3, int var4, int var5) {
         if (var1 != null) {
             this.method1160(var4, var5);
-            this.method1165(var1, var2 - this.method1145(var1), var3);
+            this.method1165(var1, var2 - this.textWidth(var1), var3);
         }
     }
 
@@ -984,7 +984,7 @@ public abstract class BaseFont extends JagGraphics {
                 var7[var8] = (int) (Math.sin((double) var8 / 2.0D + (double) var6 / 5.0D) * 5.0D);
             }
 
-            this.method1163(var1, var2 - this.method1145(var1) / 2, var3, null, var7);
+            this.method1163(var1, var2 - this.textWidth(var1) / 2, var3, null, var7);
         }
     }
 
@@ -999,7 +999,7 @@ public abstract class BaseFont extends JagGraphics {
                 var8[var9] = (int) (Math.sin((double) var9 / 3.0D + (double) var6 / 5.0D) * 5.0D);
             }
 
-            this.method1163(var1, var2 - this.method1145(var1) / 2, var3, var7, var8);
+            this.method1163(var1, var2 - this.textWidth(var1) / 2, var3, var7, var8);
         }
     }
 
@@ -1017,7 +1017,7 @@ public abstract class BaseFont extends JagGraphics {
                 var10[var11] = (int) (Math.sin((double) var11 / 1.5D + (double) var6 / 1.0D) * var8);
             }
 
-            this.method1163(var1, var2 - this.method1145(var1) / 2, var3, null, var10);
+            this.method1163(var1, var2 - this.textWidth(var1) / 2, var3, null, var10);
         }
     }
 

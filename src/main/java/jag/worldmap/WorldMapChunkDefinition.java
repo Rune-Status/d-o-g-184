@@ -1,6 +1,6 @@
 package jag.worldmap;
 
-import jag.RouteStrategy_Sub1;
+import jag.DefaultRouteStrategy;
 import jag.SecureRandomCallable;
 import jag.commons.collection.ReferenceNodeTable;
 import jag.game.type.ObjectDefinition;
@@ -153,7 +153,7 @@ public class WorldMapChunkDefinition {
 
     }
 
-    void method53(int x, int y, WorldMapTileDecor decor, WorldMapRenderRules rules, WorldMapSprite sprite) {
+    void method53(int x, int y, WorldMapTileDecor decor, WorldMapRenderRules rules, WorldMapElement sprite) {
         int var6 = decor.aShortArrayArrayArray518[0][x][y] - 1;
         int var7 = decor.aShortArrayArrayArray508[0][x][y] - 1;
         if (var6 == -1 && var7 == -1) {
@@ -164,17 +164,17 @@ public class WorldMapChunkDefinition {
         int var12;
         if (var7 != -1) {
             int var9 = anInt123;
-            TileOverlay var10 = (TileOverlay) TileOverlay.aReferenceCache385.get(var7);
+            TileOverlay var10 = TileOverlay.cache.get(var7);
             TileOverlay var11;
             if (var10 == null) {
-                byte[] var13 = TileOverlay.aReferenceTable383.unpack(4, var7);
+                byte[] var13 = TileOverlay.table.unpack(4, var7);
                 var10 = new TileOverlay();
                 if (var13 != null) {
                     var10.decode(new Buffer(var13));
                 }
 
                 var10.method499();
-                TileOverlay.aReferenceCache385.put(var10, var7);
+                TileOverlay.cache.put(var10, var7);
             }
             var11 = var10;
 
@@ -212,11 +212,11 @@ public class WorldMapChunkDefinition {
                         var16 = var18 + (var14 & 65408);
                     }
 
-                    var12 = JagGraphics3D.anIntArray782[var16] | -16777216;
+                    var12 = JagGraphics3D.colorPalette[var16] | -16777216;
                 } else if (var11.anInt378 == 16711935) {
                     var12 = var9;
                 } else {
-                    var16 = RouteStrategy_Sub1.method293(var11.anInt375, var11.anInt372, var11.anInt379);
+                    var16 = DefaultRouteStrategy.method293(var11.anInt375, var11.anInt372, var11.anInt379);
                     var15 = 96;
                     if (var16 == -2) {
                         var14 = 12345678;
@@ -240,7 +240,7 @@ public class WorldMapChunkDefinition {
                         var14 = var18 + (var16 & 65408);
                     }
 
-                    var12 = JagGraphics3D.anIntArray782[var14] | -16777216;
+                    var12 = JagGraphics3D.colorPalette[var14] | -16777216;
                 }
             }
 
@@ -277,7 +277,7 @@ public class WorldMapChunkDefinition {
 
     }
 
-    int method51(Sprite var1, Enum_Sub9 var2) {
+    int method51(Sprite var1, HAlign var2) {
         switch (var2.anInt633) {
             case 1:
                 return 0;
@@ -291,9 +291,9 @@ public class WorldMapChunkDefinition {
     void method58(List var1) {
 
         for (Object aVar1 : var1) {
-            WorldMapIcon_Sub2 var3 = (WorldMapIcon_Sub2) aVar1;
+            WorldMapLabelIcon var3 = (WorldMapLabelIcon) aVar1;
             if (var3.max.x >> 6 == anInt115 && var3.max.y >> 6 == anInt116) {
-                WorldMapIcon_Sub2 var4 = new WorldMapIcon_Sub2(var3.max, var3.max, var3.mapFunction, createLabel(var3.mapFunction));
+                WorldMapLabelIcon var4 = new WorldMapLabelIcon(var3.max, var3.max, var3.mapFunction, createLabel(var3.mapFunction));
                 aList119.add(var4);
             }
         }
@@ -307,7 +307,7 @@ public class WorldMapChunkDefinition {
 
     public WorldMapLabel createLabel(WorldMapFunction function) {
         if (function.aString1474 != null && aHashMap117 != null && aHashMap117.get(WorldMapLabelSize.SMALL) != null) {
-            int var2 = function.anInt564;
+            int var2 = function.fontSize;
             WorldMapLabelSize[] var3 = WorldMapLabelSize.method364();
             int var4 = 0;
 
@@ -341,7 +341,7 @@ public class WorldMapChunkDefinition {
             int var11 = 0;
 
             for (String var14 : var9) {
-                int var15 = var7.method1145(var14);
+                int var15 = var7.textWidth(var14);
                 if (var15 > var11) {
                     var11 = var15;
                 }
@@ -371,17 +371,17 @@ public class WorldMapChunkDefinition {
             int var6 = var3.aShortArrayArrayArray508[var5][var1][var2] - 1;
             if (var6 > -1) {
                 int var7 = anInt123;
-                TileOverlay var8 = (TileOverlay) TileOverlay.aReferenceCache385.get(var6);
+                TileOverlay var8 = TileOverlay.cache.get(var6);
                 TileOverlay var9;
                 if (var8 == null) {
-                    byte[] var12 = TileOverlay.aReferenceTable383.unpack(4, var6);
+                    byte[] var12 = TileOverlay.table.unpack(4, var6);
                     var8 = new TileOverlay();
                     if (var12 != null) {
                         var8.decode(new Buffer(var12));
                     }
 
                     var8.method499();
-                    TileOverlay.aReferenceCache385.put(var8, var6);
+                    TileOverlay.cache.put(var8, var6);
                 }
                 var9 = var8;
 
@@ -420,11 +420,11 @@ public class WorldMapChunkDefinition {
                             var15 = var17 + (var13 & 65408);
                         }
 
-                        var10 = JagGraphics3D.anIntArray782[var15] | -16777216;
+                        var10 = JagGraphics3D.colorPalette[var15] | -16777216;
                     } else if (var9.anInt378 == 16711935) {
                         var10 = var7;
                     } else {
-                        var15 = RouteStrategy_Sub1.method293(var9.anInt375, var9.anInt372, var9.anInt379);
+                        var15 = DefaultRouteStrategy.method293(var9.anInt375, var9.anInt372, var9.anInt379);
                         var14 = 96;
                         if (var15 == -2) {
                             var13 = 12345678;
@@ -448,7 +448,7 @@ public class WorldMapChunkDefinition {
                             var13 = var17 + (var15 & 65408);
                         }
 
-                        var10 = JagGraphics3D.anIntArray782[var13] | -16777216;
+                        var10 = JagGraphics3D.colorPalette[var13] | -16777216;
                     }
                 }
 
@@ -465,14 +465,14 @@ public class WorldMapChunkDefinition {
     void method49(WorldMapFunction var1, int var2, int var3) {
         Sprite var4 = var1.getSprite();
         if (var4 != null) {
-            int var5 = method51(var4, var1.anEnum_Sub9_1477);
-            int var6 = method45(var4, var1.anEnum_Sub8_1472);
-            var4.method809(var5 + var2, var3 + var6);
+            int var5 = method51(var4, var1.hAlign);
+            int var6 = method45(var4, var1.vAlign);
+            var4.renderAlphaAt(var5 + var2, var3 + var6);
         }
 
     }
 
-    int method45(Sprite var1, Enum_Sub8 var2) {
+    int method45(Sprite var1, VAlign var2) {
         switch (var2.anInt633) {
             case 0:
                 return 0;
@@ -580,8 +580,8 @@ public class WorldMapChunkDefinition {
         return createLabel(var2);
     }
 
-    int method38(int var1, int var2, WorldMapTileDecor var3, WorldMapSprite var4) {
-        return var3.aShortArrayArrayArray518[0][var1][var2] == 0 ? anInt123 : var4.method244(var1, var2);
+    int method38(int var1, int var2, WorldMapTileDecor var3, WorldMapElement var4) {
+        return var3.aShortArrayArrayArray518[0][var1][var2] == 0 ? anInt123 : var4.getTileColor(var1, var2);
     }
 
     void method50(ObjectDefinition var1, int var2, int var3, int var4, WorldMapTileDecor var5) {
@@ -596,10 +596,10 @@ public class WorldMapChunkDefinition {
 
         Object var10;
         if (var1.transformIds != null) {
-            var10 = new WorldMapIcon_Sub1(var7, var6, var1.anInt693, this);
+            var10 = new WorldMapObjectIcon(var7, var6, var1.anInt693, this);
         } else {
             WorldMapFunction var9 = WorldMapFunction.get(var1.mapFunction);
-            var10 = new WorldMapIcon_Sub2(var7, var6, var9.anInt574, createLabel(var9));
+            var10 = new WorldMapLabelIcon(var7, var6, var9.objectId, createLabel(var9));
         }
 
         aHashMap125.put(new WorldMapPosition(0, var3, var4), var10);
@@ -608,7 +608,7 @@ public class WorldMapChunkDefinition {
     void method24(WorldMapFunction var1, int var2, int var3, int var4, int var5) {
         Sprite var6 = var1.getSprite();
         if (var6 != null) {
-            var6.method809(var2 - var6.width / 2, var3 - var6.height / 2);
+            var6.renderAlphaAt(var2 - var6.width / 2, var3 - var6.height / 2);
             if (var4 % var5 < var5 / 2) {
                 JagGraphics.method1367(var2, var3, 15, 16776960, 128);
                 JagGraphics.method1367(var2, var3, 7, 16777215, 256);
@@ -621,8 +621,8 @@ public class WorldMapChunkDefinition {
 
         for (Object o : aHashMap125.values()) {
             WorldMapIcon var2 = (WorldMapIcon) o;
-            if (var2 instanceof WorldMapIcon_Sub1) {
-                ((WorldMapIcon_Sub1) var2).initialize();
+            if (var2 instanceof WorldMapObjectIcon) {
+                ((WorldMapObjectIcon) var2).initialize();
             }
         }
 
@@ -670,7 +670,7 @@ public class WorldMapChunkDefinition {
 
     }
 
-    void method57(WorldMapRenderRules rules, IndexedSprite[] var2, WorldMapSprite var3) {
+    void method57(WorldMapRenderRules rules, IndexedSprite[] var2, WorldMapElement var3) {
         Iterator var4 = aLinkedList122.iterator();
 
         WorldMapTileDecor_Sub1 var5;
@@ -701,7 +701,7 @@ public class WorldMapChunkDefinition {
 
     }
 
-    void method33(WorldMapRenderRules var1, IndexedSprite[] var2, WorldMapSprite var3) {
+    void method33(WorldMapRenderRules var1, IndexedSprite[] var2, WorldMapElement var3) {
         int var4;
         int var5;
         for (var4 = 0; var4 < 64; ++var4) {
@@ -776,7 +776,7 @@ public class WorldMapChunkDefinition {
         if (aClass63_Sub2_124 != null || !aLinkedList122.isEmpty()) {
             int var6 = anInt115;
             int var7 = anInt116;
-            Sprite var8 = (Sprite) A_REFERENCE_NODE_TABLE___118.method669(SecureRandomCallable.method256(var6, var7, var1));
+            Sprite var8 = (Sprite) A_REFERENCE_NODE_TABLE___118.get(SecureRandomCallable.method256(var6, var7, var1));
             if (var8 == null) {
                 boolean var9 = true;
                 var9 &= method30(var4);
@@ -789,26 +789,26 @@ public class WorldMapChunkDefinition {
 
                 var9 &= var5.method911(var10);
                 if (var9) {
-                    byte[] var11 = var5.method904(var10);
-                    WorldMapSprite var12;
+                    byte[] var11 = var5.unpack(var10);
+                    WorldMapElement element;
                     if (var11 == null) {
-                        var12 = new WorldMapSprite();
+                        element = new WorldMapElement();
                     } else {
-                        var12 = new WorldMapSprite(WorldMapRenderRules.method130(var11).pixels);
+                        element = new WorldMapElement(WorldMapRenderRules.method130(var11).pixels);
                     }
 
                     Sprite var14 = new Sprite(anInt120 * 64, anInt120 * 64);
                     var14.method23();
                     if (aClass63_Sub2_124 != null) {
-                        method33(rules, var3, var12);
+                        method33(rules, var3, element);
                     } else {
-                        method57(rules, var3, var12);
+                        method57(rules, var3, element);
                     }
 
                     int var15 = anInt115;
                     int var16 = anInt116;
                     int var17 = anInt120;
-                    A_REFERENCE_NODE_TABLE___118.method667(var14, SecureRandomCallable.method256(var15, var16, var17), var14.pixels.length * 4);
+                    A_REFERENCE_NODE_TABLE___118.put(var14, SecureRandomCallable.method256(var15, var16, var17), var14.pixels.length * 4);
                     method37();
                 }
             }
@@ -819,10 +819,10 @@ public class WorldMapChunkDefinition {
         int var4 = anInt115;
         int var5 = anInt116;
         int var6 = anInt120;
-        Sprite var7 = (Sprite) A_REFERENCE_NODE_TABLE___118.method669(SecureRandomCallable.method256(var4, var5, var6));
+        Sprite var7 = (Sprite) A_REFERENCE_NODE_TABLE___118.get(SecureRandomCallable.method256(var4, var5, var6));
         if (var7 != null) {
             if (var3 == anInt120 * 64) {
-                var7.method817(var1, var2);
+                var7.renderAt(var1, var2);
             } else {
                 var7.method811(var1, var2, var3, var3);
             }

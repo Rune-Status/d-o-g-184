@@ -1,6 +1,6 @@
 package jag.game.relationship;
 
-import jag.game.PlayerAppearance;
+import jag.game.PlayerModel;
 
 import java.util.Comparator;
 
@@ -12,7 +12,7 @@ public class Class223 implements Comparator {
     }
 
     public static void clear() {
-        PlayerAppearance.aReferenceCache1924.clear();
+        PlayerModel.models.clear();
     }
 
     int method1342(Chatter var1, Chatter var2) {

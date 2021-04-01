@@ -1,19 +1,19 @@
 package jag.graphics;
 
 public abstract class GraphicsProvider {
-    public static IndexedSprite aDoublyNode_Sub24_Sub4_1815;
+    public static IndexedSprite titlebuttonSprite;
     public int[] anIntArray1818;
-    public int anInt1817;
-    public int anInt1816;
+    public int width;
+    public int height;
 
     protected GraphicsProvider() {
     }
 
     public final void method1318() {
-        JagGraphics.setTarget(this.anIntArray1818, this.anInt1817, this.anInt1816);
+        JagGraphics.setTarget(this.anIntArray1818, this.width, this.height);
     }
 
-    public abstract void method22(int var1, int var2);
+    public abstract void drawGame(int var1, int var2);
 
     public abstract void method20(int var1, int var2, int var3, int var4);
 }

@@ -1,49 +1,56 @@
 package jag.game;
 
+import jag.BootSprites;
 import jag.ComponentFillType;
-import jag.graphics.NamedFont;
-import jag.opcode.OldConnectionTaskProcessor;
+import jag.SecureRandomService;
 import jag.SerializableLong;
+import jag.audi.AudioRunnable;
+import jag.audi.DefaultAudioSystemProvider;
 import jag.commons.collection.IntegerNode;
 import jag.commons.collection.Node;
 import jag.commons.collection.ReferenceCache;
 import jag.commons.input.Mouse;
-import jag.game.option.ClientPreferences;
+import jag.game.menu.ComponentSelection;
+import jag.game.menu.ContextMenu;
+import jag.game.relationship.AssociateComparatorByRank;
+import jag.game.relationship.BefriendedPlayer;
 import jag.game.relationship.ClanMember;
-import jag.game.scene.CameraCapture;
+import jag.game.scene.SceneGraph;
+import jag.game.scene.SceneOccluder;
 import jag.game.scene.entity.Model;
+import jag.game.scene.entity.PlayerEntity;
 import jag.game.scene.entity.Projectile;
 import jag.game.scene.entity.UnlitModel;
 import jag.game.stockmarket.StockMarketOffer;
-import jag.game.type.AnimationSequence;
-import jag.game.type.ItemDefinition;
-import jag.game.type.NpcDefinition;
-import jag.graphics.Font;
-import jag.graphics.Sprite;
-import jag.graphics.SpriteClip;
+import jag.game.stockmarket.StockMarketOfferWorldComparator;
+import jag.game.type.*;
+import jag.graphics.*;
 import jag.js5.ReferenceTable;
 import jag.opcode.*;
 import jag.script.ScriptEvent;
+import jag.statics.Skills;
 import jag.statics.Statics2;
-import jag.statics.Statics21;
-import jag.statics.Statics23;
+import jag.statics.Statics24;
 import jag.statics.Statics48;
-import jag.worldmap.WorldMapIcon_Sub1;
+import jag.worldmap.WorldMapObjectIcon;
 
 public class InterfaceComponent extends Node {
-    public static final ReferenceCache aReferenceCache1370;
-    public static final ReferenceCache aReferenceCache1367;
-    public static final ReferenceCache aReferenceCache1364;
-    public static final ReferenceCache aReferenceCache1374;
-    public static boolean aBoolean1151;
+
+    public static final ReferenceCache<Sprite> sprites;
+    public static final ReferenceCache<Font> fonts;
+    public static final ReferenceCache<Model> models;
+    public static final ReferenceCache<ComponentSprite> specialSprites;
+    public static boolean forceRepaint;
     public static ReferenceTable aReferenceTable1375;
+    public static int anInt1342;
+    public static ReferenceTable aReferenceTable364;
 
     static {
-        aReferenceCache1370 = new ReferenceCache(200);
-        aReferenceCache1364 = new ReferenceCache(50);
-        aReferenceCache1367 = new ReferenceCache(20);
-        aReferenceCache1374 = new ReferenceCache(8);
-        aBoolean1151 = false;
+        sprites = new ReferenceCache<>(200);
+        models = new ReferenceCache<>(50);
+        fonts = new ReferenceCache<>(20);
+        specialSprites = new ReferenceCache<>(8);
+        forceRepaint = false;
     }
 
     public int enabledMaterialId;
@@ -51,132 +58,132 @@ public class InterfaceComponent extends Node {
     public int buttonType;
     public int parentUid;
     public int[] itemIds;
-    public boolean aBoolean562;
+    public boolean format;
     public int renderCycle;
     public String toolTip;
     public int fontId;
-    public int[] anIntArray1371;
+    public int[] spriteIds;
     public int materialId;
     public int modelType;
     public int width;
     public int uid;
     public int modelId;
-    public boolean aBoolean1378;
+    public boolean decodedObjects;
     public int type;
     public int height;
     public boolean flippedVertically;
     public int shadowColor;
     public int boundsIndex;
     public boolean flippedHorizontally;
-    public int componentIndex;
+    public int subComponentIndex;
     public int xLayout;
-    public int anInt1369;
+    public int xAlignment;
     public int borderThickness;
     public int[] itemStackSizes;
     public int xMargin;
-    public int anInt694;
+    public int baseWidth;
     public int relativeX;
     public int contentType;
-    public int anInt695;
+    public int yAlignment;
     public int yLayout;
     public int relativeY;
     public int yMargin;
-    public int anInt1105;
+    public int baseHeight;
     public String selectedAction;
     public boolean explicitlyHidden;
-    public int anInt711;
-    public int anInt1357;
+    public int scaleX;
+    public int animation;
     public int itemId;
     public boolean aBoolean1372;
-    public int anInt709;
-    public int anInt1353;
-    public int[] anIntArray1392;
-    public InterfaceComponent[] components;
-    public Object[] mousePressListeners;
-    public int anInt1351;
+    public int scaleY;
+    public int enabledAnimation;
+    public int[] cs1Types;
+    public InterfaceComponent[] subcomponents;
+    public Object[] cs2Listeners;
+    public int rotationKey;
     public int config;
     public String spellName;
-    public int[] anIntArray1395;
-    public int[][] functionOpcodes;
-    public boolean aBoolean1412;
+    public int[] cs1Values;
+    public int[][] cs1Opcodes;
+    public boolean noClickThrough;
     public int xRotation;
     public int alpha;
-    public boolean aBoolean1410;
-    public int anInt1401;
+    public boolean noScrollThrough;
+    public int animationFrameCycle;
     public int zRotation;
     public Object[] anObjectArray1400;
     public int xPadding;
     public int yPadding;
-    public int anInt1389;
+    public int animationFrame;
     public int[] xSprites;
-    public int anInt1402;
+    public int detour;
     public int insetX;
     public int insetY;
     public int[] ySprites;
     public String name;
     public int viewportWidth;
-    public boolean aBoolean1404;
+    public boolean hovered;
     public int viewportHeight;
-    public int anInt1381;
+    public int dragArea;
     public Object[] scrollListeners;
-    public int textColor;
-    public int anInt1383;
-    public int anInt1348;
-    public int anInt1345;
-    public int anInt1344;
-    public boolean aBoolean1409;
-    public boolean aBoolean1346;
-    public ComponentFillType anComponentFillType_1349;
+    public int foreground;
+    public int dragAreaThreshold;
+    public int enabledForeground;
+    public int hoverForeground;
+    public int enabledHoverForeground;
+    public boolean prioritizeMenuOptions;
+    public boolean filled;
+    public ComponentFillType fillType;
     public byte[][] aByteArrayArray1365;
-    public int anInt1343;
-    public int anInt1347;
-    public boolean aBoolean1360;
+    public int enabledAlpha;
+    public int lineWidth;
+    public boolean invertDivider;
     public int[] anIntArray1361;
     public Object[] dragListeners;
     public int[] anIntArray1405;
-    public Object[] anObjectArray1380;
+    public Object[] targetExitListeners;
     public int spriteId;
-    public boolean aBoolean1358;
+    public boolean tileSprites;
     public int[] anIntArray1366;
     public int horizontalMargin;
-    public Object[] anObjectArray1387;
+    public Object[] dragReleaseListeners;
     public int verticalMargin;
     public byte[][] aByteArrayArray1363;
-    public Object[] anObjectArray1377;
+    public Object[] targetEnterListeners;
     public int textSpacing;
-    public boolean aBoolean1388;
+    public boolean scrollBar;
     public int modelOffsetX;
     public int modelOffsetY;
     public int yRotation;
     public int modelZoom;
-    public int anInt1354;
+    public int scaleZ;
     public boolean textShadowed;
-    public boolean aBoolean1352;
-    public boolean aBoolean1359;
+    public boolean perpendicular;
+    public boolean transparent;
     public String text;
-    public int anInt1356;
+    public int itemStackSizeMode;
     public int itemStackSize;
-    public String aString1373;
+    public String enabledText;
     public String[] tableActions;
     public InterfaceComponent parent;
-    public boolean aBoolean1407;
-    public Object[] anObjectArray1386;
-    public Object[] anObjectArray1379;
-    public Object[] anObjectArray1376;
+    public boolean clicked;
+    public Object[] pressListeners;
+    public Object[] holdListeners;
+    public Object[] releaseListeners;
     public Object[] mouseEnterListeners;
     public int anInt1406;
     public Object[] mouseExitListeners;
     public int anInt1413;
-    public Object[] anObjectArray1385;
-    public Object[] configListenerArgs;
+    public Object[] clickListeners;
+    public Object[] varTransmit;
     public int anInt1408;
     public Object[] renderListeners;
-    public int[] configTriggers;
+    public int[] varTriggers;
     public int anInt1411;
-    public Object[] anObjectArray1384;
+    public Object[] initializationListeners;
     public Object[] hoverListeners;
-    public Object[] tableListenerArgs;
-    public Object[] skillListenerArgs;
+    public Object[] itemTransmit;
+    public Object[] skillTransmit;
     public int[] itemTriggers;
     public int[] skillTriggers;
     public Object[] anObjectArray1403;
@@ -188,121 +195,120 @@ public class InterfaceComponent extends Node {
     public Object[] anObjectArray1393;
     public Object[] anObjectArray1391;
     public Object[] anObjectArray1394;
-    int anInt1355;
-    int anInt1350;
+    int enabledModelType;
+    int enabledModelId;
 
     public InterfaceComponent() {
-        this.aBoolean562 = false;
-        this.uid = -1;
-        this.componentIndex = -1;
-        this.buttonType = 0;
-        this.contentType = 0;
-        this.xLayout = 0;
-        this.yLayout = 0;
-        this.anInt1369 = 0;
-        this.anInt695 = 0;
-        this.xMargin = 0;
-        this.yMargin = 0;
-        this.anInt694 = 0;
-        this.anInt1105 = 0;
-        this.relativeX = 0;
-        this.relativeY = 0;
-        this.width = 0;
-        this.height = 0;
-        this.anInt711 = 1;
-        this.anInt709 = 1;
-        this.parentUid = -1;
-        this.explicitlyHidden = false;
-        this.insetX = 0;
-        this.insetY = 0;
-        this.viewportWidth = 0;
-        this.viewportHeight = 0;
-        this.textColor = 0;
-        this.anInt1348 = 0;
-        this.anInt1345 = 0;
-        this.anInt1344 = 0;
-        this.aBoolean1346 = false;
-        this.anComponentFillType_1349 = ComponentFillType.anEnum_Sub11_1862;
-        this.alpha = 0;
-        this.anInt1343 = 0;
-        this.anInt1347 = 1;
-        this.aBoolean1360 = false;
-        this.materialId = -1;
-        this.enabledMaterialId = -1;
-        this.spriteId = 0;
-        this.aBoolean1358 = false;
-        this.borderThickness = 0;
-        this.shadowColor = 0;
-        this.modelType = 1;
-        this.modelId = -1;
-        this.anInt1355 = 1;
-        this.anInt1350 = -1;
-        this.anInt1357 = -1;
-        this.anInt1353 = -1;
-        this.modelOffsetX = 0;
-        this.modelOffsetY = 0;
-        this.xRotation = 0;
-        this.zRotation = 0;
-        this.yRotation = 0;
-        this.modelZoom = 100;
-        this.anInt1354 = 0;
-        this.anInt1351 = 0;
-        this.aBoolean1352 = false;
-        this.aBoolean1359 = false;
-        this.anInt1356 = 2;
-        this.fontId = -1;
-        this.text = "";
-        this.aString1373 = "";
-        this.textSpacing = 0;
-        this.horizontalMargin = 0;
-        this.verticalMargin = 0;
-        this.textShadowed = false;
-        this.xPadding = 0;
-        this.yPadding = 0;
-        this.config = 0;
-        this.aBoolean1372 = false;
-        this.name = "";
-        this.parent = null;
-        this.anInt1381 = 0;
-        this.anInt1383 = 0;
-        this.aBoolean1388 = false;
-        this.selectedAction = "";
-        this.aBoolean1378 = false;
-        this.anInt1402 = -1;
-        this.spellName = "";
-        this.toolTip = "Ok";
-        this.itemId = -1;
-        this.itemStackSize = 0;
-        this.anInt1389 = 0;
-        this.anInt1401 = 0;
-        this.aBoolean1404 = false;
-        this.aBoolean1407 = false;
-        this.anInt1406 = -1;
-        this.anInt1413 = 0;
-        this.anInt1408 = 0;
-        this.anInt1411 = 0;
-        this.boundsIndex = -1;
-        this.renderCycle = -1;
-        this.aBoolean1412 = false;
-        this.aBoolean1410 = false;
-        this.aBoolean1409 = false;
+        format = false;
+        uid = -1;
+        subComponentIndex = -1;
+        buttonType = 0;
+        contentType = 0;
+        xLayout = 0;
+        yLayout = 0;
+        xAlignment = 0;
+        yAlignment = 0;
+        xMargin = 0;
+        yMargin = 0;
+        baseWidth = 0;
+        baseHeight = 0;
+        relativeX = 0;
+        relativeY = 0;
+        width = 0;
+        height = 0;
+        scaleX = 1;
+        scaleY = 1;
+        parentUid = -1;
+        explicitlyHidden = false;
+        insetX = 0;
+        insetY = 0;
+        viewportWidth = 0;
+        viewportHeight = 0;
+        foreground = 0;
+        enabledForeground = 0;
+        hoverForeground = 0;
+        enabledHoverForeground = 0;
+        filled = false;
+        fillType = ComponentFillType.SOLID;
+        alpha = 0;
+        enabledAlpha = 0;
+        lineWidth = 1;
+        invertDivider = false;
+        materialId = -1;
+        enabledMaterialId = -1;
+        spriteId = 0;
+        tileSprites = false;
+        borderThickness = 0;
+        shadowColor = 0;
+        modelType = 1;
+        modelId = -1;
+        enabledModelType = 1;
+        enabledModelId = -1;
+        animation = -1;
+        enabledAnimation = -1;
+        modelOffsetX = 0;
+        modelOffsetY = 0;
+        xRotation = 0;
+        zRotation = 0;
+        yRotation = 0;
+        modelZoom = 100;
+        scaleZ = 0;
+        rotationKey = 0;
+        perpendicular = false;
+        transparent = false;
+        itemStackSizeMode = 2;
+        fontId = -1;
+        text = "";
+        enabledText = "";
+        textSpacing = 0;
+        horizontalMargin = 0;
+        verticalMargin = 0;
+        textShadowed = false;
+        xPadding = 0;
+        yPadding = 0;
+        config = 0;
+        aBoolean1372 = false;
+        name = "";
+        parent = null;
+        dragArea = 0;
+        dragAreaThreshold = 0;
+        scrollBar = false;
+        selectedAction = "";
+        decodedObjects = false;
+        detour = -1;
+        spellName = "";
+        toolTip = "Ok";
+        itemId = -1;
+        itemStackSize = 0;
+        animationFrame = 0;
+        animationFrameCycle = 0;
+        hovered = false;
+        clicked = false;
+        anInt1406 = -1;
+        anInt1413 = 0;
+        anInt1408 = 0;
+        anInt1411 = 0;
+        boundsIndex = -1;
+        renderCycle = -1;
+        noClickThrough = false;
+        noScrollThrough = false;
+        prioritizeMenuOptions = false;
     }
 
     public static InterfaceComponent lookup(int uid, int subcomponent) {
-        InterfaceComponent var2 = lookup(uid);
+        InterfaceComponent component = lookup(uid);
         if (subcomponent == -1) {
-            return var2;
+            return component;
         }
-        return var2 != null && var2.components != null && subcomponent < var2.components.length ? var2.components[subcomponent] : null;
+        return component != null && component.subcomponents != null && subcomponent < component.subcomponents.length ? component.subcomponents[subcomponent] : null;
     }
 
     public static void closeInterface() {
-        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.BUTTON_CLOSE_ACTION, client.connectionContext.encryptor);
-        client.connectionContext.writeLater(packet);
-
-        for (SubInterface var1 = client.subInterfaces.head(); var1 != null; var1 = client.subInterfaces.next()) {
-            if (var1.state == 0 || var1.state == 3) {
-                NamedFont.method1182(var1, true);
+        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.BUTTON_CLOSE_ACTION, client.netWriter.encryptor);
+        client.netWriter.writeLater(packet);
+        for (SubInterface itf = client.subInterfaces.head(); itf != null; itf = client.subInterfaces.next()) {
+            if (itf.type == 0 || itf.type == 3) {
+                close(itf, true);
             }
         }
 
@@ -310,20 +316,19 @@ public class InterfaceComponent extends Node {
             repaint(client.pleaseWaitComponent);
             client.pleaseWaitComponent = null;
         }
-
     }
 
     public static InterfaceComponent lookup(int uid) {
-        int var1 = uid >> 16;
-        int var2 = uid & 65535;
-        if (client.interfaces[var1] == null || client.interfaces[var1][var2] == null) {
-            boolean var3 = load(var1);
-            if (!var3) {
+        int group = uid >> 16;
+        int component = uid & 0xffff;
+        if (client.interfaces[group] == null || client.interfaces[group][component] == null) {
+            boolean loaded = load(group);
+            if (!loaded) {
                 return null;
             }
         }
 
-        return client.interfaces[var1][var2];
+        return client.interfaces[group][component];
     }
 
     public static InterfaceComponent getTopLevelComponent(InterfaceComponent src) {
@@ -331,7 +336,8 @@ public class InterfaceComponent extends Node {
         if (depth == 0) {
             return null;
         }
-        for (int var2 = 0; var2 < depth; ++var2) {
+
+        for (int i = 0; i < depth; ++i) {
             src = lookup(src.parentUid);
             if (src == null) {
                 return null;
@@ -346,7 +352,7 @@ public class InterfaceComponent extends Node {
     }
 
     public static int getConfig(InterfaceComponent component) {
-        IntegerNode node = client.interfaceConfigs.lookup(((long) component.uid << 32) + (long) component.componentIndex);
+        IntegerNode node = client.interfaceConfigs.lookup(((long) component.uid << 32) + (long) component.subComponentIndex);
         return node != null ? node.value : component.config;
     }
 
@@ -357,9 +363,9 @@ public class InterfaceComponent extends Node {
             int boundsIndex) {
         if (load(group)) {
             StockMarketOffer.draggingInterface = null;
-            ScriptEvent.renderComponents(client.interfaces[group], -1, minX, minY, maxX, maxY, parentX, parentY, boundsIndex);
+            renderComponents(client.interfaces[group], -1, minX, minY, maxX, maxY, parentX, parentY, boundsIndex);
             if (StockMarketOffer.draggingInterface != null) {
-                ScriptEvent.renderComponents(StockMarketOffer.draggingInterface, -1412584499, minX, minY, maxX, maxY, Statics23.anInt1342, CameraCapture.anInt1913, boundsIndex);
+                renderComponents(StockMarketOffer.draggingInterface, -1412584499, minX, minY, maxX, maxY, anInt1342, SceneOccluder.anInt1913, boundsIndex);
                 StockMarketOffer.draggingInterface = null;
             }
 
@@ -367,96 +373,722 @@ public class InterfaceComponent extends Node {
             if (boundsIndex != -1) {
                 client.renderedComponents[boundsIndex] = true;
             } else {
-                for (int var8 = 0; var8 < 100; ++var8) {
-                    client.renderedComponents[var8] = true;
+                for (int i = 0; i < 100; ++i) {
+                    client.renderedComponents[i] = true;
                 }
             }
 
         }
     }
 
-    public static String method1005(String var0, InterfaceComponent var1) {
-        if (var0.contains("%")) {
-            for (int var2 = 1; var2 <= 5; ++var2) {
+    public static void renderComponents(
+            InterfaceComponent[] components, int uid,
+            int x, int y, int width, int height,
+            int rootX, int rootY, int boundsIndex) {
+
+        JagGraphics.setClip(x, y, width, height);
+        JagGraphics3D.method499();
+
+        for (InterfaceComponent component : components) {
+            if (component != null && (component.parentUid == uid || uid == -1412584499 && component == client.draggedComponent)) {
+                int nextBoundsIndex;
+                if (boundsIndex == -1) {
+                    client.interfacePositionsX[client.renderedComponentCount] = component.relativeX + rootX;
+                    client.interfacePositionsY[client.renderedComponentCount] = component.relativeY + rootY;
+                    client.interfaceWidths[client.renderedComponentCount] = component.width;
+                    client.interfaceHeights[client.renderedComponentCount] = component.height;
+                    nextBoundsIndex = ++client.renderedComponentCount - 1;
+                } else {
+                    nextBoundsIndex = boundsIndex;
+                }
+
+                component.boundsIndex = nextBoundsIndex;
+                component.renderCycle = client.engineCycle;
+                if (!component.format || !isExplicitlyHidden(component)) {
+                    if (component.contentType > 0) {
+                        method475(component);
+                    }
+
+                    int absoluteX = component.relativeX + rootX;
+                    int absoluteY = component.relativeY + rootY;
+                    int alpha = component.alpha;
+                    int var15;
+                    int var16;
+                    if (component == client.draggedComponent) {
+                        if (uid != -1412584499 && !component.scrollBar) {
+                            StockMarketOffer.draggingInterface = components;
+                            anInt1342 = rootX;
+                            SceneOccluder.anInt1913 = rootY;
+                            continue;
+                        }
+
+                        if (client.aBoolean1062 && client.processingComponentDragTopLevel) {
+                            var15 = Mouse.x;
+                            var16 = Mouse.y;
+                            var15 -= client.currentComponentDragX;
+                            var16 -= client.currentComponentDragY;
+                            if (var15 < client.anInt1060) {
+                                var15 = client.anInt1060;
+                            }
+
+                            if (var15 + component.width > client.anInt1060 + client.topLevelOfDraggedComponent.width) {
+                                var15 = client.anInt1060 + client.topLevelOfDraggedComponent.width - component.width;
+                            }
+
+                            if (var16 < client.anInt1069) {
+                                var16 = client.anInt1069;
+                            }
+
+                            if (var16 + component.height > client.anInt1069 + client.topLevelOfDraggedComponent.height) {
+                                var16 = client.anInt1069 + client.topLevelOfDraggedComponent.height - component.height;
+                            }
+
+                            absoluteX = var15;
+                            absoluteY = var16;
+                        }
+
+                        if (!component.scrollBar) {
+                            alpha = 128;
+                        }
+                    }
+
+                    int var17;
+                    int var18;
+                    int var19;
+                    int var20;
+                    int var21;
+                    int var22;
+                    if (component.type == 2) {
+                        var15 = absoluteX;
+                        var16 = absoluteY;
+                        var17 = width;
+                        var18 = height;
+                    } else if (component.type == 9) {
+                        var19 = absoluteX;
+                        var20 = absoluteY;
+                        var21 = absoluteX + component.width;
+                        var22 = absoluteY + component.height;
+                        if (var21 < absoluteX) {
+                            var19 = var21;
+                            var21 = absoluteX;
+                        }
+
+                        if (var22 < absoluteY) {
+                            var20 = var22;
+                            var22 = absoluteY;
+                        }
+
+                        ++var21;
+                        ++var22;
+                        var15 = Math.max(var19, absoluteX);
+                        var16 = Math.max(var20, absoluteY);
+                        var17 = Math.min(var21, width);
+                        var18 = Math.min(var22, height);
+                    } else {
+                        var19 = absoluteX + component.width;
+                        var20 = absoluteY + component.height;
+                        var15 = Math.max(absoluteX, absoluteX);
+                        var16 = Math.max(absoluteY, absoluteY);
+                        var17 = Math.min(var19, width);
+                        var18 = Math.min(var20, height);
+                    }
+
+                    if (!component.format || var15 < var17 && var16 < var18) {
+                        if (component.contentType != 0) {
+                            if (component.contentType == 1336) {
+                                if (client.displayFps) {
+                                    absoluteY += 15;
+                                    BootSprites.font_p12full.method1151("Fps:" + client.anInt1292, absoluteX + component.width, absoluteY, 16776960, -1);
+                                    absoluteY += 15;
+                                    Runtime var39 = Runtime.getRuntime();
+                                    var20 = (int) ((var39.totalMemory() - var39.freeMemory()) / 1024L);
+                                    var21 = 16776960;
+                                    if (var20 > 327680 && !client.lowMemory) {
+                                        var21 = 16711680;
+                                    }
+
+                                    BootSprites.font_p12full.method1151("Mem:" + var20 + "k", absoluteX + component.width, absoluteY, var21, -1);
+                                }
+                                continue;
+                            }
+
+                            if (component.contentType == 1337) {
+                                client.anInt1039 = absoluteX;
+                                client.anInt1038 = absoluteY;
+                                BefriendedPlayer.method553(absoluteX, absoluteY, component.width, component.height);
+                                client.renderedComponents[component.boundsIndex] = true;
+                                JagGraphics.setClip(absoluteX, absoluteY, width, height);
+                                continue;
+                            }
+
+                            if (component.contentType == 1338) {
+                                SceneGraph.renderMinimap(component, absoluteX, absoluteY, nextBoundsIndex);
+                                JagGraphics.setClip(absoluteX, absoluteY, width, height);
+                                continue;
+                            }
+
+                            if (component.contentType == 1339) {
+                                AudioRunnable.method985(component, absoluteX, absoluteY);
+                                JagGraphics.setClip(absoluteX, absoluteY, width, height);
+                                continue;
+                            }
+
+                            if (component.contentType == 1400) {
+                                client.worldMap.method1268(absoluteX, absoluteY, component.width, component.height, client.engineCycle);
+                            }
+
+                            if (component.contentType == 1401) {
+                                client.worldMap.method1269(absoluteX, absoluteY, component.width, component.height);
+                            }
+
+                            if (component.contentType == 1402) {
+                                AsyncOutputStream.loginScreenEffect.render(absoluteX, client.engineCycle);
+                            }
+                        }
+
+                        if (component.type == 0) {
+                            if (!component.format && isExplicitlyHidden(component) && component != OldConnection.hoveredComponent) {
+                                continue;
+                            }
+
+                            if (!component.format) {
+                                if (component.insetY > component.viewportHeight - component.height) {
+                                    component.insetY = component.viewportHeight - component.height;
+                                }
+
+                                if (component.insetY < 0) {
+                                    component.insetY = 0;
+                                }
+                            }
+
+                            renderComponents(components, component.uid, var15, var16, var17, var18, absoluteX - component.insetX, absoluteY - component.insetY, nextBoundsIndex);
+                            if (component.subcomponents != null) {
+                                renderComponents(component.subcomponents, component.uid, var15, var16, var17, var18, absoluteX - component.insetX, absoluteY - component.insetY, nextBoundsIndex);
+                            }
+
+                            SubInterface var24 = client.subInterfaces.lookup(component.uid);
+                            if (var24 != null) {
+                                renderInterface(var24.id, var15, var16, var17, var18, absoluteX, absoluteY, nextBoundsIndex);
+                            }
+
+                            JagGraphics.setClip(absoluteX, absoluteY, width, height);
+                            JagGraphics3D.method499();
+                        }
+
+                        if (client.resizableMode || client.aBooleanArray1083[nextBoundsIndex] || client.redrawMode > 1) {
+                            if (component.type == 0 && !component.format && component.viewportHeight > component.height) {
+                                GameShell.drawScrollbar(absoluteX + component.width, absoluteY, component.insetY, component.height, component.viewportHeight);
+                            }
+
+                            if (component.type != 1) {
+                                int var23;
+                                int var25;
+                                int var26;
+                                int var27;
+                                if (component.type == 2) {
+                                    var19 = 0;
+
+                                    for (var20 = 0; var20 < component.baseHeight; ++var20) {
+                                        for (var21 = 0; var21 < component.baseWidth; ++var21) {
+                                            var22 = absoluteX + var21 * (component.xPadding + 32);
+                                            var23 = absoluteY + var20 * (component.yPadding + 32);
+                                            if (var19 < 20) {
+                                                var22 += component.xSprites[var19];
+                                                var23 += component.ySprites[var19];
+                                            }
+
+                                            if (component.itemIds[var19] <= 0) {
+                                                if (component.spriteIds != null && var19 < 20) {
+                                                    Sprite var43 = component.method961(var19);
+                                                    if (var43 != null) {
+                                                        var43.renderAlphaAt(var22, var23);
+                                                    } else if (forceRepaint) {
+                                                        repaint(component);
+                                                    }
+                                                }
+                                            } else {
+                                                boolean var40 = false;
+                                                boolean var41 = false;
+                                                var27 = component.itemIds[var19] - 1;
+                                                if (var22 + 32 > absoluteX && var22 < width && var23 + 32 > absoluteY && var23 < height || component == AnimationFrameGroup.dragComponent && var19 == client.draggingComponentSourceIndex) {
+                                                    Sprite var28;
+                                                    if (ComponentSelection.Item.state == 1 && var19 == ComponentSelection.Item.id && component.uid == ComponentSelection.Item.uid) {
+                                                        var28 = ItemDefinition.getSprite(var27, component.itemStackSizes[var19], 2, 0, 2, false);
+                                                    } else {
+                                                        var28 = ItemDefinition.getSprite(var27, component.itemStackSizes[var19], 1, 3153952, 2, false);
+                                                    }
+
+                                                    if (var28 != null) {
+                                                        if (component == AnimationFrameGroup.dragComponent && var19 == client.draggingComponentSourceIndex) {
+                                                            var25 = Mouse.x - client.draggingComponentX;
+                                                            var26 = Mouse.y - client.draggingComponentY;
+                                                            if (var25 < 5 && var25 > -5) {
+                                                                var25 = 0;
+                                                            }
+
+                                                            if (var26 < 5 && var26 > -5) {
+                                                                var26 = 0;
+                                                            }
+
+                                                            if (client.componentDragCycles < 5) {
+                                                                var25 = 0;
+                                                                var26 = 0;
+                                                            }
+
+                                                            var28.method832(var22 + var25, var23 + var26, 128);
+                                                            if (uid != -1) {
+                                                                InterfaceComponent var29 = components[uid & 65535];
+                                                                int var30;
+                                                                if (var23 + var26 < JagGraphics.drawingAreaTop && var29.insetY > 0) {
+                                                                    var30 = (JagGraphics.drawingAreaTop - var23 - var26) * client.anInt972 / 3;
+                                                                    if (var30 > client.anInt972 * 10) {
+                                                                        var30 = client.anInt972 * 10;
+                                                                    }
+
+                                                                    if (var30 > var29.insetY) {
+                                                                        var30 = var29.insetY;
+                                                                    }
+
+                                                                    var29.insetY -= var30;
+                                                                    client.draggingComponentY += var30;
+                                                                    repaint(var29);
+                                                                }
+
+                                                                if (var23 + var26 + 32 > JagGraphics.drawingAreaRight && var29.insetY < var29.viewportHeight - var29.height) {
+                                                                    var30 = (var26 + var23 + 32 - JagGraphics.drawingAreaRight) * client.anInt972 / 3;
+                                                                    if (var30 > client.anInt972 * 10) {
+                                                                        var30 = client.anInt972 * 10;
+                                                                    }
+
+                                                                    if (var30 > var29.viewportHeight - var29.height - var29.insetY) {
+                                                                        var30 = var29.viewportHeight - var29.height - var29.insetY;
+                                                                    }
+
+                                                                    var29.insetY += var30;
+                                                                    client.draggingComponentY -= var30;
+                                                                    repaint(var29);
+                                                                }
+                                                            }
+                                                        } else if (component == StockMarketOfferWorldComparator.anInterfaceComponent351 && var19 == client.anInt1015) {
+                                                            var28.method832(var22, var23, 128);
+                                                        } else {
+                                                            var28.renderAlphaAt(var22, var23);
+                                                        }
+                                                    } else {
+                                                        repaint(component);
+                                                    }
+                                                }
+                                            }
+
+                                            ++var19;
+                                        }
+                                    }
+                                } else if (component.type == 3) {
+                                    if (Projectile.method1192(component)) {
+                                        var19 = component.enabledForeground;
+                                        if (component == OldConnection.hoveredComponent && component.enabledHoverForeground != 0) {
+                                            var19 = component.enabledHoverForeground;
+                                        }
+                                    } else {
+                                        var19 = component.foreground;
+                                        if (component == OldConnection.hoveredComponent && component.hoverForeground != 0) {
+                                            var19 = component.hoverForeground;
+                                        }
+                                    }
+
+                                    if (component.filled) {
+                                        switch (component.fillType.type) {
+                                            case 1:
+                                                JagGraphics.method1376(absoluteX, absoluteY, component.width, component.height, component.foreground, component.enabledForeground);
+                                                break;
+                                            case 2:
+                                                JagGraphics.method1359(absoluteX, absoluteY, component.width, component.height, component.foreground, component.enabledForeground, 255 - (component.alpha & 255), 255 - (component.enabledAlpha & 255));
+                                                break;
+                                            default:
+                                                if (alpha == 0) {
+                                                    JagGraphics.fillRect(absoluteX, absoluteY, component.width, component.height, var19);
+                                                } else {
+                                                    JagGraphics.method1370(absoluteX, absoluteY, component.width, component.height, var19, 256 - (alpha & 255));
+                                                }
+                                        }
+                                    } else if (alpha == 0) {
+                                        JagGraphics.method1372(absoluteX, absoluteY, component.width, component.height, var19);
+                                    } else {
+                                        JagGraphics.drawRect(absoluteX, absoluteY, component.width, component.height, var19, 256 - (alpha & 255));
+                                    }
+                                } else {
+                                    Font var37;
+                                    if (component.type == 4) {
+                                        var37 = component.method957();
+                                        if (var37 == null) {
+                                            if (forceRepaint) {
+                                                repaint(component);
+                                            }
+                                        } else {
+                                            String var45 = component.text;
+                                            if (Projectile.method1192(component)) {
+                                                var20 = component.enabledForeground;
+                                                if (component == OldConnection.hoveredComponent && component.enabledHoverForeground != 0) {
+                                                    var20 = component.enabledHoverForeground;
+                                                }
+
+                                                if (component.enabledText.length() > 0) {
+                                                    var45 = component.enabledText;
+                                                }
+                                            } else {
+                                                var20 = component.foreground;
+                                                if (component == OldConnection.hoveredComponent && component.hoverForeground != 0) {
+                                                    var20 = component.hoverForeground;
+                                                }
+                                            }
+
+                                            if (component.format && component.itemId != -1) {
+                                                ItemDefinition var46 = ItemDefinition.get(component.itemId);
+                                                var45 = var46.name;
+                                                if (var45 == null) {
+                                                    var45 = "null";
+                                                }
+
+                                                if ((var46.stackable == 1 || component.itemStackSize != 1) && component.itemStackSize != -1) {
+                                                    var45 = client.getColorTags(16748608) + var45 + "</col>" + " " + 'x' + Server.method149(component.itemStackSize);
+                                                }
+                                            }
+
+                                            if (component == client.pleaseWaitComponent) {
+                                                var45 = "Please wait...";
+                                                var20 = component.foreground;
+                                            }
+
+                                            if (!component.format) {
+                                                var45 = method1005(var45, component);
+                                            }
+
+                                            var37.method1149(var45, absoluteX, absoluteY, component.width, component.height, var20, component.textShadowed ? 0 : -1, component.horizontalMargin, component.verticalMargin, component.textSpacing);
+                                        }
+                                    } else if (component.type == 5) {
+                                        Sprite var38;
+                                        if (!component.format) {
+                                            var38 = component.method958(Projectile.method1192(component));
+                                            if (var38 != null) {
+                                                var38.renderAlphaAt(absoluteX, absoluteY);
+                                            } else if (forceRepaint) {
+                                                repaint(component);
+                                            }
+                                        } else {
+                                            if (component.itemId != -1) {
+                                                var38 = ItemDefinition.getSprite(component.itemId, component.itemStackSize, component.borderThickness, component.shadowColor, component.itemStackSizeMode, false);
+                                            } else {
+                                                var38 = component.method958(false);
+                                            }
+
+                                            if (var38 == null) {
+                                                if (forceRepaint) {
+                                                    repaint(component);
+                                                }
+                                            } else {
+                                                var20 = var38.anInt112;
+                                                var21 = var38.anInt375;
+                                                if (!component.tileSprites) {
+                                                    var22 = component.width * 4096 / var20;
+                                                    if (component.spriteId != 0) {
+                                                        var38.method824(component.width / 2 + absoluteX, component.height / 2 + absoluteY, component.spriteId, var22);
+                                                    } else if (alpha != 0) {
+                                                        var38.method818(absoluteX, absoluteY, component.width, component.height, 256 - (alpha & 255));
+                                                    } else if (var20 == component.width && var21 == component.height) {
+                                                        var38.renderAlphaAt(absoluteX, absoluteY);
+                                                    } else {
+                                                        var38.method807(absoluteX, absoluteY, component.width, component.height);
+                                                    }
+                                                } else {
+                                                    JagGraphics.method1364(absoluteX, absoluteY, absoluteX + component.width, absoluteY + component.height);
+                                                    var22 = (var20 - 1 + component.width) / var20;
+                                                    var23 = (var21 - 1 + component.height) / var21;
+
+                                                    for (var25 = 0; var25 < var22; ++var25) {
+                                                        for (var26 = 0; var26 < var23; ++var26) {
+                                                            if (component.spriteId != 0) {
+                                                                var38.method824(var20 / 2 + absoluteX + var25 * var20, var21 / 2 + absoluteY + var26 * var21, component.spriteId, 4096);
+                                                            } else if (alpha != 0) {
+                                                                var38.method832(absoluteX + var25 * var20, absoluteY + var26 * var21, 256 - (alpha & 255));
+                                                            } else {
+                                                                var38.renderAlphaAt(absoluteX + var25 * var20, absoluteY + var26 * var21);
+                                                            }
+                                                        }
+                                                    }
+
+                                                    JagGraphics.setClip(absoluteX, absoluteY, width, height);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        ItemDefinition var34;
+                                        if (component.type == 6) {
+                                            boolean var36 = Projectile.method1192(component);
+                                            if (var36) {
+                                                var20 = component.enabledAnimation;
+                                            } else {
+                                                var20 = component.animation;
+                                            }
+
+                                            Model var42 = null;
+                                            var22 = 0;
+                                            if (component.itemId != -1) {
+                                                var34 = ItemDefinition.get(component.itemId);
+                                                if (var34 != null) {
+                                                    var34 = var34.method519(component.itemStackSize);
+                                                    var42 = var34.getModel(1);
+                                                    if (var42 != null) {
+                                                        var42.computeBounds();
+                                                        var22 = var42.height / 2;
+                                                    } else {
+                                                        repaint(component);
+                                                    }
+                                                }
+                                            } else if (component.modelType == 5) {
+                                                if (component.modelId == 0) {
+                                                    var42 = client.renderedAppearance.getModel(null, -1, null, -1);
+                                                } else {
+                                                    var42 = PlayerEntity.local.getModel();
+                                                }
+                                            } else if (var20 == -1) {
+                                                var42 = component.method956(null, -1, var36, PlayerEntity.local.model);
+                                                if (var42 == null && forceRepaint) {
+                                                    repaint(component);
+                                                }
+                                            } else {
+                                                AnimationSequence var47 = AnimationSequence.get(var20);
+                                                var42 = component.method956(var47, component.animationFrame, var36, PlayerEntity.local.model);
+                                                if (var42 == null && forceRepaint) {
+                                                    repaint(component);
+                                                }
+                                            }
+
+                                            JagGraphics3D.method637(component.width / 2 + absoluteX, component.height / 2 + absoluteY);
+                                            var23 = JagGraphics3D.SIN_TABLE[component.xRotation] * component.modelZoom >> 16;
+                                            var25 = JagGraphics3D.COS_TABLE[component.xRotation] * component.modelZoom >> 16;
+                                            if (var42 != null) {
+                                                if (!component.format) {
+                                                    var42.method1289(0, component.zRotation, 0, component.xRotation, 0, var23, var25);
+                                                } else {
+                                                    var42.computeBounds();
+                                                    if (component.perpendicular) {
+                                                        var42.method1287(0, component.zRotation, component.yRotation, component.xRotation, component.modelOffsetX, var22 + var23 + component.modelOffsetY, var25 + component.modelOffsetY, component.modelZoom);
+                                                    } else {
+                                                        var42.method1289(0, component.zRotation, component.yRotation, component.xRotation, component.modelOffsetX, var23 + var22 + component.modelOffsetY, var25 + component.modelOffsetY);
+                                                    }
+                                                }
+                                            }
+
+                                            JagGraphics3D.method23();
+                                        } else {
+                                            if (component.type == 7) {
+                                                var37 = component.method957();
+                                                if (var37 == null) {
+                                                    if (forceRepaint) {
+                                                        repaint(component);
+                                                    }
+                                                    continue;
+                                                }
+
+                                                var20 = 0;
+
+                                                for (var21 = 0; var21 < component.baseHeight; ++var21) {
+                                                    for (var22 = 0; var22 < component.baseWidth; ++var22) {
+                                                        if (component.itemIds[var20] > 0) {
+                                                            var34 = ItemDefinition.get(component.itemIds[var20] - 1);
+                                                            String var31;
+                                                            if (var34.stackable != 1 && component.itemStackSizes[var20] == 1) {
+                                                                var31 = client.getColorTags(16748608) + var34.name + "</col>";
+                                                            } else {
+                                                                var31 = client.getColorTags(16748608) + var34.name + "</col>" + " " + 'x' + Server.method149(component.itemStackSizes[var20]);
+                                                            }
+
+                                                            var26 = absoluteX + var22 * (component.xPadding + 115);
+                                                            var27 = absoluteY + (component.yPadding + 12) * var21;
+                                                            if (component.horizontalMargin == 0) {
+                                                                var37.drawString(var31, var26, var27, component.foreground, component.textShadowed ? 0 : -1);
+                                                            } else if (component.horizontalMargin == 1) {
+                                                                var37.method1154(var31, component.width / 2 + var26, var27, component.foreground, component.textShadowed ? 0 : -1);
+                                                            } else {
+                                                                var37.method1151(var31, var26 + component.width - 1, var27, component.foreground, component.textShadowed ? 0 : -1);
+                                                            }
+                                                        }
+
+                                                        ++var20;
+                                                    }
+                                                }
+                                            }
+
+                                            if (component.type == 8 && component == Statics24.anInterfaceComponent1417 && client.anInt1041 == client.anInt1036) {
+                                                var19 = 0;
+                                                var20 = 0;
+                                                Font var32 = BootSprites.font_p12full;
+                                                String var33 = component.text;
+
+                                                String var44;
+                                                for (var33 = method1005(var33, component); var33.length() > 0; var20 = var20 + var32.anInt375 + 1) {
+                                                    var25 = var33.indexOf("<br>");
+                                                    if (var25 != -1) {
+                                                        var44 = var33.substring(0, var25);
+                                                        var33 = var33.substring(var25 + 4);
+                                                    } else {
+                                                        var44 = var33;
+                                                        var33 = "";
+                                                    }
+
+                                                    var26 = var32.textWidth(var44);
+                                                    if (var26 > var19) {
+                                                        var19 = var26;
+                                                    }
+                                                }
+
+                                                var19 += 6;
+                                                var20 += 7;
+                                                var25 = absoluteX + component.width - 5 - var19;
+                                                var26 = absoluteY + component.height + 5;
+                                                if (var25 < absoluteX + 5) {
+                                                    var25 = absoluteX + 5;
+                                                }
+
+                                                if (var25 + var19 > width) {
+                                                    var25 = width - var19;
+                                                }
+
+                                                if (var26 + var20 > height) {
+                                                    var26 = height - var20;
+                                                }
+
+                                                JagGraphics.fillRect(var25, var26, var19, var20, 16777120);
+                                                JagGraphics.method1372(var25, var26, var19, var20, 0);
+                                                var33 = component.text;
+                                                var27 = var26 + var32.anInt375 + 2;
+
+                                                for (var33 = method1005(var33, component); var33.length() > 0; var27 = var27 + var32.anInt375 + 1) {
+                                                    int var35 = var33.indexOf("<br>");
+                                                    if (var35 != -1) {
+                                                        var44 = var33.substring(0, var35);
+                                                        var33 = var33.substring(var35 + 4);
+                                                    } else {
+                                                        var44 = var33;
+                                                        var33 = "";
+                                                    }
+
+                                                    var32.drawString(var44, var25 + 3, var27, 0, -1);
+                                                }
+                                            }
+
+                                            if (component.type == 9) {
+                                                if (component.invertDivider) {
+                                                    var19 = absoluteX;
+                                                    var20 = absoluteY + component.height;
+                                                    var21 = absoluteX + component.width;
+                                                    var22 = absoluteY;
+                                                } else {
+                                                    var19 = absoluteX;
+                                                    var20 = absoluteY;
+                                                    var21 = absoluteX + component.width;
+                                                    var22 = absoluteY + component.height;
+                                                }
+
+                                                if (component.lineWidth == 1) {
+                                                    JagGraphics.drawDiagonalLine(var19, var20, var21, var22, component.foreground);
+                                                } else {
+                                                    DefaultAudioSystemProvider.method98(var19, var20, var21, var22, component.foreground, component.lineWidth);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static String method1005(String str, InterfaceComponent component) {
+        if (str.contains("%")) {
+            for (int i = 1; i <= 5; ++i) {
                 while (true) {
-                    int var3 = var0.indexOf("%" + var2);
-                    if (var3 == -1) {
+                    int index = str.indexOf("%" + i);
+                    if (index == -1) {
                         break;
                     }
 
-                    String var4 = var0.substring(0, var3);
-                    int var5 = Statics21.method922(var1, var2 - 1);
-                    String var6;
-                    if (var5 < 999999999) {
-                        var6 = Integer.toString(var5);
+                    String prefix = str.substring(0, index);
+                    int value = processCs1(component, i - 1);
+                    String infix;
+                    if (value < 999999999) {
+                        infix = Integer.toString(value);
                     } else {
-                        var6 = "*";
+                        infix = "*";
                     }
 
-                    var0 = var4 + var6 + var0.substring(var3 + 2);
+                    str = prefix + infix + str.substring(index + 2);
                 }
             }
         }
-
-        return var0;
+        return str;
     }
 
-    public static void method513(InterfaceComponent[] var0, int var1) {
-        for (InterfaceComponent var3 : var0) {
-            if (var3 != null && var3.parentUid == var1 && (!var3.aBoolean562 || !isExplicitlyHidden(var3))) {
-                int var5;
-                if (var3.type == 0) {
-                    if (!var3.aBoolean562 && isExplicitlyHidden(var3) && var3 != OldConnection.anInterfaceComponent873) {
+    public static void method513(InterfaceComponent[] group, int parentUid) {
+        for (InterfaceComponent component : group) {
+            if (component != null && component.parentUid == parentUid
+                    && (!component.format || !isExplicitlyHidden(component))) {
+                int animationId;
+                if (component.type == 0) {
+                    if (!component.format && isExplicitlyHidden(component) && component != OldConnection.hoveredComponent) {
                         continue;
                     }
 
-                    method513(var0, var3.uid);
-                    if (var3.components != null) {
-                        method513(var3.components, var3.uid);
+                    method513(group, component.uid);
+                    if (component.subcomponents != null) {
+                        method513(component.subcomponents, component.uid);
                     }
 
-                    SubInterface var7 = client.subInterfaces.lookup(var3.uid);
-                    if (var7 != null) {
-                        var5 = var7.id;
-                        if (load(var5)) {
-                            method513(client.interfaces[var5], -1);
+                    SubInterface sub = client.subInterfaces.lookup(component.uid);
+                    if (sub != null) {
+                        animationId = sub.id;
+                        if (load(animationId)) {
+                            method513(client.interfaces[animationId], -1);
                         }
                     }
                 }
 
-                if (var3.type == 6) {
-                    if (var3.anInt1357 != -1 || var3.anInt1353 != -1) {
-                        boolean var4 = Projectile.method1192(var3);
+                if (component.type == 6) {
+                    if (component.animation != -1 || component.enabledAnimation != -1) {
+                        boolean var4 = Projectile.method1192(component);
                         if (var4) {
-                            var5 = var3.anInt1353;
+                            animationId = component.enabledAnimation;
                         } else {
-                            var5 = var3.anInt1357;
+                            animationId = component.animation;
                         }
 
-                        if (var5 != -1) {
-                            AnimationSequence var6 = AnimationSequence.get(var5);
+                        if (animationId != -1) {
+                            AnimationSequence animation = AnimationSequence.get(animationId);
 
-                            for (var3.anInt1401 += client.anInt972; var3.anInt1401 > var6.frameLengths[var3.anInt1389]; repaint(var3)) {
-                                var3.anInt1401 -= var6.frameLengths[var3.anInt1389];
-                                ++var3.anInt1389;
-                                if (var3.anInt1389 >= var6.frameIds.length) {
-                                    var3.anInt1389 -= var6.loopOffset;
-                                    if (var3.anInt1389 < 0 || var3.anInt1389 >= var6.frameIds.length) {
-                                        var3.anInt1389 = 0;
+                            for (component.animationFrameCycle += client.anInt972; component.animationFrameCycle > animation.frameLengths[component.animationFrame]; repaint(component)) {
+                                component.animationFrameCycle -= animation.frameLengths[component.animationFrame];
+                                ++component.animationFrame;
+                                if (component.animationFrame >= animation.frameIds.length) {
+                                    component.animationFrame -= animation.loopOffset;
+                                    if (component.animationFrame < 0 || component.animationFrame >= animation.frameIds.length) {
+                                        component.animationFrame = 0;
                                     }
                                 }
                             }
                         }
                     }
 
-                    if (var3.anInt1351 != 0 && !var3.aBoolean562) {
-                        int var8 = var3.anInt1351 >> 16;
-                        var5 = var3.anInt1351 << 16 >> 16;
+                    if (component.rotationKey != 0 && !component.format) {
+                        int var8 = component.rotationKey >> 16;
+                        animationId = component.rotationKey << 16 >> 16;
                         var8 *= client.anInt972;
-                        var5 *= client.anInt972;
-                        var3.xRotation = var8 + var3.xRotation & 2047;
-                        var3.zRotation = var5 + var3.zRotation & 2047;
-                        repaint(var3);
+                        animationId *= client.anInt972;
+                        component.xRotation = var8 + component.xRotation & 2047;
+                        component.zRotation = animationId + component.zRotation & 2047;
+                        repaint(component);
                     }
                 }
             }
@@ -464,104 +1096,101 @@ public class InterfaceComponent extends Node {
 
     }
 
-    public static void method830(int var0) {
-        if (var0 != -1) {
-            if (Statics2.validInterfaces[var0]) {
-                aReferenceTable1375.method914(var0);
-                if (client.interfaces[var0] != null) {
-                    boolean var1 = true;
+    public static void method830(int i) {
+        if (i != -1) {
+            if (Statics2.validInterfaces[i]) {
+                aReferenceTable1375.method914(i);
+                if (client.interfaces[i] != null) {
+                    boolean bool = true;
 
-                    for (int var2 = 0; var2 < client.interfaces[var0].length; ++var2) {
-                        if (client.interfaces[var0][var2] != null) {
-                            if (client.interfaces[var0][var2].type != 2) {
-                                client.interfaces[var0][var2] = null;
+                    for (int j = 0; j < client.interfaces[i].length; ++j) {
+                        if (client.interfaces[i][j] != null) {
+                            if (client.interfaces[i][j].type != 2) {
+                                client.interfaces[i][j] = null;
                             } else {
-                                var1 = false;
+                                bool = false;
                             }
                         }
                     }
 
-                    if (var1) {
-                        client.interfaces[var0] = null;
+                    if (bool) {
+                        client.interfaces[i] = null;
                     }
 
-                    Statics2.validInterfaces[var0] = false;
+                    Statics2.validInterfaces[i] = false;
                 }
             }
         }
     }
 
-    public static boolean load(int var0) {
-        if (Statics2.validInterfaces[var0]) {
+    public static boolean load(int group) {
+        if (Statics2.validInterfaces[group]) {
             return true;
         }
-        if (!aReferenceTable1375.method911(var0)) {
+        if (!aReferenceTable1375.method911(group)) {
             return false;
         }
-        int var1 = aReferenceTable1375.method901(var0);
-        if (var1 == 0) {
-            Statics2.validInterfaces[var0] = true;
+        int componentCount = aReferenceTable1375.getFileCount(group);
+        if (componentCount == 0) {
+            Statics2.validInterfaces[group] = true;
             return true;
         }
-        if (client.interfaces[var0] == null) {
-            client.interfaces[var0] = new InterfaceComponent[var1];
+        if (client.interfaces[group] == null) {
+            client.interfaces[group] = new InterfaceComponent[componentCount];
         }
 
-        for (int var2 = 0; var2 < var1; ++var2) {
-            if (client.interfaces[var0][var2] == null) {
-                byte[] var3 = aReferenceTable1375.unpack(var0, var2);
-                if (var3 != null) {
-                    client.interfaces[var0][var2] = new InterfaceComponent();
-                    client.interfaces[var0][var2].uid = var2 + (var0 << 16);
-                    if (var3[0] == -1) {
-                        client.interfaces[var0][var2].method963(new Buffer(var3));
+        for (int i = 0; i < componentCount; ++i) {
+            if (client.interfaces[group][i] == null) {
+                byte[] data = aReferenceTable1375.unpack(group, i);
+                if (data != null) {
+                    client.interfaces[group][i] = new InterfaceComponent();
+                    client.interfaces[group][i].uid = i + (group << 16);
+                    if (data[0] == -1) {
+                        client.interfaces[group][i].decode(new Buffer(data));
                     } else {
-                        client.interfaces[var0][var2].method962(new Buffer(var3));
+                        client.interfaces[group][i].decodeOldFormat(new Buffer(data));
                     }
                 }
             }
         }
 
-        Statics2.validInterfaces[var0] = true;
+        Statics2.validInterfaces[group] = true;
         return true;
     }
 
-    public static void method146(int var0) {
-        if (load(var0)) {
-            InterfaceComponent[] var1 = client.interfaces[var0];
-
-            for (InterfaceComponent var3 : var1) {
-                if (var3 != null) {
-                    var3.anInt1389 = 0;
-                    var3.anInt1401 = 0;
+    public static void loadAnimable(int group) {
+        if (load(group)) {
+            InterfaceComponent[] components = client.interfaces[group];
+            for (InterfaceComponent component : components) {
+                if (component != null) {
+                    component.animationFrame = 0;
+                    component.animationFrameCycle = 0;
                 }
             }
-
         }
     }
 
-    public static void repaint(InterfaceComponent var0) {
-        if (var0.renderCycle == client.anInt1084) {
-            client.renderedComponents[var0.boundsIndex] = true;
+    public static void repaint(InterfaceComponent component) {
+        if (component.renderCycle == client.anInt1084) {
+            client.renderedComponents[component.boundsIndex] = true;
         }
-
     }
 
-    public static void method118(int var0, int var1) {
-        if (load(var0)) {
-            MouseRecorder.method265(client.interfaces[var0], var1);
+    public static void method118(int group, int var1) {
+        if (load(group)) {
+            MouseRecorder.method265(client.interfaces[group], var1);
         }
     }
 
     public static void processAction(int actionIndex, int uid, int subcomponent, int itemId, String actionText) {
         InterfaceComponent component = lookup(uid, subcomponent);
         if (component != null) {
-            if (component.mousePressListeners != null) {
+            if (component.cs2Listeners != null) {
                 ScriptEvent event = new ScriptEvent();
-                event.source = component;
+                event.component = component;
                 event.actionIndex = actionIndex;
                 event.opbase = actionText;
-                event.args = component.mousePressListeners;
+                event.args = component.cs2Listeners;
                 ScriptEvent.fire(event);
             }
 
@@ -577,83 +1206,83 @@ public class InterfaceComponent extends Node {
                 if (actionEnabled) {
                     OutgoingPacket packet;
                     if (actionIndex == 1) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_0, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_0, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 2) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_1, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_1, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 3) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_2, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_2, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 4) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_3, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_3, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 5) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_4, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_4, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 6) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_5, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_5, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 7) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_6, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_6, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 8) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_7, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_7, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 9) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_8, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_8, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
 
                     if (actionIndex == 10) {
-                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_9, client.connectionContext.encryptor);
-                        packet.buffer.writeInt(uid);
-                        packet.buffer.writeShort(subcomponent);
-                        packet.buffer.writeShort(itemId);
-                        client.connectionContext.writeLater(packet);
+                        packet = OutgoingPacket.prepare(OutgoingPacketMeta.INTERFACE_ACTION_9, client.netWriter.encryptor);
+                        packet.buffer.p4(uid);
+                        packet.buffer.p2(subcomponent);
+                        packet.buffer.p2(itemId);
+                        client.netWriter.writeLater(packet);
                     }
                 }
             }
@@ -661,22 +1290,22 @@ public class InterfaceComponent extends Node {
     }
 
     public static void method177(InterfaceComponent var0, int var1, int var2, int var3, int var4, int var5, int var6) {
-        if (client.aBoolean984) {
-            client.anInt976 = 32;
+        if (client.useDefaultScrollbar) {
+            client.scrollbarWidth = 32;
         } else {
-            client.anInt976 = 0;
+            client.scrollbarWidth = 0;
         }
 
-        client.aBoolean984 = false;
+        client.useDefaultScrollbar = false;
         int var7;
-        if (Mouse.pressMeta == 1 || !WorldMapIcon_Sub1.aBoolean492 && Mouse.pressMeta == 4) {
+        if (Mouse.pressMeta == 1 || !WorldMapObjectIcon.mouseCameraEnabled && Mouse.pressMeta == 4) {
             if (var5 >= var1 && var5 < var1 + 16 && var6 >= var2 && var6 < var2 + 16) {
                 var0.insetY -= 4;
                 repaint(var0);
             } else if (var5 >= var1 && var5 < var1 + 16 && var6 >= var3 + var2 - 16 && var6 < var3 + var2) {
                 var0.insetY += 4;
                 repaint(var0);
-            } else if (var5 >= var1 - client.anInt976 && var5 < client.anInt976 + var1 + 16 && var6 >= var2 + 16 && var6 < var3 + var2 - 16) {
+            } else if (var5 >= var1 - client.scrollbarWidth && var5 < client.scrollbarWidth + var1 + 16 && var6 >= var2 + 16 && var6 < var3 + var2 - 16) {
                 var7 = var3 * (var3 - 32) / var4;
                 if (var7 < 8) {
                     var7 = 8;
@@ -686,14 +1315,14 @@ public class InterfaceComponent extends Node {
                 int var9 = var3 - 32 - var7;
                 var0.insetY = var8 * (var4 - var3) / var9;
                 repaint(var0);
-                client.aBoolean984 = true;
+                client.useDefaultScrollbar = true;
             }
         }
 
-        if (client.anInt1086 != 0) {
+        if (client.mouseWheelPtr != 0) {
             var7 = var0.width;
             if (var5 >= var1 - var7 && var6 >= var2 && var5 < var1 + 16 && var6 <= var3 + var2) {
-                var0.insetY += client.anInt1086 * 45;
+                var0.insetY += client.mouseWheelPtr * 45;
                 repaint(var0);
             }
         }
@@ -703,28 +1332,28 @@ public class InterfaceComponent extends Node {
     public static void method728(InterfaceComponent var0, int var1, int var2, boolean var3) {
         int var4 = var0.width;
         int var5 = var0.height;
-        if (var0.anInt1369 == 0) {
-            var0.width = var0.anInt694;
-        } else if (var0.anInt1369 == 1) {
-            var0.width = var1 - var0.anInt694;
-        } else if (var0.anInt1369 == 2) {
-            var0.width = var0.anInt694 * var1 >> 14;
+        if (var0.xAlignment == 0) {
+            var0.width = var0.baseWidth;
+        } else if (var0.xAlignment == 1) {
+            var0.width = var1 - var0.baseWidth;
+        } else if (var0.xAlignment == 2) {
+            var0.width = var0.baseWidth * var1 >> 14;
         }
 
-        if (var0.anInt695 == 0) {
-            var0.height = var0.anInt1105;
-        } else if (var0.anInt695 == 1) {
-            var0.height = var2 - var0.anInt1105;
-        } else if (var0.anInt695 == 2) {
-            var0.height = var2 * var0.anInt1105 >> 14;
+        if (var0.yAlignment == 0) {
+            var0.height = var0.baseHeight;
+        } else if (var0.yAlignment == 1) {
+            var0.height = var2 - var0.baseHeight;
+        } else if (var0.yAlignment == 2) {
+            var0.height = var2 * var0.baseHeight >> 14;
         }
 
-        if (var0.anInt1369 == 4) {
-            var0.width = var0.anInt711 * var0.height / var0.anInt709;
+        if (var0.xAlignment == 4) {
+            var0.width = var0.scaleX * var0.height / var0.scaleY;
         }
 
-        if (var0.anInt695 == 4) {
-            var0.height = var0.anInt709 * var0.width / var0.anInt711;
+        if (var0.yAlignment == 4) {
+            var0.height = var0.scaleY * var0.width / var0.scaleX;
         }
 
         if (var0.contentType == 1337) {
@@ -733,7 +1362,7 @@ public class InterfaceComponent extends Node {
 
         if (var3 && var0.anObjectArray1400 != null && (var4 != var0.width || var5 != var0.height)) {
             ScriptEvent var6 = new ScriptEvent();
-            var6.source = var0;
+            var6.component = var0;
             var6.args = var0.anObjectArray1400;
             client.aNodeDeque1082.add(var6);
         }
@@ -836,474 +1465,704 @@ public class InterfaceComponent extends Node {
                 }
 
                 if (var6.type == 0) {
-                    GameEngine.method925(var0, var6, var4);
+                    GameShell.method925(var0, var6, var4);
                 }
             }
         }
 
     }
 
-    public static String method612(InterfaceComponent var0, int var1) {
+    public static String getAction(InterfaceComponent var0, int var1) {
         int var2 = getConfig(var0);
         boolean var3 = (var2 >> var1 + 1 & 1) != 0;
-        if (!var3 && var0.mousePressListeners == null) {
+        if (!var3 && var0.cs2Listeners == null) {
             return null;
         }
         return var0.actions != null && var0.actions.length > var1 && var0.actions[var1] != null && var0.actions[var1].trim().length() != 0 ? var0.actions[var1] : null;
     }
 
-    public Sprite method958(boolean var1) {
-        aBoolean1151 = false;
-        int var2;
-        if (var1) {
-            var2 = this.enabledMaterialId;
-        } else {
-            var2 = this.materialId;
-        }
-
-        if (var2 == -1) {
+    public static String getSelectedAction(InterfaceComponent var0) {
+        if (SerializableLong.getComponentSpellTargets(getConfig(var0)) == 0) {
             return null;
         }
-        long var3 = ((long) this.shadowColor << 40) + ((this.flippedHorizontally ? 1L : 0L) << 39) + (long) var2 + ((long) this.borderThickness << 36) + ((this.flippedVertically ? 1L : 0L) << 38);
-        Sprite var5 = (Sprite) aReferenceCache1370.get(var3);
-        if (var5 != null) {
-            return var5;
-        }
-        var5 = Sprite.get(ClientPreferences.aReferenceTable364, var2, 0);
-        if (var5 == null) {
-            aBoolean1151 = true;
-            return null;
-        }
-        if (this.flippedVertically) {
-            var5.method828();
-        }
-
-        if (this.flippedHorizontally) {
-            var5.method827();
-        }
-
-        if (this.borderThickness > 0) {
-            var5.method830(this.borderThickness);
-        }
-
-        if (this.borderThickness >= 1) {
-            var5.method822(1);
-        }
-
-        if (this.borderThickness >= 2) {
-            var5.method822(16777215);
-        }
-
-        if (this.shadowColor != 0) {
-            var5.method835(this.shadowColor);
-        }
-
-        aReferenceCache1370.put(var5, var3);
-        return var5;
+        return var0.selectedAction != null && var0.selectedAction.trim().length() != 0 ? var0.selectedAction : null;
     }
 
-    public void method962(Buffer var1) {
-        this.aBoolean562 = false;
-        this.type = var1.readUByte();
-        this.buttonType = var1.readUByte();
-        this.contentType = var1.readUShort();
-        this.xMargin = var1.method1029();
-        this.yMargin = var1.method1029();
-        this.anInt694 = var1.readUShort();
-        this.anInt1105 = var1.readUShort();
-        this.alpha = var1.readUByte();
-        this.parentUid = var1.readUShort();
-        if (this.parentUid == 65535) {
-            this.parentUid = -1;
-        } else {
-            this.parentUid += this.uid & -65536;
+    public static void close(SubInterface itf, boolean updated) {
+        int id = itf.id;
+        int key = (int) itf.key;
+        itf.unlink();
+        if (updated) {
+            method830(id);
         }
 
-        this.anInt1402 = var1.readUShort();
-        if (this.anInt1402 == 65535) {
-            this.anInt1402 = -1;
-        }
-
-        int var2 = var1.readUByte();
-        int var3;
-        if (var2 > 0) {
-            this.anIntArray1392 = new int[var2];
-            this.anIntArray1395 = new int[var2];
-
-            for (var3 = 0; var3 < var2; ++var3) {
-                this.anIntArray1392[var3] = var1.readUByte();
-                this.anIntArray1395[var3] = var1.readUShort();
+        for (IntegerNode cfg = client.interfaceConfigs.head(); cfg != null; cfg = client.interfaceConfigs.next()) {
+            if ((long) id == (cfg.key >> 48 & 0xffffL)) {
+                cfg.unlink();
             }
         }
 
-        var3 = var1.readUByte();
-        int var4;
-        int var5;
-        int var6;
-        if (var3 > 0) {
-            this.functionOpcodes = new int[var3][];
+        InterfaceComponent cmp = lookup(key);
+        if (cmp != null) {
+            repaint(cmp);
+        }
 
-            for (var4 = 0; var4 < var3; ++var4) {
-                var5 = var1.readUShort();
-                this.functionOpcodes[var4] = new int[var5];
+        SecureRandomService.method317();
+        if (client.rootInterfaceIndex != -1) {
+            method118(client.rootInterfaceIndex, 1);
+        }
 
-                for (var6 = 0; var6 < var5; ++var6) {
-                    this.functionOpcodes[var4][var6] = var1.readUShort();
-                    if (this.functionOpcodes[var4][var6] == 65535) {
-                        this.functionOpcodes[var4][var6] = -1;
+    }
+
+    public static void drag(InterfaceComponent component, int var1, int var2) {
+        if (client.draggedComponent == null && !ContextMenu.open) {
+            if (component != null) {
+                InterfaceComponent parent = getTopLevelComponent(component);
+                if (parent == null) {
+                    parent = component.parent;
+                }
+
+                if (parent != null) {
+                    client.draggedComponent = component;
+                    parent = getTopLevelComponent(component);
+                    if (parent == null) {
+                        parent = component.parent;
+                    }
+
+                    client.topLevelOfDraggedComponent = parent;
+                    client.currentComponentDragX = var1;
+                    client.currentComponentDragY = var2;
+                    Statics2.anInt654 = 0;
+                    client.aBoolean1062 = false;
+                    int var5 = AssociateComparatorByRank.getMaximumMenuRowIndex();
+                    if (var5 != -1) {
+                        DefinitionProperty.method516(var5);
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    public static void loadAndInitialize(int var0) {
+        if (var0 != -1) {
+            if (load(var0)) {
+                InterfaceComponent[] var1 = client.interfaces[var0];
+
+                for (InterfaceComponent var3 : var1) {
+                    if (var3.initializationListeners != null) {
+                        ScriptEvent var4 = new ScriptEvent();
+                        var4.component = var3;
+                        var4.args = var3.initializationListeners;
+                        ScriptEvent.process(var4, 5000000);
+                    }
+                }
+
+            }
+        }
+    }
+
+    public static int processCs1(InterfaceComponent component, int cs1OpcodeIndex) {
+        if (component.cs1Opcodes != null && cs1OpcodeIndex < component.cs1Opcodes.length) {
+            try {
+                int[] opcodes = component.cs1Opcodes[cs1OpcodeIndex];
+                int accumulated = 0;
+                int ptr = 0;
+                byte operation = 0;
+
+                while (true) {
+                    int opcode = opcodes[ptr++];
+                    int value = 0;
+                    byte var8 = 0;
+                    if (opcode == 0) {
+                        return accumulated;
+                    }
+
+                    if (opcode == 1) {
+                        value = client.currentLevels[opcodes[ptr++]];
+                    }
+
+                    if (opcode == 2) {
+                        value = client.levels[opcodes[ptr++]];
+                    }
+
+                    if (opcode == 3) {
+                        value = client.experiences[opcodes[ptr++]];
+                    }
+
+                    int var9;
+                    InterfaceComponent var10;
+                    int var11;
+                    int var12;
+                    if (opcode == 4) {
+                        var9 = opcodes[ptr++] << 16;
+                        var9 += opcodes[ptr++];
+                        var10 = lookup(var9);
+                        var11 = opcodes[ptr++];
+                        if (var11 != -1 && (!ItemDefinition.get(var11).members || client.membersWorld)) {
+                            for (var12 = 0; var12 < var10.itemIds.length; ++var12) {
+                                if (var11 + 1 == var10.itemIds[var12]) {
+                                    value += var10.itemStackSizes[var12];
+                                }
+                            }
+                        }
+                    }
+
+                    if (opcode == 5) {
+                        value = Vars.values[opcodes[ptr++]];
+                    }
+
+                    if (opcode == 6) {
+                        value = Skills.EXP_TABLE[client.levels[opcodes[ptr++]] - 1];
+                    }
+
+                    if (opcode == 7) {
+                        value = Vars.values[opcodes[ptr++]] * 100 / 46875;
+                    }
+
+                    if (opcode == 8) {
+                        value = PlayerEntity.local.combatLevel;
+                    }
+
+                    if (opcode == 9) {
+                        for (var9 = 0; var9 < 25; ++var9) {
+                            if (Skills.ENABLED[var9]) {
+                                value += client.levels[var9];
+                            }
+                        }
+                    }
+
+                    if (opcode == 10) {
+                        var9 = opcodes[ptr++] << 16;
+                        var9 += opcodes[ptr++];
+                        var10 = lookup(var9);
+                        var11 = opcodes[ptr++];
+                        if (var11 != -1 && (!ItemDefinition.get(var11).members || client.membersWorld)) {
+                            for (var12 = 0; var12 < var10.itemIds.length; ++var12) {
+                                if (var11 + 1 == var10.itemIds[var12]) {
+                                    value = 999999999;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (opcode == 11) {
+                        value = client.energy;
+                    }
+
+                    if (opcode == 12) {
+                        value = client.weight;
+                    }
+
+                    if (opcode == 13) {
+                        var9 = Vars.values[opcodes[ptr++]];
+                        int var13 = opcodes[ptr++];
+                        value = (var9 & 1 << var13) != 0 ? 1 : 0;
+                    }
+
+                    if (opcode == 14) {
+                        var9 = opcodes[ptr++];
+                        value = Varbit.get(var9);
+                    }
+
+                    if (opcode == 15) {
+                        var8 = 1;
+                    }
+
+                    if (opcode == 16) {
+                        var8 = 2;
+                    }
+
+                    if (opcode == 17) {
+                        var8 = 3;
+                    }
+
+                    if (opcode == 18) {
+                        value = client.baseX + (PlayerEntity.local.absoluteX >> 7);
+                    }
+
+                    if (opcode == 19) {
+                        value = client.baseY + (PlayerEntity.local.absoluteY >> 7);
+                    }
+
+                    if (opcode == 20) {
+                        value = opcodes[ptr++];
+                    }
+
+                    if (var8 == 0) {
+                        if (operation == 0) {
+                            accumulated += value;
+                        }
+
+                        if (operation == 1) {
+                            accumulated -= value;
+                        }
+
+                        if (operation == 2 && value != 0) {
+                            accumulated /= value;
+                        }
+
+                        if (operation == 3) {
+                            accumulated *= value;
+                        }
+
+                        operation = 0;
+                    } else {
+                        operation = var8;
+                    }
+                }
+            } catch (Exception var14) {
+                return -1;
+            }
+        }
+        return -2;
+    }
+
+    public Sprite method958(boolean enabled) {
+        forceRepaint = false;
+
+        int material = enabled ? enabledMaterialId : materialId;
+        if (material == -1) {
+            return null;
+        }
+
+        long key = ((long) shadowColor << 40) + ((flippedHorizontally ? 1L : 0L) << 39) + (long) material + ((long) borderThickness << 36) + ((flippedVertically ? 1L : 0L) << 38);
+        Sprite sprite = sprites.get(key);
+        if (sprite != null) {
+            return sprite;
+        }
+
+        sprite = Sprite.get(aReferenceTable364, material, 0);
+        if (sprite == null) {
+            forceRepaint = true;
+            return null;
+        }
+        if (flippedVertically) {
+            sprite.method828();
+        }
+
+        if (flippedHorizontally) {
+            sprite.method827();
+        }
+
+        if (borderThickness > 0) {
+            sprite.method830(borderThickness);
+        }
+
+        if (borderThickness >= 1) {
+            sprite.method822(1);
+        }
+
+        if (borderThickness >= 2) {
+            sprite.method822(16777215);
+        }
+
+        if (shadowColor != 0) {
+            sprite.method835(shadowColor);
+        }
+
+        sprites.put(sprite, key);
+        return sprite;
+    }
+
+    public void decodeOldFormat(Buffer buffer) {
+        format = false;
+        type = buffer.g1();
+        buttonType = buffer.g1();
+        contentType = buffer.g2();
+        xMargin = buffer.g2b();
+        yMargin = buffer.g2b();
+        baseWidth = buffer.g2();
+        baseHeight = buffer.g2();
+        alpha = buffer.g1();
+        parentUid = buffer.g2();
+        if (parentUid == 0xffff) {
+            parentUid = -1;
+        } else {
+            parentUid += uid & 0xffff0000;
+        }
+
+        detour = buffer.g2();
+        if (detour == 0xffff) {
+            detour = -1;
+        }
+
+        int var2 = buffer.g1();
+        if (var2 > 0) {
+            cs1Types = new int[var2];
+            cs1Values = new int[var2];
+
+            for (int var3 = 0; var3 < var2; ++var3) {
+                cs1Types[var3] = buffer.g1();
+                cs1Values[var3] = buffer.g2();
+            }
+        }
+
+        int size = buffer.g1();
+        if (size > 0) {
+            cs1Opcodes = new int[size][];
+            for (int i = 0; i < size; ++i) {
+                int group = buffer.g2();
+                cs1Opcodes[i] = new int[group];
+                for (int j = 0; j < group; ++j) {
+                    cs1Opcodes[i][j] = buffer.g2();
+                    if (cs1Opcodes[i][j] == 0xffff) {
+                        cs1Opcodes[i][j] = -1;
                     }
                 }
             }
         }
 
-        if (this.type == 0) {
-            this.viewportHeight = var1.readUShort();
-            this.explicitlyHidden = var1.readUByte() == 1;
+        if (type == 0) {
+            viewportHeight = buffer.g2();
+            explicitlyHidden = buffer.g1() == 1;
         }
 
-        if (this.type == 1) {
-            var1.readUShort();
-            var1.readUByte();
+        if (type == 1) {
+            buffer.g2();
+            buffer.g1();
         }
 
-        if (this.type == 2) {
-            this.itemIds = new int[this.anInt694 * this.anInt1105];
-            this.itemStackSizes = new int[this.anInt1105 * this.anInt694];
-            var4 = var1.readUByte();
+        if (type == 2) {
+            itemIds = new int[baseWidth * baseHeight];
+            itemStackSizes = new int[baseHeight * baseWidth];
+            int var4 = buffer.g1();
             if (var4 == 1) {
-                this.config |= 268435456;
+                config |= 268435456;
             }
 
-            var5 = var1.readUByte();
+            int var5 = buffer.g1();
             if (var5 == 1) {
-                this.config |= 1073741824;
+                config |= 0x40000000;
             }
 
-            var6 = var1.readUByte();
+            int var6 = buffer.g1();
             if (var6 == 1) {
-                this.config |= Integer.MIN_VALUE;
+                config |= Integer.MIN_VALUE;
             }
 
-            int var7 = var1.readUByte();
+            int var7 = buffer.g1();
             if (var7 == 1) {
-                this.config |= 536870912;
+                config |= 0x20000000;
             }
 
-            this.xPadding = var1.readUByte();
-            this.yPadding = var1.readUByte();
-            this.xSprites = new int[20];
-            this.ySprites = new int[20];
-            this.anIntArray1371 = new int[20];
+            xPadding = buffer.g1();
+            yPadding = buffer.g1();
+            xSprites = new int[20];
+            ySprites = new int[20];
+            spriteIds = new int[20];
 
-            int var8;
-            for (var8 = 0; var8 < 20; ++var8) {
-                int var9 = var1.readUByte();
+            for (int i = 0; i < 20; ++i) {
+                int var9 = buffer.g1();
                 if (var9 == 1) {
-                    this.xSprites[var8] = var1.method1029();
-                    this.ySprites[var8] = var1.method1029();
-                    this.anIntArray1371[var8] = var1.readInt();
+                    xSprites[i] = buffer.g2b();
+                    ySprites[i] = buffer.g2b();
+                    spriteIds[i] = buffer.g4();
                 } else {
-                    this.anIntArray1371[var8] = -1;
+                    spriteIds[i] = -1;
                 }
             }
 
-            this.tableActions = new String[5];
-
-            for (var8 = 0; var8 < 5; ++var8) {
-                String var11 = var1.readString();
-                if (var11.length() > 0) {
-                    this.tableActions[var8] = var11;
-                    this.config |= 1 << var8 + 23;
+            tableActions = new String[5];
+            for (int i = 0; i < 5; ++i) {
+                String action = buffer.gstr();
+                if (action.length() > 0) {
+                    tableActions[i] = action;
+                    config |= 1 << i + 23;
                 }
             }
         }
 
-        if (this.type == 3) {
-            this.aBoolean1346 = var1.readUByte() == 1;
+        if (type == 3) {
+            filled = buffer.g1() == 1;
         }
 
-        if (this.type == 4 || this.type == 1) {
-            this.horizontalMargin = var1.readUByte();
-            this.verticalMargin = var1.readUByte();
-            this.textSpacing = var1.readUByte();
-            this.fontId = var1.readUShort();
-            if (this.fontId == 65535) {
-                this.fontId = -1;
+        if (type == 4 || type == 1) {
+            horizontalMargin = buffer.g1();
+            verticalMargin = buffer.g1();
+            textSpacing = buffer.g1();
+            fontId = buffer.g2();
+            if (fontId == 0xffff) {
+                fontId = -1;
             }
 
-            this.textShadowed = var1.readUByte() == 1;
+            textShadowed = buffer.g1() == 1;
         }
 
-        if (this.type == 4) {
-            this.text = var1.readString();
-            this.aString1373 = var1.readString();
+        if (type == 4) {
+            text = buffer.gstr();
+            enabledText = buffer.gstr();
         }
 
-        if (this.type == 1 || this.type == 3 || this.type == 4) {
-            this.textColor = var1.readInt();
+        if (type == 1 || type == 3 || type == 4) {
+            foreground = buffer.g4();
         }
 
-        if (this.type == 3 || this.type == 4) {
-            this.anInt1348 = var1.readInt();
-            this.anInt1345 = var1.readInt();
-            this.anInt1344 = var1.readInt();
+        if (type == 3 || type == 4) {
+            enabledForeground = buffer.g4();
+            hoverForeground = buffer.g4();
+            enabledHoverForeground = buffer.g4();
         }
 
-        if (this.type == 5) {
-            this.materialId = var1.readInt();
-            this.enabledMaterialId = var1.readInt();
+        if (type == 5) {
+            materialId = buffer.g4();
+            enabledMaterialId = buffer.g4();
         }
 
-        if (this.type == 6) {
-            this.modelType = 1;
-            this.modelId = var1.readUShort();
-            if (this.modelId == 65535) {
-                this.modelId = -1;
+        if (type == 6) {
+            modelType = 1;
+            modelId = buffer.g2();
+            if (modelId == 0xffff) {
+                modelId = -1;
             }
 
-            this.anInt1355 = 1;
-            this.anInt1350 = var1.readUShort();
-            if (this.anInt1350 == 65535) {
-                this.anInt1350 = -1;
+            enabledModelType = 1;
+            enabledModelId = buffer.g2();
+            if (enabledModelId == 0xffff) {
+                enabledModelId = -1;
             }
 
-            this.anInt1357 = var1.readUShort();
-            if (this.anInt1357 == 65535) {
-                this.anInt1357 = -1;
+            animation = buffer.g2();
+            if (animation == 0xffff) {
+                animation = -1;
             }
 
-            this.anInt1353 = var1.readUShort();
-            if (this.anInt1353 == 65535) {
-                this.anInt1353 = -1;
+            enabledAnimation = buffer.g2();
+            if (enabledAnimation == 0xffff) {
+                enabledAnimation = -1;
             }
 
-            this.modelZoom = var1.readUShort();
-            this.xRotation = var1.readUShort();
-            this.zRotation = var1.readUShort();
+            modelZoom = buffer.g2();
+            xRotation = buffer.g2();
+            zRotation = buffer.g2();
         }
 
-        if (this.type == 7) {
-            this.itemIds = new int[this.anInt1105 * this.anInt694];
-            this.itemStackSizes = new int[this.anInt694 * this.anInt1105];
-            this.horizontalMargin = var1.readUByte();
-            this.fontId = var1.readUShort();
-            if (this.fontId == 65535) {
-                this.fontId = -1;
+        if (type == 7) {
+            itemIds = new int[baseHeight * baseWidth];
+            itemStackSizes = new int[baseWidth * baseHeight];
+            horizontalMargin = buffer.g1();
+            fontId = buffer.g2();
+            if (fontId == 0xffff) {
+                fontId = -1;
             }
 
-            this.textShadowed = var1.readUByte() == 1;
-            this.textColor = var1.readInt();
-            this.xPadding = var1.method1029();
-            this.yPadding = var1.method1029();
-            var4 = var1.readUByte();
+            textShadowed = buffer.g1() == 1;
+            foreground = buffer.g4();
+            xPadding = buffer.g2b();
+            yPadding = buffer.g2b();
+
+            int var4 = buffer.g1();
             if (var4 == 1) {
-                this.config |= 1073741824;
+                config |= 0x40000000;
             }
 
-            this.tableActions = new String[5];
+            tableActions = new String[5];
 
-            for (var5 = 0; var5 < 5; ++var5) {
-                String var10 = var1.readString();
-                if (var10.length() > 0) {
-                    this.tableActions[var5] = var10;
-                    this.config |= 1 << var5 + 23;
-                }
-            }
-        }
-
-        if (this.type == 8) {
-            this.text = var1.readString();
-        }
-
-        if (this.buttonType == 2 || this.type == 2) {
-            this.selectedAction = var1.readString();
-            this.spellName = var1.readString();
-            var4 = var1.readUShort() & 63;
-            this.config |= var4 << 11;
-        }
-
-        if (this.buttonType == 1 || this.buttonType == 4 || this.buttonType == 5 || this.buttonType == 6) {
-            this.toolTip = var1.readString();
-            if (this.toolTip.length() == 0) {
-                if (this.buttonType == 1) {
-                    this.toolTip = "Ok";
-                }
-
-                if (this.buttonType == 4) {
-                    this.toolTip = "Select";
-                }
-
-                if (this.buttonType == 5) {
-                    this.toolTip = "Select";
-                }
-
-                if (this.buttonType == 6) {
-                    this.toolTip = "Continue";
+            for (int i = 0; i < 5; ++i) {
+                String action = buffer.gstr();
+                if (action.length() > 0) {
+                    tableActions[i] = action;
+                    config |= 1 << i + 23;
                 }
             }
         }
 
-        if (this.buttonType == 1 || this.buttonType == 4 || this.buttonType == 5) {
-            this.config |= 4194304;
+        if (type == 8) {
+            text = buffer.gstr();
         }
 
-        if (this.buttonType == 6) {
-            this.config |= 1;
+        if (buttonType == 2 || type == 2) {
+            selectedAction = buffer.gstr();
+            spellName = buffer.gstr();
+            int var4 = buffer.g2() & 0x3f;
+            config |= var4 << 11;
         }
 
+        if (buttonType == 1 || buttonType == 4 || buttonType == 5 || buttonType == 6) {
+            toolTip = buffer.gstr();
+            if (toolTip.length() == 0) {
+                if (buttonType == 1) {
+                    toolTip = "Ok";
+                }
+
+                if (buttonType == 4) {
+                    toolTip = "Select";
+                }
+
+                if (buttonType == 5) {
+                    toolTip = "Select";
+                }
+
+                if (buttonType == 6) {
+                    toolTip = "Continue";
+                }
+            }
+        }
+
+        if (buttonType == 1 || buttonType == 4 || buttonType == 5) {
+            config |= 0x400000;
+        }
+
+        if (buttonType == 6) {
+            config |= 1;
+        }
     }
 
-    public void method963(Buffer var1) {
-        var1.readUByte();
-        this.aBoolean562 = true;
-        this.type = var1.readUByte();
-        this.contentType = var1.readUShort();
-        this.xMargin = var1.method1029();
-        this.yMargin = var1.method1029();
-        this.anInt694 = var1.readUShort();
-        if (this.type == 9) {
-            this.anInt1105 = var1.method1029();
+    public void decode(Buffer buffer) {
+        buffer.g1();
+        format = true;
+        type = buffer.g1();
+        contentType = buffer.g2();
+        xMargin = buffer.g2b();
+        yMargin = buffer.g2b();
+        baseWidth = buffer.g2();
+        if (type == 9) {
+            baseHeight = buffer.g2b();
         } else {
-            this.anInt1105 = var1.readUShort();
+            baseHeight = buffer.g2();
         }
 
-        this.anInt1369 = var1.readByte();
-        this.anInt695 = var1.readByte();
-        this.xLayout = var1.readByte();
-        this.yLayout = var1.readByte();
-        this.parentUid = var1.readUShort();
-        if (this.parentUid == 65535) {
-            this.parentUid = -1;
+        xAlignment = buffer.g1b();
+        yAlignment = buffer.g1b();
+        xLayout = buffer.g1b();
+        yLayout = buffer.g1b();
+        parentUid = buffer.g2();
+        if (parentUid == 0xffff) {
+            parentUid = -1;
         } else {
-            this.parentUid += this.uid & -65536;
+            parentUid += uid & 0xffff0000;
         }
 
-        this.explicitlyHidden = var1.readUByte() == 1;
-        if (this.type == 0) {
-            this.viewportWidth = var1.readUShort();
-            this.viewportHeight = var1.readUShort();
-            this.aBoolean1412 = var1.readUByte() == 1;
+        explicitlyHidden = buffer.g1() == 1;
+        if (type == 0) {
+            viewportWidth = buffer.g2();
+            viewportHeight = buffer.g2();
+            noClickThrough = buffer.g1() == 1;
         }
 
-        if (this.type == 5) {
-            this.materialId = var1.readInt();
-            this.spriteId = var1.readUShort();
-            this.aBoolean1358 = var1.readUByte() == 1;
-            this.alpha = var1.readUByte();
-            this.borderThickness = var1.readUByte();
-            this.shadowColor = var1.readInt();
-            this.flippedVertically = var1.readUByte() == 1;
-            this.flippedHorizontally = var1.readUByte() == 1;
+        if (type == 5) {
+            materialId = buffer.g4();
+            spriteId = buffer.g2();
+            tileSprites = buffer.g1() == 1;
+            alpha = buffer.g1();
+            borderThickness = buffer.g1();
+            shadowColor = buffer.g4();
+            flippedVertically = buffer.g1() == 1;
+            flippedHorizontally = buffer.g1() == 1;
         }
 
-        if (this.type == 6) {
-            this.modelType = 1;
-            this.modelId = var1.readUShort();
-            if (this.modelId == 65535) {
-                this.modelId = -1;
+        if (type == 6) {
+            modelType = 1;
+            modelId = buffer.g2();
+            if (modelId == 0xffff) {
+                modelId = -1;
             }
 
-            this.modelOffsetX = var1.method1029();
-            this.modelOffsetY = var1.method1029();
-            this.xRotation = var1.readUShort();
-            this.zRotation = var1.readUShort();
-            this.yRotation = var1.readUShort();
-            this.modelZoom = var1.readUShort();
-            this.anInt1357 = var1.readUShort();
-            if (this.anInt1357 == 65535) {
-                this.anInt1357 = -1;
+            modelOffsetX = buffer.g2b();
+            modelOffsetY = buffer.g2b();
+            xRotation = buffer.g2();
+            zRotation = buffer.g2();
+            yRotation = buffer.g2();
+            modelZoom = buffer.g2();
+            animation = buffer.g2();
+            if (animation == 0xffff) {
+                animation = -1;
             }
 
-            this.aBoolean1352 = var1.readUByte() == 1;
-            var1.readUShort();
-            if (this.anInt1369 != 0) {
-                this.anInt1354 = var1.readUShort();
+            perpendicular = buffer.g1() == 1;
+            buffer.g2();
+            if (xAlignment != 0) {
+                scaleZ = buffer.g2();
             }
 
-            if (this.anInt695 != 0) {
-                var1.readUShort();
-            }
-        }
-
-        if (this.type == 4) {
-            this.fontId = var1.readUShort();
-            if (this.fontId == 65535) {
-                this.fontId = -1;
-            }
-
-            this.text = var1.readString();
-            this.textSpacing = var1.readUByte();
-            this.horizontalMargin = var1.readUByte();
-            this.verticalMargin = var1.readUByte();
-            this.textShadowed = var1.readUByte() == 1;
-            this.textColor = var1.readInt();
-        }
-
-        if (this.type == 3) {
-            this.textColor = var1.readInt();
-            this.aBoolean1346 = var1.readUByte() == 1;
-            this.alpha = var1.readUByte();
-        }
-
-        if (this.type == 9) {
-            this.anInt1347 = var1.readUByte();
-            this.textColor = var1.readInt();
-            this.aBoolean1360 = var1.readUByte() == 1;
-        }
-
-        this.config = var1.readMediumInt();
-        this.name = var1.readString();
-        int var2 = var1.readUByte();
-        if (var2 > 0) {
-            this.actions = new String[var2];
-
-            for (int var3 = 0; var3 < var2; ++var3) {
-                this.actions[var3] = var1.readString();
+            if (yAlignment != 0) {
+                buffer.g2();
             }
         }
 
-        this.anInt1381 = var1.readUByte();
-        this.anInt1383 = var1.readUByte();
-        this.aBoolean1388 = var1.readUByte() == 1;
-        this.selectedAction = var1.readString();
-        this.anObjectArray1384 = this.method960(var1);
-        this.mouseEnterListeners = this.method960(var1);
-        this.mouseExitListeners = this.method960(var1);
-        this.anObjectArray1380 = this.method960(var1);
-        this.anObjectArray1377 = this.method960(var1);
-        this.configListenerArgs = this.method960(var1);
-        this.tableListenerArgs = this.method960(var1);
-        this.skillListenerArgs = this.method960(var1);
-        this.renderListeners = this.method960(var1);
-        this.mousePressListeners = this.method960(var1);
-        this.hoverListeners = this.method960(var1);
-        this.anObjectArray1386 = this.method960(var1);
-        this.anObjectArray1385 = this.method960(var1);
-        this.anObjectArray1376 = this.method960(var1);
-        this.anObjectArray1379 = this.method960(var1);
-        this.dragListeners = this.method960(var1);
-        this.anObjectArray1387 = this.method960(var1);
-        this.scrollListeners = this.method960(var1);
-        this.configTriggers = this.method965(var1);
-        this.itemTriggers = this.method965(var1);
-        this.skillTriggers = this.method965(var1);
+        if (type == 4) {
+            fontId = buffer.g2();
+            if (fontId == 0xffff) {
+                fontId = -1;
+            }
+
+            text = buffer.gstr();
+            textSpacing = buffer.g1();
+            horizontalMargin = buffer.g1();
+            verticalMargin = buffer.g1();
+            textShadowed = buffer.g1() == 1;
+            foreground = buffer.g4();
+        }
+
+        if (type == 3) {
+            foreground = buffer.g4();
+            filled = buffer.g1() == 1;
+            alpha = buffer.g1();
+        }
+
+        if (type == 9) {
+            lineWidth = buffer.g1();
+            foreground = buffer.g4();
+            invertDivider = buffer.g1() == 1;
+        }
+
+        config = buffer.g3();
+        name = buffer.gstr();
+
+        int actionCount = buffer.g1();
+        if (actionCount > 0) {
+            actions = new String[actionCount];
+            for (int i = 0; i < actionCount; ++i) {
+                actions[i] = buffer.gstr();
+            }
+        }
+
+        dragArea = buffer.g1();
+        dragAreaThreshold = buffer.g1();
+        scrollBar = buffer.g1() == 1;
+        selectedAction = buffer.gstr();
+        initializationListeners = decodeObjects(buffer);
+        mouseEnterListeners = decodeObjects(buffer);
+        mouseExitListeners = decodeObjects(buffer);
+        targetExitListeners = decodeObjects(buffer);
+        targetEnterListeners = decodeObjects(buffer);
+        varTransmit = decodeObjects(buffer);
+        itemTransmit = decodeObjects(buffer);
+        skillTransmit = decodeObjects(buffer);
+        renderListeners = decodeObjects(buffer);
+        cs2Listeners = decodeObjects(buffer);
+        hoverListeners = decodeObjects(buffer);
+        pressListeners = decodeObjects(buffer);
+        clickListeners = decodeObjects(buffer);
+        releaseListeners = decodeObjects(buffer);
+        holdListeners = decodeObjects(buffer);
+        dragListeners = decodeObjects(buffer);
+        dragReleaseListeners = decodeObjects(buffer);
+        scrollListeners = decodeObjects(buffer);
+        varTriggers = decodeArray(buffer);
+        itemTriggers = decodeArray(buffer);
+        skillTriggers = decodeArray(buffer);
     }
 
-    public SpriteClip method959(boolean var1) {
-        if (this.enabledMaterialId == -1) {
-            var1 = false;
+    public ComponentSprite getSprite(boolean enabled) {
+        if (enabledMaterialId == -1) {
+            enabled = false;
         }
 
-        int var2 = var1 ? this.enabledMaterialId : this.materialId;
-        if (var2 == -1) {
+        int material = enabled ? this.enabledMaterialId : this.materialId;
+        if (material == -1) {
             return null;
         }
-        long var3 = ((this.flippedVertically ? 1L : 0L) << 38) + (long) var2 + ((long) this.borderThickness << 36) + ((this.flippedHorizontally ? 1L : 0L) << 39) + ((long) this.shadowColor << 40);
-        SpriteClip var5 = (SpriteClip) aReferenceCache1374.get(var3);
-        if (var5 != null) {
-            return var5;
+
+        long key = ((this.flippedVertically ? 1L : 0L) << 38) + (long) material + ((long) this.borderThickness << 36) + ((this.flippedHorizontally ? 1L : 0L) << 39) + ((long) this.shadowColor << 40);
+        ComponentSprite sprite = specialSprites.get(key);
+        if (sprite != null) {
+            return sprite;
         }
-        Sprite var6 = this.method958(var1);
+
+        Sprite var6 = method958(enabled);
         if (var6 == null) {
             return null;
         }
@@ -1334,40 +2193,40 @@ public class InterfaceComponent extends Node {
             var9[var10] = var12 - var11;
         }
 
-        var5 = new SpriteClip(var7.width, var7.height, var9, var8);
-        aReferenceCache1374.put(var5, var3);
-        return var5;
+        sprite = new ComponentSprite(var7.width, var7.height, var9, var8);
+        specialSprites.put(sprite, key);
+        return sprite;
     }
 
     public Font method957() {
-        aBoolean1151 = false;
-        if (this.fontId == -1) {
+        forceRepaint = false;
+        if (fontId == -1) {
             return null;
         }
-        Font var1 = (Font) aReferenceCache1367.get(this.fontId);
+        Font var1 = fonts.get(fontId);
         if (var1 != null) {
             return var1;
         }
-        var1 = ClanMember.method708(ClientPreferences.aReferenceTable364, SerializableLong.aReferenceTable645, this.fontId, 0);
+        var1 = ClanMember.method708(aReferenceTable364, SerializableLong.aReferenceTable645, fontId, 0);
         if (var1 != null) {
-            aReferenceCache1367.put(var1, this.fontId);
+            fonts.put(var1, fontId);
         } else {
-            aBoolean1151 = true;
+            forceRepaint = true;
         }
 
         return var1;
     }
 
-    public Model method956(AnimationSequence var1, int var2, boolean var3, PlayerAppearance var4) {
-        aBoolean1151 = false;
+    public Model method956(AnimationSequence var1, int var2, boolean var3, PlayerModel var4) {
+        forceRepaint = false;
         int var5;
         int var6;
         if (var3) {
-            var5 = this.anInt1355;
-            var6 = this.anInt1350;
+            var5 = enabledModelType;
+            var6 = enabledModelId;
         } else {
-            var5 = this.modelType;
-            var6 = this.modelId;
+            var5 = modelType;
+            var6 = modelId;
         }
 
         if (var5 == 0) {
@@ -1376,13 +2235,13 @@ public class InterfaceComponent extends Node {
         if (var5 == 1 && var6 == -1) {
             return null;
         }
-        Model var7 = (Model) aReferenceCache1364.get(var6 + (var5 << 16));
+        Model var7 = models.get(var6 + (var5 << 16));
         if (var7 == null) {
             UnlitModel var8;
             if (var5 == 1) {
                 var8 = UnlitModel.method982(OldConnectionTaskProcessor.aReferenceTable854, var6, 0);
                 if (var8 == null) {
-                    aBoolean1151 = true;
+                    forceRepaint = true;
                     return null;
                 }
 
@@ -1390,9 +2249,9 @@ public class InterfaceComponent extends Node {
             }
 
             if (var5 == 2) {
-                var8 = NpcDefinition.get(var6).method507();
+                var8 = NpcDefinition.get(var6).getBaseModel();
                 if (var8 == null) {
-                    aBoolean1151 = true;
+                    forceRepaint = true;
                     return null;
                 }
 
@@ -1406,7 +2265,7 @@ public class InterfaceComponent extends Node {
 
                 var8 = var4.method1427();
                 if (var8 == null) {
-                    aBoolean1151 = true;
+                    forceRepaint = true;
                     return null;
                 }
 
@@ -1417,14 +2276,14 @@ public class InterfaceComponent extends Node {
                 ItemDefinition var9 = ItemDefinition.get(var6);
                 var8 = var9.method531(10);
                 if (var8 == null) {
-                    aBoolean1151 = true;
+                    forceRepaint = true;
                     return null;
                 }
 
                 var7 = var8.light(var9.ambient + 64, var9.contrast + 768, -50, -10, -50);
             }
 
-            aReferenceCache1364.put(var7, var6 + (var5 << 16));
+            models.put(var7, var6 + (var5 << 16));
         }
 
         if (var1 != null) {
@@ -1435,21 +2294,21 @@ public class InterfaceComponent extends Node {
     }
 
     public Sprite method961(int var1) {
-        aBoolean1151 = false;
-        if (var1 >= 0 && var1 < this.anIntArray1371.length) {
-            int var2 = this.anIntArray1371[var1];
+        forceRepaint = false;
+        if (var1 >= 0 && var1 < spriteIds.length) {
+            int var2 = spriteIds[var1];
             if (var2 == -1) {
                 return null;
             }
-            Sprite var3 = (Sprite) aReferenceCache1370.get(var2);
+            Sprite var3 = sprites.get(var2);
             if (var3 != null) {
                 return var3;
             }
-            var3 = Sprite.get(ClientPreferences.aReferenceTable364, var2, 0);
+            var3 = Sprite.get(aReferenceTable364, var2, 0);
             if (var3 != null) {
-                aReferenceCache1370.put(var3, var2);
+                sprites.put(var3, var2);
             } else {
-                aBoolean1151 = true;
+                forceRepaint = true;
             }
 
             return var3;
@@ -1458,58 +2317,63 @@ public class InterfaceComponent extends Node {
     }
 
     public void method964(int var1, String var2) {
-        if (this.actions == null || this.actions.length <= var1) {
+        if (actions == null || actions.length <= var1) {
             String[] var3 = new String[var1 + 1];
-            if (this.actions != null) {
-                System.arraycopy(this.actions, 0, var3, 0, this.actions.length);
+            if (actions != null) {
+                System.arraycopy(actions, 0, var3, 0, actions.length);
             }
 
-            this.actions = var3;
+            actions = var3;
         }
 
-        this.actions[var1] = var2;
+        actions[var1] = var2;
     }
 
-    Object[] method960(Buffer var1) {
-        int var2 = var1.readUByte();
-        if (var2 == 0) {
+    Object[] decodeObjects(Buffer var1) {
+        int len = var1.g1();
+        if (len == 0) {
             return null;
         }
-        Object[] var3 = new Object[var2];
 
-        for (int var4 = 0; var4 < var2; ++var4) {
-            int var5 = var1.readUByte();
-            if (var5 == 0) {
-                var3[var4] = var1.readInt();
-            } else if (var5 == 1) {
-                var3[var4] = var1.readString();
+        Object[] arr = new Object[len];
+
+        for (int i = 0; i < len; ++i) {
+            int type = var1.g1();
+            if (type == 0) {
+                arr[i] = var1.g4();
+            } else if (type == 1) {
+                arr[i] = var1.gstr();
             }
         }
 
-        this.aBoolean1378 = true;
-        return var3;
+        decodedObjects = true;
+        return arr;
     }
 
-    int[] method965(Buffer var1) {
-        int var2 = var1.readUByte();
+    int[] decodeArray(Buffer var1) {
+        int var2 = var1.g1();
         if (var2 == 0) {
             return null;
         }
         int[] var3 = new int[var2];
 
         for (int var4 = 0; var4 < var2; ++var4) {
-            var3[var4] = var1.readInt();
+            var3[var4] = var1.g4();
         }
 
         return var3;
     }
 
-    public void method817(int var1, int var2) {
-        int var3 = this.itemIds[var2];
-        this.itemIds[var2] = this.itemIds[var1];
-        this.itemIds[var1] = var3;
-        var3 = this.itemStackSizes[var2];
-        this.itemStackSizes[var2] = this.itemStackSizes[var1];
-        this.itemStackSizes[var1] = var3;
+    public void swapItem(int src, int dst) {
+        int srcvalue = itemIds[dst];
+        itemIds[dst] = itemIds[src];
+        itemIds[src] = srcvalue;
+        srcvalue = itemStackSizes[dst];
+        itemStackSizes[dst] = itemStackSizes[src];
+        itemStackSizes[src] = srcvalue;
     }
 }
+
+
+
+

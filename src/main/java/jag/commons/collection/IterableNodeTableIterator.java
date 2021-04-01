@@ -2,65 +2,66 @@ package jag.commons.collection;
 
 import java.util.Iterator;
 
-public class IterableNodeTableIterator implements Iterator {
+public class IterableNodeTableIterator<T extends Node> implements Iterator<T> {
 
-    public final IterableNodeTable table;
-    public Node aNode1826;
-    public Node aNode1829;
-    public int anInt1827;
+    public final IterableNodeTable<T> table;
+    public Node mru;
+    public Node head;
+    public int ptr;
 
-    public IterableNodeTableIterator(IterableNodeTable var1) {
-        aNode1826 = null;
-        table = var1;
-        method1327();
+    public IterableNodeTableIterator(IterableNodeTable<T> table) {
+        this.table = table;
+        mru = null;
+        reset();
     }
 
-    public void method1327() {
-        aNode1829 = table.buckets[0].next;
-        anInt1827 = 1;
-        aNode1826 = null;
+    public void reset() {
+        head = table.buckets[0].next;
+        ptr = 1;
+        mru = null;
     }
 
     public void remove() {
-        if (aNode1826 == null) {
+        if (mru == null) {
             throw new IllegalStateException();
         }
-        aNode1826.unlink();
-        aNode1826 = null;
+        mru.unlink();
+        mru = null;
     }
 
-    public Object next() {
-        Node var1;
-        if (table.buckets[anInt1827 - 1] != aNode1829) {
-            var1 = aNode1829;
-            aNode1829 = var1.next;
-            aNode1826 = var1;
-            return var1;
+    public T next() {
+        Node node;
+        if (table.buckets[ptr - 1] != head) {
+            node = head;
+            head = node.next;
+            mru = node;
+            return (T) node;
         }
+
         do {
-            if (anInt1827 >= table.size) {
+            if (ptr >= table.size) {
                 return null;
             }
 
-            var1 = table.buckets[anInt1827++].next;
-        } while (var1 == table.buckets[anInt1827 - 1]);
+            node = table.buckets[ptr++].next;
+        } while (node == table.buckets[ptr - 1]);
 
-        aNode1829 = var1.next;
-        aNode1826 = var1;
-        return var1;
+        head = node.next;
+        mru = node;
+        return (T) node;
     }
 
     public boolean hasNext() {
-        if (table.buckets[anInt1827 - 1] != aNode1829) {
+        if (table.buckets[ptr - 1] != head) {
             return true;
         }
-        while (anInt1827 < table.size) {
-            if (table.buckets[anInt1827++].next != table.buckets[anInt1827 - 1]) {
-                aNode1829 = table.buckets[anInt1827 - 1].next;
+
+        while (ptr < table.size) {
+            if (table.buckets[ptr++].next != table.buckets[ptr - 1]) {
+                head = table.buckets[ptr - 1].next;
                 return true;
             }
-
-            aNode1829 = table.buckets[anInt1827 - 1];
+            head = table.buckets[ptr - 1];
         }
 
         return false;

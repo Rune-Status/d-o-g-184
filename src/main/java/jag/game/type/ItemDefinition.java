@@ -1,15 +1,19 @@
 package jag.game.type;
 
-import jag.Face;
 import jag.commons.collection.DoublyLinkedNode;
 import jag.commons.collection.IterableNodeTable;
 import jag.commons.collection.Node;
 import jag.commons.collection.ReferenceCache;
-import jag.game.HealthBar;
+import jag.game.InterfaceComponent;
+import jag.game.client;
+import jag.game.menu.ContextMenuBuilder;
 import jag.game.option.ClientPreferences;
 import jag.game.scene.entity.Model;
 import jag.game.scene.entity.UnlitModel;
 import jag.graphics.Font;
+import jag.graphics.JagGraphics;
+import jag.graphics.JagGraphics3D;
+import jag.graphics.Sprite;
 import jag.js5.DiskFile;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
@@ -21,23 +25,23 @@ import java.io.IOException;
 
 public class ItemDefinition extends DoublyLinkedNode {
 
-    public static final ReferenceCache aReferenceCache716;
-    public static final ReferenceCache aReferenceCache720;
-    public static final ReferenceCache aReferenceCache717;
+    public static final ReferenceCache<Sprite> sprites;
+    public static final ReferenceCache<ItemDefinition> cache;
+    public static final ReferenceCache<Model> models;
     public static ReferenceTable aReferenceTable722;
     public static ReferenceTable aReferenceTable721;
     public static boolean loadMembersItemDefinitions;
 
     static {
-        aReferenceCache720 = new ReferenceCache(64);
-        aReferenceCache717 = new ReferenceCache(50);
-        aReferenceCache716 = new ReferenceCache(200);
+        cache = new ReferenceCache<>(64);
+        models = new ReferenceCache<>(50);
+        sprites = new ReferenceCache<>(200);
     }
 
     public String[] actions;
     public String name;
     public int spriteScale;
-    public int anInt693;
+    public int id;
     public int spritePitch;
     public int spriteRoll;
     public int spriteTranslateX;
@@ -60,7 +64,7 @@ public class ItemDefinition extends DoublyLinkedNode {
     public int modelId;
     public int[] variantIds;
     public int shiftClickActionIndex;
-    public IterableNodeTable properties;
+    public IterableNodeTable<? super Node> properties;
     public int maleHeadModel2;
     public int maleModel1;
     public int maleModel2;
@@ -83,44 +87,44 @@ public class ItemDefinition extends DoublyLinkedNode {
     public int anInt713;
 
     public ItemDefinition() {
-        this.name = "null";
-        this.spriteScale = 2000;
-        this.spritePitch = 0;
-        this.spriteRoll = 0;
-        this.spriteYaw = 0;
-        this.spriteTranslateX = 0;
-        this.spriteTranslateY = 0;
-        this.stackable = 0;
-        this.value = 1;
-        this.members = false;
-        this.groundActions = new String[]{null, null, "Take", null, null};
-        this.actions = new String[]{null, null, null, null, "Drop"};
-        this.shiftClickActionIndex = -2;
-        this.anInt579 = -1;
-        this.maleModel1 = -1;
-        this.anInt711 = 0;
-        this.anInt709 = -1;
-        this.femaleModel1 = -1;
-        this.anInt710 = 0;
-        this.maleModel2 = -1;
-        this.femaleModel2 = -1;
-        this.maleHeadModel = -1;
-        this.maleHeadModel2 = -1;
-        this.femaleHeadModel = -1;
-        this.femaleHeadModel2 = -1;
-        this.noteId = -1;
-        this.noteTemplateId = -1;
-        this.resizeX = 128;
-        this.resizeY = 128;
-        this.resizeZ = 128;
-        this.ambient = 0;
-        this.contrast = 0;
-        this.team = 0;
-        this.stockMarketable = false;
-        this.anInt713 = -1;
-        this.anInt714 = -1;
-        this.anInt715 = -1;
-        this.anInt712 = -1;
+        name = "null";
+        spriteScale = 2000;
+        spritePitch = 0;
+        spriteRoll = 0;
+        spriteYaw = 0;
+        spriteTranslateX = 0;
+        spriteTranslateY = 0;
+        stackable = 0;
+        value = 1;
+        members = false;
+        groundActions = new String[]{null, null, "Take", null, null};
+        actions = new String[]{null, null, null, null, "Drop"};
+        shiftClickActionIndex = -2;
+        anInt579 = -1;
+        maleModel1 = -1;
+        anInt711 = 0;
+        anInt709 = -1;
+        femaleModel1 = -1;
+        anInt710 = 0;
+        maleModel2 = -1;
+        femaleModel2 = -1;
+        maleHeadModel = -1;
+        maleHeadModel2 = -1;
+        femaleHeadModel = -1;
+        femaleHeadModel2 = -1;
+        noteId = -1;
+        noteTemplateId = -1;
+        resizeX = 128;
+        resizeY = 128;
+        resizeZ = 128;
+        ambient = 0;
+        contrast = 0;
+        team = 0;
+        stockMarketable = false;
+        anInt713 = -1;
+        anInt714 = -1;
+        anInt715 = -1;
+        anInt712 = -1;
     }
 
     public static ClientPreferences method529() {
@@ -128,7 +132,7 @@ public class ItemDefinition extends DoublyLinkedNode {
         ClientPreferences var1 = new ClientPreferences();
 
         try {
-            var0 = RegionUpdateType.method863("", Statics55.anGameType_629.name, false);
+            var0 = RegionUpdateType.method863("", Statics55.gameType.name, false);
             byte[] var2 = new byte[(int) var0.length()];
 
             int var4;
@@ -154,13 +158,13 @@ public class ItemDefinition extends DoublyLinkedNode {
     }
 
     public static ItemDefinition get(int var0) {
-        ItemDefinition var2 = (ItemDefinition) aReferenceCache720.get(var0);
+        ItemDefinition var2 = cache.get(var0);
         if (var2 != null) {
             return var2;
         }
         byte[] var3 = aReferenceTable721.unpack(10, var0);
         var2 = new ItemDefinition();
-        var2.anInt693 = var0;
+        var2.id = var0;
         if (var3 != null) {
             var2.method528(new Buffer(var3));
         }
@@ -188,7 +192,7 @@ public class ItemDefinition extends DoublyLinkedNode {
             if (var2.properties != null) {
                 boolean var4 = false;
 
-                for (Node var5 = var2.properties.method235(); var5 != null; var5 = var2.properties.method234()) {
+                for (Node var5 = var2.properties.first(); var5 != null; var5 = var2.properties.next()) {
                     DefinitionProperty var6 = DefinitionProperty.get((int) var5.key);
                     if (var6.deleteOnUse) {
                         var5.unlink();
@@ -203,153 +207,306 @@ public class ItemDefinition extends DoublyLinkedNode {
             }
         }
 
-        aReferenceCache720.put(var2, var0);
+        cache.put(var2, var0);
         return var2;
     }
 
     public static void clear() {
-        aReferenceCache720.clear();
-        aReferenceCache717.clear();
-        aReferenceCache716.clear();
+        cache.clear();
+        models.clear();
+        sprites.clear();
     }
 
     public static void method240(ReferenceTable var0, ReferenceTable var1, boolean var2, Font var3) {
         aReferenceTable721 = var0;
         aReferenceTable722 = var1;
         loadMembersItemDefinitions = var2;
-        Statics5.anInt838 = aReferenceTable721.method901(10);
-        Face.aFont774 = var3;
+        Statics5.anInt838 = aReferenceTable721.getFileCount(10);
+        Font.p11 = var3;
+    }
+
+    public static String quantityToString(int amount) {
+        if (amount < 100000) {
+            return "<col=ffff00>" + amount + "</col>";
+        }
+        return amount < 10000000 ? "<col=ffffff>" + amount / 1000 + "K" + "</col>" : "<col=00ff80>" + amount / 1000000 + "M" + "</col>";
+    }
+
+    public static void processOpcode(InterfaceComponent component, ItemDefinition definition, int index, int i, boolean idk) {
+        String[] var5 = definition.actions;
+        byte var6 = -1;
+        String var7 = null;
+        if (var5 != null && var5[i] != null) {
+            if (i == 0) {
+                var6 = 33;
+            } else if (i == 1) {
+                var6 = 34;
+            } else if (i == 2) {
+                var6 = 35;
+            } else if (i == 3) {
+                var6 = 36;
+            } else {
+                var6 = 37;
+            }
+
+            var7 = var5[i];
+        } else if (i == 4) {
+            var6 = 37;
+            var7 = "Drop";
+        }
+
+        if (var6 != -1 && var7 != null) {
+            ContextMenuBuilder.insertRow(var7, client.getColorTags(16748608) + definition.name, var6, definition.id, index, component.uid, idk);
+        }
+
+    }
+
+    public static Sprite getSprite(int itemId, int stackSize, int borderThickness, int shadowColor, int stackSizeMode, boolean noted) {
+        if (stackSize == -1) {
+            stackSizeMode = 0;
+        } else if (stackSizeMode == 2 && stackSize != 1) {
+            stackSizeMode = 1;
+        }
+
+        long spriteUID = ((long) shadowColor << 42) + ((long) stackSizeMode << 40) + ((long) borderThickness << 38) + (long) itemId + ((long) stackSize << 16);
+
+        Sprite sprite;
+        if (!noted) {
+            sprite = sprites.get(spriteUID);
+            if (sprite != null) {
+                return sprite;
+            }
+        }
+
+        ItemDefinition definition = get(itemId);
+        if (stackSize > 1 && definition.variantIds != null) {
+            int variant = -1;
+            for (int i = 0; i < 10; ++i) {
+                if (stackSize >= definition.variantStackSizes[i] && definition.variantStackSizes[i] != 0) {
+                    variant = definition.variantIds[i];
+                }
+            }
+
+            if (variant != -1) {
+                definition = get(variant);
+            }
+        }
+
+        Model model = definition.getModel(1);
+        if (model == null) {
+            return null;
+        }
+
+        Sprite base = null;
+        if (definition.noteTemplateId != -1) {
+            base = getSprite(definition.noteId, 10, 1, 0, 0, true);
+            if (base == null) {
+                return null;
+            }
+        } else if (definition.anInt714 != -1) {
+            base = getSprite(definition.anInt713, stackSize, borderThickness, shadowColor, 0, false);
+            if (base == null) {
+                return null;
+            }
+        } else if (definition.anInt712 != -1) {
+            base = getSprite(definition.anInt715, stackSize, 0, 0, 0, false);
+            if (base == null) {
+                return null;
+            }
+        }
+
+        int[] pixels = JagGraphics.drawingAreaPixels;
+        int areaWidth = JagGraphics.drawingAreaWidth;
+        int areaHeight = JagGraphics.drawingAreaHeight;
+
+        int[] area = new int[4];
+        JagGraphics.method1366(area);
+        sprite = new Sprite(36, 32);
+        JagGraphics.setTarget(sprite.pixels, 36, 32);
+        JagGraphics.clear();
+        JagGraphics3D.method499();
+        JagGraphics3D.method637(16, 16);
+        JagGraphics3D.aBoolean789 = false;
+        if (definition.anInt712 != -1) {
+            base.renderAlphaAt(0, 0);
+        }
+
+        int var19 = definition.spriteScale;
+        if (noted) {
+            var19 = (int) (1.5D * (double) var19);
+        } else if (borderThickness == 2) {
+            var19 = (int) (1.04D * (double) var19);
+        }
+
+        int ps = var19 * JagGraphics3D.SIN_TABLE[definition.spritePitch] >> 16;
+        int pc = var19 * JagGraphics3D.COS_TABLE[definition.spritePitch] >> 16;
+        model.computeBounds();
+        model.method1289(0, definition.spriteRoll, definition.spriteYaw, definition.spritePitch, definition.spriteTranslateX, model.height / 2 + ps + definition.spriteTranslateY, pc + definition.spriteTranslateY);
+        if (definition.anInt714 != -1) {
+            base.renderAlphaAt(0, 0);
+        }
+
+        if (borderThickness >= 1) {
+            sprite.method822(1);
+        }
+
+        if (borderThickness >= 2) {
+            sprite.method822(16777215);
+        }
+
+        if (shadowColor != 0) {
+            sprite.method835(shadowColor);
+        }
+
+        JagGraphics.setTarget(sprite.pixels, 36, 32);
+        if (definition.noteTemplateId != -1) {
+            base.renderAlphaAt(0, 0);
+        }
+
+        if (stackSizeMode == 1 || stackSizeMode == 2 && definition.stackable == 1) {
+            Font.p11.drawString(quantityToString(stackSize), 0, 9, 16776960, 1);
+        }
+
+        if (!noted) {
+            sprites.put(sprite, spriteUID);
+        }
+
+        JagGraphics.setTarget(pixels, areaWidth, areaHeight);
+        JagGraphics.method1373(area);
+        JagGraphics3D.method499();
+        JagGraphics3D.aBoolean789 = true;
+        return sprite;
     }
 
     public void method526(Buffer var1, int var2) {
         if (var2 == 1) {
-            this.modelId = var1.readUShort();
+            modelId = var1.g2();
         } else if (var2 == 2) {
-            this.name = var1.readString();
+            name = var1.gstr();
         } else if (var2 == 4) {
-            this.spriteScale = var1.readUShort();
+            spriteScale = var1.g2();
         } else if (var2 == 5) {
-            this.spritePitch = var1.readUShort();
+            spritePitch = var1.g2();
         } else if (var2 == 6) {
-            this.spriteRoll = var1.readUShort();
+            spriteRoll = var1.g2();
         } else if (var2 == 7) {
-            this.spriteTranslateX = var1.readUShort();
-            if (this.spriteTranslateX > 32767) {
-                this.spriteTranslateX -= 65536;
+            spriteTranslateX = var1.g2();
+            if (spriteTranslateX > 32767) {
+                spriteTranslateX -= 65536;
             }
         } else if (var2 == 8) {
-            this.spriteTranslateY = var1.readUShort();
-            if (this.spriteTranslateY > 32767) {
-                this.spriteTranslateY -= 65536;
+            spriteTranslateY = var1.g2();
+            if (spriteTranslateY > 32767) {
+                spriteTranslateY -= 65536;
             }
         } else if (var2 == 11) {
-            this.stackable = 1;
+            stackable = 1;
         } else if (var2 == 12) {
-            this.value = var1.readInt();
+            value = var1.g4();
         } else if (var2 == 16) {
-            this.members = true;
+            members = true;
         } else if (var2 == 23) {
-            this.anInt579 = var1.readUShort();
-            this.anInt711 = var1.readUByte();
+            anInt579 = var1.g2();
+            anInt711 = var1.g1();
         } else if (var2 == 24) {
-            this.maleModel1 = var1.readUShort();
+            maleModel1 = var1.g2();
         } else if (var2 == 25) {
-            this.anInt709 = var1.readUShort();
-            this.anInt710 = var1.readUByte();
+            anInt709 = var1.g2();
+            anInt710 = var1.g1();
         } else if (var2 == 26) {
-            this.femaleModel1 = var1.readUShort();
+            femaleModel1 = var1.g2();
         } else if (var2 >= 30 && var2 < 35) {
-            this.groundActions[var2 - 30] = var1.readString();
-            if (this.groundActions[var2 - 30].equalsIgnoreCase("Hidden")) {
-                this.groundActions[var2 - 30] = null;
+            groundActions[var2 - 30] = var1.gstr();
+            if (groundActions[var2 - 30].equalsIgnoreCase("Hidden")) {
+                groundActions[var2 - 30] = null;
             }
         } else if (var2 >= 35 && var2 < 40) {
-            this.actions[var2 - 35] = var1.readString();
+            actions[var2 - 35] = var1.gstr();
         } else {
             int var3;
             int var4;
             if (var2 == 40) {
-                var3 = var1.readUByte();
-                this.aShortArray723 = new short[var3];
-                this.aShortArray718 = new short[var3];
+                var3 = var1.g1();
+                aShortArray723 = new short[var3];
+                aShortArray718 = new short[var3];
 
                 for (var4 = 0; var4 < var3; ++var4) {
-                    this.aShortArray723[var4] = (short) var1.readUShort();
-                    this.aShortArray718[var4] = (short) var1.readUShort();
+                    aShortArray723[var4] = (short) var1.g2();
+                    aShortArray718[var4] = (short) var1.g2();
                 }
             } else if (var2 == 41) {
-                var3 = var1.readUByte();
-                this.aShortArray724 = new short[var3];
-                this.aShortArray719 = new short[var3];
+                var3 = var1.g1();
+                aShortArray724 = new short[var3];
+                aShortArray719 = new short[var3];
 
                 for (var4 = 0; var4 < var3; ++var4) {
-                    this.aShortArray724[var4] = (short) var1.readUShort();
-                    this.aShortArray719[var4] = (short) var1.readUShort();
+                    aShortArray724[var4] = (short) var1.g2();
+                    aShortArray719[var4] = (short) var1.g2();
                 }
             } else if (var2 == 42) {
-                this.shiftClickActionIndex = var1.readByte();
+                shiftClickActionIndex = var1.g1b();
             } else if (var2 == 65) {
-                this.stockMarketable = true;
+                stockMarketable = true;
             } else if (var2 == 78) {
-                this.maleModel2 = var1.readUShort();
+                maleModel2 = var1.g2();
             } else if (var2 == 79) {
-                this.femaleModel2 = var1.readUShort();
+                femaleModel2 = var1.g2();
             } else if (var2 == 90) {
-                this.maleHeadModel = var1.readUShort();
+                maleHeadModel = var1.g2();
             } else if (var2 == 91) {
-                this.femaleHeadModel = var1.readUShort();
+                femaleHeadModel = var1.g2();
             } else if (var2 == 92) {
-                this.maleHeadModel2 = var1.readUShort();
+                maleHeadModel2 = var1.g2();
             } else if (var2 == 93) {
-                this.femaleHeadModel2 = var1.readUShort();
+                femaleHeadModel2 = var1.g2();
             } else if (var2 == 95) {
-                this.spriteYaw = var1.readUShort();
+                spriteYaw = var1.g2();
             } else if (var2 == 97) {
-                this.noteId = var1.readUShort();
+                noteId = var1.g2();
             } else if (var2 == 98) {
-                this.noteTemplateId = var1.readUShort();
+                noteTemplateId = var1.g2();
             } else if (var2 >= 100 && var2 < 110) {
-                if (this.variantIds == null) {
-                    this.variantIds = new int[10];
-                    this.variantStackSizes = new int[10];
+                if (variantIds == null) {
+                    variantIds = new int[10];
+                    variantStackSizes = new int[10];
                 }
 
-                this.variantIds[var2 - 100] = var1.readUShort();
-                this.variantStackSizes[var2 - 100] = var1.readUShort();
+                variantIds[var2 - 100] = var1.g2();
+                variantStackSizes[var2 - 100] = var1.g2();
             } else if (var2 == 110) {
-                this.resizeX = var1.readUShort();
+                resizeX = var1.g2();
             } else if (var2 == 111) {
-                this.resizeY = var1.readUShort();
+                resizeY = var1.g2();
             } else if (var2 == 112) {
-                this.resizeZ = var1.readUShort();
+                resizeZ = var1.g2();
             } else if (var2 == 113) {
-                this.ambient = var1.readByte();
+                ambient = var1.g1b();
             } else if (var2 == 114) {
-                this.contrast = var1.readByte() * 5;
+                contrast = var1.g1b() * 5;
             } else if (var2 == 115) {
-                this.team = var1.readUByte();
+                team = var1.g1();
             } else if (var2 == 139) {
-                this.anInt713 = var1.readUShort();
+                anInt713 = var1.g2();
             } else if (var2 == 140) {
-                this.anInt714 = var1.readUShort();
+                anInt714 = var1.g2();
             } else if (var2 == 148) {
-                this.anInt715 = var1.readUShort();
+                anInt715 = var1.g2();
             } else if (var2 == 149) {
-                this.anInt712 = var1.readUShort();
+                anInt712 = var1.g2();
             } else if (var2 == 249) {
-                this.properties = IterableNodeTable.read(var1, this.properties);
+                properties = IterableNodeTable.decode(var1, properties);
             }
         }
 
     }
 
     public final Model getModel(int var1) {
-        if (this.variantIds != null && var1 > 1) {
+        if (variantIds != null && var1 > 1) {
             int var3 = -1;
 
             for (int var4 = 0; var4 < 10; ++var4) {
-                if (var1 >= this.variantStackSizes[var4] && this.variantStackSizes[var4] != 0) {
-                    var3 = this.variantIds[var4];
+                if (var1 >= variantStackSizes[var4] && variantStackSizes[var4] != 0) {
+                    var3 = variantIds[var4];
                 }
             }
 
@@ -358,45 +515,45 @@ public class ItemDefinition extends DoublyLinkedNode {
             }
         }
 
-        Model var5 = (Model) aReferenceCache717.get(this.anInt693);
+        Model var5 = models.get(id);
         if (var5 != null) {
             return var5;
         }
-        UnlitModel var6 = UnlitModel.method982(aReferenceTable722, this.modelId, 0);
+        UnlitModel var6 = UnlitModel.method982(aReferenceTable722, modelId, 0);
         if (var6 == null) {
             return null;
         }
-        if (this.resizeX != 128 || this.resizeY != 128 || this.resizeZ != 128) {
-            var6.method764(this.resizeX, this.resizeY, this.resizeZ);
+        if (resizeX != 128 || resizeY != 128 || resizeZ != 128) {
+            var6.method764(resizeX, resizeY, resizeZ);
         }
 
-        int var7;
-        if (this.aShortArray723 != null) {
-            for (var7 = 0; var7 < this.aShortArray723.length; ++var7) {
-                var6.texturize(this.aShortArray723[var7], this.aShortArray718[var7]);
+        int i;
+        if (aShortArray723 != null) {
+            for (i = 0; i < aShortArray723.length; ++i) {
+                var6.texturize(aShortArray723[i], aShortArray718[i]);
             }
         }
 
-        if (this.aShortArray724 != null) {
-            for (var7 = 0; var7 < this.aShortArray724.length; ++var7) {
-                var6.colorize(this.aShortArray724[var7], this.aShortArray719[var7]);
+        if (aShortArray724 != null) {
+            for (i = 0; i < aShortArray724.length; ++i) {
+                var6.colorize(aShortArray724[i], aShortArray719[i]);
             }
         }
 
-        var5 = var6.light(this.ambient + 64, this.contrast + 768, -50, -10, -50);
+        var5 = var6.light(ambient + 64, contrast + 768, -50, -10, -50);
         var5.aabbEnabled = true;
-        aReferenceCache717.put(var5, this.anInt693);
+        models.put(var5, id);
         return var5;
     }
 
     public final UnlitModel method531(int var1) {
         int var3;
-        if (this.variantIds != null && var1 > 1) {
+        if (variantIds != null && var1 > 1) {
             int var2 = -1;
 
             for (var3 = 0; var3 < 10; ++var3) {
-                if (var1 >= this.variantStackSizes[var3] && this.variantStackSizes[var3] != 0) {
-                    var2 = this.variantIds[var3];
+                if (var1 >= variantStackSizes[var3] && variantStackSizes[var3] != 0) {
+                    var2 = variantIds[var3];
                 }
             }
 
@@ -405,23 +562,23 @@ public class ItemDefinition extends DoublyLinkedNode {
             }
         }
 
-        UnlitModel var4 = UnlitModel.method982(aReferenceTable722, this.modelId, 0);
+        UnlitModel var4 = UnlitModel.method982(aReferenceTable722, modelId, 0);
         if (var4 == null) {
             return null;
         }
-        if (this.resizeX != 128 || this.resizeY != 128 || this.resizeZ != 128) {
-            var4.method764(this.resizeX, this.resizeY, this.resizeZ);
+        if (resizeX != 128 || resizeY != 128 || resizeZ != 128) {
+            var4.method764(resizeX, resizeY, resizeZ);
         }
 
-        if (this.aShortArray723 != null) {
-            for (var3 = 0; var3 < this.aShortArray723.length; ++var3) {
-                var4.texturize(this.aShortArray723[var3], this.aShortArray718[var3]);
+        if (aShortArray723 != null) {
+            for (var3 = 0; var3 < aShortArray723.length; ++var3) {
+                var4.texturize(aShortArray723[var3], aShortArray718[var3]);
             }
         }
 
-        if (this.aShortArray724 != null) {
-            for (var3 = 0; var3 < this.aShortArray724.length; ++var3) {
-                var4.colorize(this.aShortArray724[var3], this.aShortArray719[var3]);
+        if (aShortArray724 != null) {
+            for (var3 = 0; var3 < aShortArray724.length; ++var3) {
+                var4.colorize(aShortArray724[var3], aShortArray719[var3]);
             }
         }
 
@@ -432,22 +589,22 @@ public class ItemDefinition extends DoublyLinkedNode {
     }
 
     public final boolean method530(boolean var1) {
-        int var2 = this.maleHeadModel;
-        int var3 = this.maleHeadModel2;
+        int var2 = maleHeadModel;
+        int var3 = maleHeadModel2;
         if (var1) {
-            var2 = this.femaleHeadModel;
-            var3 = this.femaleHeadModel2;
+            var2 = femaleHeadModel;
+            var3 = femaleHeadModel2;
         }
 
         if (var2 == -1) {
             return true;
         }
         boolean var4 = true;
-        if (!aReferenceTable722.method913(var2, 0)) {
+        if (!aReferenceTable722.load(var2, 0)) {
             var4 = false;
         }
 
-        if (var3 != -1 && !aReferenceTable722.method913(var3, 0)) {
+        if (var3 != -1 && !aReferenceTable722.load(var3, 0)) {
             var4 = false;
         }
 
@@ -456,21 +613,21 @@ public class ItemDefinition extends DoublyLinkedNode {
 
     public void method528(Buffer var1) {
         while (true) {
-            int var2 = var1.readUByte();
+            int var2 = var1.g1();
             if (var2 == 0) {
                 return;
             }
 
-            this.method526(var1, var2);
+            method526(var1, var2);
         }
     }
 
     public final UnlitModel method521(boolean var1) {
-        int var2 = this.maleHeadModel;
-        int var3 = this.maleHeadModel2;
+        int var2 = maleHeadModel;
+        int var3 = maleHeadModel2;
         if (var1) {
-            var2 = this.femaleHeadModel;
-            var3 = this.femaleHeadModel2;
+            var2 = femaleHeadModel;
+            var3 = femaleHeadModel2;
         }
 
         if (var2 == -1) {
@@ -484,15 +641,15 @@ public class ItemDefinition extends DoublyLinkedNode {
         }
 
         int var7;
-        if (this.aShortArray723 != null) {
-            for (var7 = 0; var7 < this.aShortArray723.length; ++var7) {
-                var4.texturize(this.aShortArray723[var7], this.aShortArray718[var7]);
+        if (aShortArray723 != null) {
+            for (var7 = 0; var7 < aShortArray723.length; ++var7) {
+                var4.texturize(aShortArray723[var7], aShortArray718[var7]);
             }
         }
 
-        if (this.aShortArray724 != null) {
-            for (var7 = 0; var7 < this.aShortArray724.length; ++var7) {
-                var4.colorize(this.aShortArray724[var7], this.aShortArray719[var7]);
+        if (aShortArray724 != null) {
+            for (var7 = 0; var7 < aShortArray724.length; ++var7) {
+                var4.colorize(aShortArray724[var7], aShortArray719[var7]);
             }
         }
 
@@ -500,28 +657,28 @@ public class ItemDefinition extends DoublyLinkedNode {
     }
 
     public final boolean method518(boolean var1) {
-        int var2 = this.anInt579;
-        int var3 = this.maleModel1;
-        int var4 = this.maleModel2;
+        int var2 = anInt579;
+        int var3 = maleModel1;
+        int var4 = maleModel2;
         if (var1) {
-            var2 = this.anInt709;
-            var3 = this.femaleModel1;
-            var4 = this.femaleModel2;
+            var2 = anInt709;
+            var3 = femaleModel1;
+            var4 = femaleModel2;
         }
 
         if (var2 == -1) {
             return true;
         }
         boolean var5 = true;
-        if (!aReferenceTable722.method913(var2, 0)) {
+        if (!aReferenceTable722.load(var2, 0)) {
             var5 = false;
         }
 
-        if (var3 != -1 && !aReferenceTable722.method913(var3, 0)) {
+        if (var3 != -1 && !aReferenceTable722.load(var3, 0)) {
             var5 = false;
         }
 
-        if (var4 != -1 && !aReferenceTable722.method913(var4, 0)) {
+        if (var4 != -1 && !aReferenceTable722.load(var4, 0)) {
             var5 = false;
         }
 
@@ -529,31 +686,31 @@ public class ItemDefinition extends DoublyLinkedNode {
     }
 
     public void method524(ItemDefinition var1, ItemDefinition var2) {
-        this.modelId = var1.modelId;
-        this.spriteScale = var1.spriteScale;
-        this.spritePitch = var1.spritePitch;
-        this.spriteRoll = var1.spriteRoll;
-        this.spriteYaw = var1.spriteYaw;
-        this.spriteTranslateX = var1.spriteTranslateX;
-        this.spriteTranslateY = var1.spriteTranslateY;
-        this.aShortArray723 = var1.aShortArray723;
-        this.aShortArray718 = var1.aShortArray718;
-        this.aShortArray724 = var1.aShortArray724;
-        this.aShortArray719 = var1.aShortArray719;
-        this.name = var2.name;
-        this.members = var2.members;
-        this.value = var2.value;
-        this.stackable = 1;
+        modelId = var1.modelId;
+        spriteScale = var1.spriteScale;
+        spritePitch = var1.spritePitch;
+        spriteRoll = var1.spriteRoll;
+        spriteYaw = var1.spriteYaw;
+        spriteTranslateX = var1.spriteTranslateX;
+        spriteTranslateY = var1.spriteTranslateY;
+        aShortArray723 = var1.aShortArray723;
+        aShortArray718 = var1.aShortArray718;
+        aShortArray724 = var1.aShortArray724;
+        aShortArray719 = var1.aShortArray719;
+        name = var2.name;
+        members = var2.members;
+        value = var2.value;
+        stackable = 1;
     }
 
     public final UnlitModel getEquipmentModel(boolean var1) {
-        int var3 = this.anInt579;
-        int var4 = this.maleModel1;
-        int var5 = this.maleModel2;
+        int var3 = anInt579;
+        int var4 = maleModel1;
+        int var5 = maleModel2;
         if (var1) {
-            var3 = this.anInt709;
-            var4 = this.femaleModel1;
-            var5 = this.femaleModel2;
+            var3 = anInt709;
+            var4 = femaleModel1;
+            var5 = femaleModel2;
         }
 
         if (var3 == -1) {
@@ -572,24 +729,24 @@ public class ItemDefinition extends DoublyLinkedNode {
             }
         }
 
-        if (!var1 && this.anInt711 != 0) {
-            var6.method976(0, this.anInt711, 0);
+        if (!var1 && anInt711 != 0) {
+            var6.method976(0, anInt711, 0);
         }
 
-        if (var1 && this.anInt710 != 0) {
-            var6.method976(0, this.anInt710, 0);
+        if (var1 && anInt710 != 0) {
+            var6.method976(0, anInt710, 0);
         }
 
         int var10;
-        if (this.aShortArray723 != null) {
-            for (var10 = 0; var10 < this.aShortArray723.length; ++var10) {
-                var6.texturize(this.aShortArray723[var10], this.aShortArray718[var10]);
+        if (aShortArray723 != null) {
+            for (var10 = 0; var10 < aShortArray723.length; ++var10) {
+                var6.texturize(aShortArray723[var10], aShortArray718[var10]);
             }
         }
 
-        if (this.aShortArray724 != null) {
-            for (var10 = 0; var10 < this.aShortArray724.length; ++var10) {
-                var6.colorize(this.aShortArray724[var10], this.aShortArray719[var10]);
+        if (aShortArray724 != null) {
+            for (var10 = 0; var10 < aShortArray724.length; ++var10) {
+                var6.colorize(aShortArray724[var10], aShortArray719[var10]);
             }
         }
 
@@ -597,77 +754,77 @@ public class ItemDefinition extends DoublyLinkedNode {
     }
 
     public void copy(ItemDefinition var1, ItemDefinition var2) {
-        this.modelId = var1.modelId;
-        this.spriteScale = var1.spriteScale;
-        this.spritePitch = var1.spritePitch;
-        this.spriteRoll = var1.spriteRoll;
-        this.spriteYaw = var1.spriteYaw;
-        this.spriteTranslateX = var1.spriteTranslateX;
-        this.spriteTranslateY = var1.spriteTranslateY;
-        this.aShortArray723 = var2.aShortArray723;
-        this.aShortArray718 = var2.aShortArray718;
-        this.aShortArray724 = var2.aShortArray724;
-        this.aShortArray719 = var2.aShortArray719;
-        this.name = var2.name;
-        this.members = var2.members;
-        this.stackable = var2.stackable;
-        this.anInt579 = var2.anInt579;
-        this.maleModel1 = var2.maleModel1;
-        this.maleModel2 = var2.maleModel2;
-        this.anInt709 = var2.anInt709;
-        this.femaleModel1 = var2.femaleModel1;
-        this.femaleModel2 = var2.femaleModel2;
-        this.maleHeadModel = var2.maleHeadModel;
-        this.maleHeadModel2 = var2.maleHeadModel2;
-        this.femaleHeadModel = var2.femaleHeadModel;
-        this.femaleHeadModel2 = var2.femaleHeadModel2;
-        this.team = var2.team;
-        this.groundActions = var2.groundActions;
-        this.actions = new String[5];
+        modelId = var1.modelId;
+        spriteScale = var1.spriteScale;
+        spritePitch = var1.spritePitch;
+        spriteRoll = var1.spriteRoll;
+        spriteYaw = var1.spriteYaw;
+        spriteTranslateX = var1.spriteTranslateX;
+        spriteTranslateY = var1.spriteTranslateY;
+        aShortArray723 = var2.aShortArray723;
+        aShortArray718 = var2.aShortArray718;
+        aShortArray724 = var2.aShortArray724;
+        aShortArray719 = var2.aShortArray719;
+        name = var2.name;
+        members = var2.members;
+        stackable = var2.stackable;
+        anInt579 = var2.anInt579;
+        maleModel1 = var2.maleModel1;
+        maleModel2 = var2.maleModel2;
+        anInt709 = var2.anInt709;
+        femaleModel1 = var2.femaleModel1;
+        femaleModel2 = var2.femaleModel2;
+        maleHeadModel = var2.maleHeadModel;
+        maleHeadModel2 = var2.maleHeadModel2;
+        femaleHeadModel = var2.femaleHeadModel;
+        femaleHeadModel2 = var2.femaleHeadModel2;
+        team = var2.team;
+        groundActions = var2.groundActions;
+        actions = new String[5];
         if (var2.actions != null) {
-            System.arraycopy(var2.actions, 0, this.actions, 0, 4);
+            System.arraycopy(var2.actions, 0, actions, 0, 4);
         }
 
-        this.actions[4] = "Discard";
-        this.value = 0;
+        actions[4] = "Discard";
+        value = 0;
     }
 
     public void method523(ItemDefinition var1, ItemDefinition var2) {
-        this.modelId = var1.modelId;
-        this.spriteScale = var1.spriteScale;
-        this.spritePitch = var1.spritePitch;
-        this.spriteRoll = var1.spriteRoll;
-        this.spriteYaw = var1.spriteYaw;
-        this.spriteTranslateX = var1.spriteTranslateX;
-        this.spriteTranslateY = var1.spriteTranslateY;
-        this.aShortArray723 = var1.aShortArray723;
-        this.aShortArray718 = var1.aShortArray718;
-        this.aShortArray724 = var1.aShortArray724;
-        this.aShortArray719 = var1.aShortArray719;
-        this.stackable = var1.stackable;
-        this.name = var2.name;
-        this.value = 0;
-        this.members = false;
-        this.stockMarketable = false;
+        modelId = var1.modelId;
+        spriteScale = var1.spriteScale;
+        spritePitch = var1.spritePitch;
+        spriteRoll = var1.spriteRoll;
+        spriteYaw = var1.spriteYaw;
+        spriteTranslateX = var1.spriteTranslateX;
+        spriteTranslateY = var1.spriteTranslateY;
+        aShortArray723 = var1.aShortArray723;
+        aShortArray718 = var1.aShortArray718;
+        aShortArray724 = var1.aShortArray724;
+        aShortArray719 = var1.aShortArray719;
+        stackable = var1.stackable;
+        name = var2.name;
+        value = 0;
+        members = false;
+        stockMarketable = false;
     }
 
-    public int method522() {
-        if (this.shiftClickActionIndex != -1 && this.actions != null) {
-            if (this.shiftClickActionIndex >= 0) {
-                return this.actions[this.shiftClickActionIndex] != null ? this.shiftClickActionIndex : -1;
+    public int getShiftOptionIndex() {
+        if (shiftClickActionIndex != -1 && actions != null) {
+            if (shiftClickActionIndex >= 0) {
+                return actions[shiftClickActionIndex] != null ? shiftClickActionIndex : -1;
             }
-            return "Drop".equalsIgnoreCase(this.actions[4]) ? 4 : -1;
+            return "Drop".equalsIgnoreCase(actions[4]) ? 4 : -1;
         }
         return -1;
     }
 
     public ItemDefinition method519(int var1) {
-        if (this.variantIds != null && var1 > 1) {
+        if (variantIds != null && var1 > 1) {
             int var2 = -1;
 
             for (int var3 = 0; var3 < 10; ++var3) {
-                if (var1 >= this.variantStackSizes[var3] && this.variantStackSizes[var3] != 0) {
-                    var2 = this.variantIds[var3];
+                if (var1 >= variantStackSizes[var3] && variantStackSizes[var3] != 0) {
+                    var2 = variantIds[var3];
                 }
             }
 
@@ -680,10 +837,10 @@ public class ItemDefinition extends DoublyLinkedNode {
     }
 
     public int method527(int var1, int var2) {
-        return HealthBar.method696(this.properties, var1, var2);
+        return IterableNodeTable.getIntParameter(properties, var1, var2);
     }
 
     public String method520(int var1, String var2) {
-        return IterableNodeTable.getStringParameter(this.properties, var1, var2);
+        return IterableNodeTable.getStringParameter(properties, var1, var2);
     }
 }

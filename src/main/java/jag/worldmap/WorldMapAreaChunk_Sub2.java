@@ -1,12 +1,10 @@
 package jag.worldmap;
 
-import jag.graphics.GraphicsProvider;
 import jag.graphics.IndexedSprite;
 import jag.opcode.Buffer;
-import jag.script.RuneScript;
+import jag.script.ClientScript;
 
 public class WorldMapAreaChunk_Sub2 implements WorldMapAreaChunk {
-    public static GraphicsProvider aGraphicsProvider_284;
     public static IndexedSprite aDoublyNode_Sub24_Sub4_288;
     int anInt285;
     int anInt282;
@@ -22,14 +20,14 @@ public class WorldMapAreaChunk_Sub2 implements WorldMapAreaChunk {
     WorldMapAreaChunk_Sub2() {
     }
 
-    public static RuneScript method151(int var0, int var1, int var2) {
+    public static ClientScript method151(int var0, int var1, int var2) {
         int var3 = (var1 << 8) + var0;
-        RuneScript var5 = RuneScript.method239(var3);
+        ClientScript var5 = ClientScript.get(var3);
         if (var5 != null) {
             return var5;
         }
         int var6 = (var2 + 40000 << 8) + var0;
-        var5 = RuneScript.method239(var6);
+        var5 = ClientScript.get(var6);
         return var5;
     }
 
@@ -44,21 +42,21 @@ public class WorldMapAreaChunk_Sub2 implements WorldMapAreaChunk {
         return false;
     }
 
-    public void method93(WorldMapArea var1) {
-        if (var1.anInt134 > this.anInt279) {
-            var1.anInt134 = this.anInt279;
+    public void method93(WorldMapCacheArea var1) {
+        if (var1.regionMinX > this.anInt279) {
+            var1.regionMinX = this.anInt279;
         }
 
-        if (var1.anInt131 < this.anInt279) {
-            var1.anInt131 = this.anInt279;
+        if (var1.regionMaxX < this.anInt279) {
+            var1.regionMaxX = this.anInt279;
         }
 
-        if (var1.anInt138 > this.anInt277) {
-            var1.anInt138 = this.anInt277;
+        if (var1.regionMinY > this.anInt277) {
+            var1.regionMinY = this.anInt277;
         }
 
-        if (var1.anInt129 < this.anInt277) {
-            var1.anInt129 = this.anInt277;
+        if (var1.regionMaxY < this.anInt277) {
+            var1.regionMaxY = this.anInt277;
         }
 
     }
@@ -80,16 +78,16 @@ public class WorldMapAreaChunk_Sub2 implements WorldMapAreaChunk {
     }
 
     public void decode(Buffer buffer) {
-        anInt285 = buffer.readUByte();
-        anInt287 = buffer.readUByte();
-        anInt281 = buffer.readUShort();
-        anInt278 = buffer.readUByte();
-        anInt280 = buffer.readUShort();
-        anInt286 = buffer.readUByte();
-        anInt279 = buffer.readUShort();
-        anInt282 = buffer.readUByte();
-        anInt277 = buffer.readUShort();
-        anInt283 = buffer.readUByte();
+        anInt285 = buffer.g1();
+        anInt287 = buffer.g1();
+        anInt281 = buffer.g2();
+        anInt278 = buffer.g1();
+        anInt280 = buffer.g2();
+        anInt286 = buffer.g1();
+        anInt279 = buffer.g2();
+        anInt282 = buffer.g1();
+        anInt277 = buffer.g2();
+        anInt283 = buffer.g1();
         method148();
     }
 

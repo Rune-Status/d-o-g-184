@@ -93,28 +93,28 @@ public class AudioFilter {
     }
 
     public final void method547(Buffer var1, AudioEnvelope var2) {
-        int var3 = var1.readUByte();
+        int var3 = var1.g1();
         this.anIntArray743[0] = var3 >> 4;
         this.anIntArray743[1] = var3 & 15;
         if (var3 != 0) {
-            this.anIntArray739[0] = var1.readUShort();
-            this.anIntArray739[1] = var1.readUShort();
-            int var4 = var1.readUByte();
+            this.anIntArray739[0] = var1.g2();
+            this.anIntArray739[1] = var1.g2();
+            int var4 = var1.g1();
 
             int var5;
             int var6;
             for (var5 = 0; var5 < 2; ++var5) {
                 for (var6 = 0; var6 < this.anIntArray743[var5]; ++var6) {
-                    this.anIntArrayArrayArray741[var5][0][var6] = var1.readUShort();
-                    this.anIntArrayArrayArray740[var5][0][var6] = var1.readUShort();
+                    this.anIntArrayArrayArray741[var5][0][var6] = var1.g2();
+                    this.anIntArrayArrayArray740[var5][0][var6] = var1.g2();
                 }
             }
 
             for (var5 = 0; var5 < 2; ++var5) {
                 for (var6 = 0; var6 < this.anIntArray743[var5]; ++var6) {
                     if ((var4 & 1 << var5 * 4 << var6) != 0) {
-                        this.anIntArrayArrayArray741[var5][1][var6] = var1.readUShort();
-                        this.anIntArrayArrayArray740[var5][1][var6] = var1.readUShort();
+                        this.anIntArrayArrayArray741[var5][1][var6] = var1.g2();
+                        this.anIntArrayArrayArray740[var5][1][var6] = var1.g2();
                     } else {
                         this.anIntArrayArrayArray741[var5][1][var6] = this.anIntArrayArrayArray741[var5][0][var6];
                         this.anIntArrayArrayArray740[var5][1][var6] = this.anIntArrayArrayArray740[var5][0][var6];

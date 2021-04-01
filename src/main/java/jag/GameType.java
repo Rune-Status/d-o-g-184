@@ -7,7 +7,7 @@ public enum GameType implements EnumType {
     GAME3("game3", 2),
     GAME4("game4", 3),
     GAME5("game5", 4),
-    anEnum_Sub5_1211("oldscape", 5);
+    OSRS("oldscape", 5);
 
     public final String name;
     final int index;
@@ -18,6 +18,6 @@ public enum GameType implements EnumType {
     }
 
     public int getOrdinal() {
-        return this.index;
+        return index;
     }
 }

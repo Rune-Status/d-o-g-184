@@ -5,10 +5,8 @@ import jag.graphics.JagGraphics;
 import jag.graphics.JagGraphics3D;
 
 public class DefaultAudioSystemProvider implements AudioSystemProvider {
-    public static int anInt143;
     public static short[][] aShortArrayArray145;
-    public static InterfaceComponent anInterfaceComponent144;
-    public static int selectedItemId;
+    public static InterfaceComponent processingItemComponent;
     public static byte[][][] aByteArrayArrayArray141;
     public static int[][] anIntArrayArray146;
     public static int anInt142;

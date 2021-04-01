@@ -8,11 +8,11 @@ public class Vars {
 
     static {
         masks = new int[32];
-        int var0 = 2;
 
-        for (int var1 = 0; var1 < 32; ++var1) {
-            masks[var1] = var0 - 1;
-            var0 += var0;
+        int mask = 2;
+        for (int i = 0; i < 32; ++i) {
+            masks[i] = mask - 1;
+            mask += mask;
         }
 
         baseValues = new int[4000];

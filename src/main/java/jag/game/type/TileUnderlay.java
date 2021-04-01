@@ -7,11 +7,12 @@ import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
 
 public class TileUnderlay extends DoublyLinkedNode {
-    public static final ReferenceCache aReferenceCache385;
-    public static ReferenceTable aReferenceTable383;
+
+    public static final ReferenceCache<TileUnderlay> cache;
+    public static ReferenceTable table;
 
     static {
-        aReferenceCache385 = new ReferenceCache(64);
+        cache = new ReferenceCache<>(64);
     }
 
     public int anInt574;
@@ -21,11 +22,27 @@ public class TileUnderlay extends DoublyLinkedNode {
     int anInt378;
 
     public TileUnderlay() {
-        this.anInt378 = 0;
+        anInt378 = 0;
     }
 
     public static AttackOptionPriority[] method1109() {
-        return new AttackOptionPriority[]{AttackOptionPriority.anActionPrioritySetting330, AttackOptionPriority.anActionPrioritySetting331, AttackOptionPriority.anActionPrioritySetting336, AttackOptionPriority.anActionPrioritySetting333};
+        return new AttackOptionPriority[]{AttackOptionPriority.HIDDEN, AttackOptionPriority.LEFT, AttackOptionPriority.RIGHT, AttackOptionPriority.DEPENDS};
+    }
+
+    public static TileUnderlay get(int id) {
+        TileUnderlay var1 = cache.get(id);
+        if (var1 != null) {
+            return var1;
+        }
+        byte[] var2 = table.unpack(1, id);
+        var1 = new TileUnderlay();
+        if (var2 != null) {
+            var1.decode(new Buffer(var2));
+        }
+
+        var1.method254();
+        cache.put(var1, id);
+        return var1;
     }
 
     void method830(int var1) {
@@ -72,52 +89,52 @@ public class TileUnderlay extends DoublyLinkedNode {
         }
 
         var12 /= 6.0D;
-        this.anInt574 = (int) (256.0D * var14);
-        this.anInt112 = (int) (var16 * 256.0D);
-        if (this.anInt574 < 0) {
-            this.anInt574 = 0;
-        } else if (this.anInt574 > 255) {
-            this.anInt574 = 255;
+        anInt574 = (int) (256.0D * var14);
+        anInt112 = (int) (var16 * 256.0D);
+        if (anInt574 < 0) {
+            anInt574 = 0;
+        } else if (anInt574 > 255) {
+            anInt574 = 255;
         }
 
-        if (this.anInt112 < 0) {
-            this.anInt112 = 0;
-        } else if (this.anInt112 > 255) {
-            this.anInt112 = 255;
+        if (anInt112 < 0) {
+            anInt112 = 0;
+        } else if (anInt112 > 255) {
+            anInt112 = 255;
         }
 
         if (var16 > 0.5D) {
-            this.anInt375 = (int) (512.0D * var14 * (1.0D - var16));
+            anInt375 = (int) (512.0D * var14 * (1.0D - var16));
         } else {
-            this.anInt375 = (int) (512.0D * var16 * var14);
+            anInt375 = (int) (512.0D * var16 * var14);
         }
 
-        if (this.anInt375 < 1) {
-            this.anInt375 = 1;
+        if (anInt375 < 1) {
+            anInt375 = 1;
         }
 
-        this.anInt377 = (int) ((double) this.anInt375 * var12);
+        anInt377 = (int) ((double) anInt375 * var12);
     }
 
     void decode(Buffer var1, int var2) {
         if (var2 == 1) {
-            this.anInt378 = var1.readMediumInt();
+            anInt378 = var1.g3();
         }
 
     }
 
     public void method254() {
-        this.method830(this.anInt378);
+        method830(anInt378);
     }
 
     public void decode(Buffer var1) {
         while (true) {
-            int var3 = var1.readUByte();
+            int var3 = var1.g1();
             if (var3 == 0) {
                 return;
             }
 
-            this.decode(var1, var3);
+            decode(var1, var3);
         }
     }
 }

@@ -1,6 +1,6 @@
 package jag.commons.input;
 
-import jag.game.GameEngine;
+import jag.commons.time.Clock;
 
 import java.awt.event.*;
 
@@ -62,14 +62,31 @@ public class Mouse implements MouseListener, MouseMotionListener, FocusListener 
 
     }
 
-    public final synchronized void mouseMoved(MouseEvent var1) {
+    public static int getAndIncrementIdleTime() {
+        return ++idleTime - 1;
+    }
+
+    public static void process() {
+        synchronized (instance) {
+            pressMeta = pendingPressMeta;
+            x = pendingX;
+            y = pendingY;
+            lastMoveTime = pendingMoveTime;
+            clickMeta = pendingClickMeta;
+            clickX = pendingClickX;
+            clickY = pendingClickY;
+            timeOfClick = pendingTimeOfClick;
+            pendingClickMeta = 0;
+        }
+    }
+
+    public final synchronized void mouseMoved(MouseEvent e) {
         if (instance != null) {
             idleTime = 0;
-            pendingX = var1.getX();
-            pendingY = var1.getY();
-            pendingMoveTime = var1.getWhen();
+            pendingX = e.getX();
+            pendingY = e.getY();
+            pendingMoveTime = e.getWhen();
         }
-
     }
 
     final int getClickMeta(MouseEvent event) {
@@ -80,68 +97,64 @@ public class Mouse implements MouseListener, MouseMotionListener, FocusListener 
         return !event.isMetaDown() && button != RIGHT_MBUTTON ? 1 : 2;
     }
 
-    public final synchronized void mouseReleased(MouseEvent var1) {
+    public final synchronized void mouseReleased(MouseEvent e) {
         if (instance != null) {
             idleTime = 0;
             pendingPressMeta = 0;
         }
 
-        if (var1.isPopupTrigger()) {
-            var1.consume();
+        if (e.isPopupTrigger()) {
+            e.consume();
         }
-
     }
 
-    public final void mouseClicked(MouseEvent var1) {
-        if (var1.isPopupTrigger()) {
-            var1.consume();
+    public final void mouseClicked(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            e.consume();
         }
+    }
+
+    public final synchronized void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
+    public final void focusGained(FocusEvent e) {
 
     }
 
-    public final synchronized void mouseDragged(MouseEvent var1) {
-        this.mouseMoved(var1);
-    }
-
-    public final void focusGained(FocusEvent var1) {
-    }
-
-    public final synchronized void focusLost(FocusEvent var1) {
+    public final synchronized void focusLost(FocusEvent e) {
         if (instance != null) {
             pendingPressMeta = 0;
         }
-
     }
 
-    public final synchronized void mouseEntered(MouseEvent var1) {
-        this.mouseMoved(var1);
+    public final synchronized void mouseEntered(MouseEvent e) {
+        mouseMoved(e);
     }
 
-    public final synchronized void mouseExited(MouseEvent var1) {
+    public final synchronized void mouseExited(MouseEvent e) {
         if (instance != null) {
             idleTime = 0;
             pendingX = -1;
             pendingY = -1;
-            pendingMoveTime = var1.getWhen();
+            pendingMoveTime = e.getWhen();
         }
-
     }
 
-    public final synchronized void mousePressed(MouseEvent var1) {
+    public final synchronized void mousePressed(MouseEvent e) {
         if (instance != null) {
             idleTime = 0;
-            pendingClickX = var1.getX();
-            pendingClickY = var1.getY();
-            pendingTimeOfClick = GameEngine.currentTime();
-            pendingClickMeta = this.getClickMeta(var1);
+            pendingClickX = e.getX();
+            pendingClickY = e.getY();
+            pendingTimeOfClick = Clock.now();
+            pendingClickMeta = getClickMeta(e);
             if (pendingClickMeta != 0) {
                 pendingPressMeta = pendingClickMeta;
             }
         }
 
-        if (var1.isPopupTrigger()) {
-            var1.consume();
+        if (e.isPopupTrigger()) {
+            e.consume();
         }
-
     }
 }

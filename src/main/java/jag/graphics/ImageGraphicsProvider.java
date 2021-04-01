@@ -7,50 +7,49 @@ import java.util.Hashtable;
 public final class ImageGraphicsProvider extends GraphicsProvider {
 
     public final Image image;
-    public Component aComponent111;
+    public Component target;
 
-    public ImageGraphicsProvider(int var1, int var2, Component var3) {
-        super.anInt1817 = var1;
-        super.anInt1816 = var2;
-        super.anIntArray1818 = new int[var2 * var1 + 1];
-        DataBufferInt var4 = new DataBufferInt(super.anIntArray1818, super.anIntArray1818.length);
-        DirectColorModel var5 = new DirectColorModel(32, 16711680, 65280, 255);
-        WritableRaster var6 = Raster.createWritableRaster(var5.createCompatibleSampleModel(super.anInt1817, super.anInt1816), var4, null);
-        this.image = new BufferedImage(var5, var6, false, new Hashtable());
-        this.method21(var3);
-        this.method1318();
+    public ImageGraphicsProvider(int width, int height, Component target) {
+        super.width = width;
+        super.height = height;
+        super.anIntArray1818 = new int[height * width + 1];
+        DataBufferInt data = new DataBufferInt(super.anIntArray1818, super.anIntArray1818.length);
+        DirectColorModel model = new DirectColorModel(32, 16711680, 65280, 255);
+        WritableRaster raster = Raster.createWritableRaster(model.createCompatibleSampleModel(super.width, super.height), data, null);
+        image = new BufferedImage(model, raster, false, new Hashtable<>());
+        setTarget(target);
+        method1318();
     }
 
-    public final void method19(Graphics var1, int var2, int var3, int var4, int var5) {
+    public final void draw(Graphics g, int x, int y, int width, int height) {
         try {
-            Shape var6 = var1.getClip();
-            var1.clipRect(var2, var3, var4, var5);
-            var1.drawImage(this.image, 0, 0, this.aComponent111);
-            var1.setClip(var6);
-        } catch (Exception var7) {
-            this.aComponent111.repaint();
+            Shape shape = g.getClip();
+            g.clipRect(x, y, width, height);
+            g.drawImage(image, 0, 0, target);
+            g.setClip(shape);
+        } catch (Exception e) {
+            target.repaint();
         }
 
     }
 
-    public final void drawGame(Graphics var1, int var2, int var3) {
+    public final void drawGame(Graphics g, int width, int height) {
         try {
-            var1.drawImage(this.image, var2, var3, this.aComponent111);
-        } catch (Exception var6) {
-            this.aComponent111.repaint();
+            g.drawImage(image, width, height, target);
+        } catch (Exception e) {
+            target.repaint();
         }
-
     }
 
-    public final void method21(Component var1) {
-        this.aComponent111 = var1;
+    public final void setTarget(Component target) {
+        this.target = target;
     }
 
-    public final void method22(int var1, int var2) {
-        this.drawGame(this.aComponent111.getGraphics(), var1, var2);
+    public final void drawGame(int width, int height) {
+        drawGame(target.getGraphics(), width, height);
     }
 
     public final void method20(int var1, int var2, int var3, int var4) {
-        this.method19(this.aComponent111.getGraphics(), var1, var2, var3, var4);
+        draw(target.getGraphics(), var1, var2, var3, var4);
     }
 }

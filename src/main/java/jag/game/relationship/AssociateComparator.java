@@ -10,6 +10,7 @@ public abstract class AssociateComparator implements Comparator<Associate> {
     public Comparator<Associate> delegate;
 
     protected AssociateComparator() {
+
     }
 
     protected final int method1135(Associate c1, Associate c2) {
@@ -22,7 +23,6 @@ public abstract class AssociateComparator implements Comparator<Associate> {
         } else if (this.delegate instanceof AssociateComparator) {
             ((AssociateComparator) this.delegate).set(delegate);
         }
-
     }
 
     public boolean equals(Object o) {

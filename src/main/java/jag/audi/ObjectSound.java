@@ -7,22 +7,23 @@ import jag.graphics.Sprite;
 import jag.worldmap.WorldMapLabelSize;
 
 public final class ObjectSound extends Node {
-    public static final NodeDeque aNodeDeque373;
-    public static int anInt371;
+
+    public static final NodeDeque<ObjectSound> OBJECT_SOUNDS;
+    public static int oculusOrbAbsoluteX;
     public static Sprite minimapSprite;
 
     static {
-        aNodeDeque373 = new NodeDeque();
+        OBJECT_SOUNDS = new NodeDeque<>();
     }
 
-    public ObjectDefinition anObjectDefinition376;
+    public ObjectDefinition definition;
     public PcmStream_Sub2 aClass5_Sub6_Sub2_370;
     public PcmStream_Sub2 aClass5_Sub6_Sub2_369;
-    public int anInt379;
+    public int ambientSoundId;
     public int anInt372;
     public int anInt368;
     public int anInt367;
-    public int[] anIntArray374;
+    public int[] effects;
     public int anInt380;
     public int anInt377;
     public int anInt375;
@@ -34,25 +35,25 @@ public final class ObjectSound extends Node {
     }
 
     public void method254() {
-        int var1 = this.anInt379;
-        ObjectDefinition var2 = this.anObjectDefinition376.transform();
-        if (var2 != null) {
-            this.anInt379 = var2.ambientSoundId;
-            this.anInt372 = var2.anInt1344 * 128;
-            this.anInt368 = var2.anInt1508;
-            this.anInt367 = var2.anInt1510;
-            this.anIntArray374 = var2.anIntArray1509;
+        int id = ambientSoundId;
+        ObjectDefinition definition = this.definition.transform();
+        if (definition != null) {
+            ambientSoundId = definition.ambientSoundId;
+            anInt372 = definition.anInt1344 * 128;
+            anInt368 = definition.anInt1508;
+            anInt367 = definition.anInt1510;
+            effects = definition.soundEffects;
         } else {
-            this.anInt379 = -1;
-            this.anInt372 = 0;
-            this.anInt368 = 0;
-            this.anInt367 = 0;
-            this.anIntArray374 = null;
+            ambientSoundId = -1;
+            anInt372 = 0;
+            anInt368 = 0;
+            anInt367 = 0;
+            effects = null;
         }
 
-        if (var1 != this.anInt379 && this.aClass5_Sub6_Sub2_370 != null) {
-            WorldMapLabelSize.aClass5_Sub6_Sub1_528.method306(this.aClass5_Sub6_Sub2_370);
-            this.aClass5_Sub6_Sub2_370 = null;
+        if (id != ambientSoundId && aClass5_Sub6_Sub2_370 != null) {
+            WorldMapLabelSize.aClass5_Sub6_Sub1_528.removeDelegate(aClass5_Sub6_Sub2_370);
+            aClass5_Sub6_Sub2_370 = null;
         }
 
     }

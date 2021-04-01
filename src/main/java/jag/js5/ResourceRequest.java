@@ -1,7 +1,7 @@
 package jag.js5;
 
 import jag.commons.collection.DoublyLinkedNode;
-import jag.game.GameEngine;
+import jag.commons.time.Clock;
 import jag.game.relationship.AssociateComparator_Sub4;
 import jag.opcode.Buffer;
 import jag.worldmap.WorldMapIcon;
@@ -10,8 +10,8 @@ import java.io.IOException;
 
 public class ResourceRequest extends DoublyLinkedNode {
 
-    public byte aByte1220;
-    public Archive aArchive1221;
+    public byte padding;
+    public Archive archive;
     public int crc;
 
     public ResourceRequest() {
@@ -19,54 +19,54 @@ public class ResourceRequest extends DoublyLinkedNode {
     }
 
     public static boolean processResources() {
-        long time = GameEngine.currentTime();
-        int change = (int) (time - NetWorker.lastAttempt);
-        NetWorker.lastAttempt = time;
+        long time = Clock.now();
+        int change = (int) (time - Js5Worker.lastAttempt);
+        Js5Worker.lastAttempt = time;
         if (change > 200) {
             change = 200;
         }
 
-        NetWorker.latency += change;
-        if (NetWorker.anInt1486 == 0 && NetWorker.anInt1496 == 0
-                && NetWorker.anInt1491 == 0 && NetWorker.anInt1497 == 0) {
+        Js5Worker.latency += change;
+        if (Js5Worker.pendingResponseCount == 0 && Js5Worker.pendingPriorityResponseCount == 0
+                && Js5Worker.pendingCount == 0 && Js5Worker.pendingPriorityCount == 0) {
             return true;
         }
 
-        if (NetWorker.connection == null) {
+        if (Js5Worker.connection == null) {
             return false;
         }
 
         try {
-            if (NetWorker.latency > 30000) {
+            if (Js5Worker.latency > 30000) {
                 throw new IOException();
             }
             ResourceRequest buffer;
             Buffer var5;
-            while (NetWorker.anInt1496 < 200 && NetWorker.anInt1497 > 0) {
-                buffer = NetWorker.prioritized.head();
+            while (Js5Worker.pendingPriorityResponseCount < 200 && Js5Worker.pendingPriorityCount > 0) {
+                buffer = Js5Worker.pendingPriority.head();
                 var5 = new Buffer(4);
-                var5.writeByte(1);
-                var5.writeMediumInt((int) buffer.key);
-                NetWorker.connection.writeBytes(var5.payload, 0, 4);
-                NetWorker.pendingPrioritized.put(buffer, buffer.key);
-                --NetWorker.anInt1497;
-                ++NetWorker.anInt1496;
+                var5.p1(1);
+                var5.p3((int) buffer.key);
+                Js5Worker.connection.write(var5.payload, 0, 4);
+                Js5Worker.pendingPriorityRecv.put(buffer, buffer.key);
+                --Js5Worker.pendingPriorityCount;
+                ++Js5Worker.pendingPriorityResponseCount;
             }
 
-            while (NetWorker.anInt1486 < 200 && NetWorker.anInt1491 > 0) {
-                buffer = (ResourceRequest) NetWorker.extras.method299();
+            while (Js5Worker.pendingResponseCount < 200 && Js5Worker.pendingCount > 0) {
+                buffer = Js5Worker.pendingQueue.head();
                 var5 = new Buffer(4);
-                var5.writeByte(0);
-                var5.writeMediumInt((int) buffer.key);
-                NetWorker.connection.writeBytes(var5.payload, 0, 4);
+                var5.p1(0);
+                var5.p3((int) buffer.key);
+                Js5Worker.connection.write(var5.payload, 0, 4);
                 buffer.unlinkDoubly();
-                NetWorker.pendingExtras.put(buffer, buffer.key);
-                --NetWorker.anInt1491;
-                ++NetWorker.anInt1486;
+                Js5Worker.pendingRecv.put(buffer, buffer.key);
+                --Js5Worker.pendingCount;
+                ++Js5Worker.pendingResponseCount;
             }
 
             for (int input = 0; input < 100; ++input) {
-                int available = NetWorker.connection.readable();
+                int available = Js5Worker.connection.available();
                 if (available < 0) {
                     throw new IOException();
                 }
@@ -75,11 +75,11 @@ public class ResourceRequest extends DoublyLinkedNode {
                     break;
                 }
 
-                NetWorker.latency = 0;
+                Js5Worker.latency = 0;
                 byte var8 = 0;
-                if (NetWorker.current == null) {
+                if (Js5Worker.current == null) {
                     var8 = 8;
-                } else if (NetWorker.anInt1499 == 0) {
+                } else if (Js5Worker.anInt1499 == 0) {
                     var8 = 1;
                 }
 
@@ -91,37 +91,37 @@ public class ResourceRequest extends DoublyLinkedNode {
                 int var10001;
                 Buffer var23;
                 if (var8 > 0) {
-                    var9 = var8 - NetWorker.header.caret;
+                    var9 = var8 - Js5Worker.responseHeader.pos;
                     if (var9 > available) {
                         var9 = available;
                     }
 
-                    NetWorker.connection.readBytes(NetWorker.header.payload, NetWorker.header.caret, var9);
-                    if (NetWorker.encryptionKey != 0) {
+                    Js5Worker.connection.read(Js5Worker.responseHeader.payload, Js5Worker.responseHeader.pos, var9);
+                    if (Js5Worker.encryptionKey != 0) {
                         for (var10 = 0; var10 < var9; ++var10) {
-                            header = NetWorker.header.payload;
-                            var10001 = NetWorker.header.caret + var10;
-                            header[var10001] ^= NetWorker.encryptionKey;
+                            header = Js5Worker.responseHeader.payload;
+                            var10001 = Js5Worker.responseHeader.pos + var10;
+                            header[var10001] ^= Js5Worker.encryptionKey;
                         }
                     }
 
-                    var23 = NetWorker.header;
-                    var23.caret += var9;
-                    if (NetWorker.header.caret < var8) {
+                    var23 = Js5Worker.responseHeader;
+                    var23.pos += var9;
+                    if (Js5Worker.responseHeader.pos < var8) {
                         break;
                     }
 
-                    if (NetWorker.current == null) {
-                        NetWorker.header.caret = 0;
-                        var10 = NetWorker.header.readUByte();
-                        var11 = NetWorker.header.readUShort();
-                        int var12 = NetWorker.header.readUByte();
-                        var13 = NetWorker.header.readInt();
+                    if (Js5Worker.current == null) {
+                        Js5Worker.responseHeader.pos = 0;
+                        var10 = Js5Worker.responseHeader.g1();
+                        var11 = Js5Worker.responseHeader.g2();
+                        int var12 = Js5Worker.responseHeader.g1();
+                        var13 = Js5Worker.responseHeader.g4();
                         long var14 = var11 + (var10 << 16);
-                        ResourceRequest var16 = (ResourceRequest) NetWorker.pendingPrioritized.lookup(var14);
+                        ResourceRequest var16 = Js5Worker.pendingPriorityRecv.lookup(var14);
                         AssociateComparator_Sub4.aBoolean804 = true;
                         if (var16 == null) {
-                            var16 = (ResourceRequest) NetWorker.pendingExtras.lookup(var14);
+                            var16 = Js5Worker.pendingRecv.lookup(var14);
                             AssociateComparator_Sub4.aBoolean804 = false;
                         }
 
@@ -130,94 +130,94 @@ public class ResourceRequest extends DoublyLinkedNode {
                         }
 
                         int var17 = var12 == 0 ? 5 : 9;
-                        NetWorker.current = var16;
-                        CacheRequestWorker.buffer = new Buffer(var13 + var17 + NetWorker.current.aByte1220);
-                        CacheRequestWorker.buffer.writeByte(var12);
-                        CacheRequestWorker.buffer.writeInt(var13);
-                        NetWorker.anInt1499 = 8;
-                        NetWorker.header.caret = 0;
-                    } else if (NetWorker.anInt1499 == 0) {
-                        if (NetWorker.header.payload[0] == -1) {
-                            NetWorker.anInt1499 = 1;
-                            NetWorker.header.caret = 0;
+                        Js5Worker.current = var16;
+                        Js5Worker.archiveBuffer = new Buffer(var13 + var17 + Js5Worker.current.padding);
+                        Js5Worker.archiveBuffer.p1(var12);
+                        Js5Worker.archiveBuffer.p4(var13);
+                        Js5Worker.anInt1499 = 8;
+                        Js5Worker.responseHeader.pos = 0;
+                    } else if (Js5Worker.anInt1499 == 0) {
+                        if (Js5Worker.responseHeader.payload[0] == -1) {
+                            Js5Worker.anInt1499 = 1;
+                            Js5Worker.responseHeader.pos = 0;
                         } else {
-                            NetWorker.current = null;
+                            Js5Worker.current = null;
                         }
                     }
                 } else {
-                    var9 = CacheRequestWorker.buffer.payload.length - NetWorker.current.aByte1220;
-                    var10 = 512 - NetWorker.anInt1499;
-                    if (var10 > var9 - CacheRequestWorker.buffer.caret) {
-                        var10 = var9 - CacheRequestWorker.buffer.caret;
+                    var9 = Js5Worker.archiveBuffer.payload.length - Js5Worker.current.padding;
+                    var10 = 512 - Js5Worker.anInt1499;
+                    if (var10 > var9 - Js5Worker.archiveBuffer.pos) {
+                        var10 = var9 - Js5Worker.archiveBuffer.pos;
                     }
 
                     if (var10 > available) {
                         var10 = available;
                     }
 
-                    NetWorker.connection.readBytes(CacheRequestWorker.buffer.payload, CacheRequestWorker.buffer.caret, var10);
-                    if (NetWorker.encryptionKey != 0) {
+                    Js5Worker.connection.read(Js5Worker.archiveBuffer.payload, Js5Worker.archiveBuffer.pos, var10);
+                    if (Js5Worker.encryptionKey != 0) {
                         for (var11 = 0; var11 < var10; ++var11) {
-                            header = CacheRequestWorker.buffer.payload;
-                            var10001 = var11 + CacheRequestWorker.buffer.caret;
-                            header[var10001] ^= NetWorker.encryptionKey;
+                            header = Js5Worker.archiveBuffer.payload;
+                            var10001 = var11 + Js5Worker.archiveBuffer.pos;
+                            header[var10001] ^= Js5Worker.encryptionKey;
                         }
                     }
 
-                    var23 = CacheRequestWorker.buffer;
-                    var23.caret += var10;
-                    NetWorker.anInt1499 += var10;
-                    if (var9 == CacheRequestWorker.buffer.caret) {
-                        if (16711935L == NetWorker.current.key) {
-                            WorldMapIcon.aBuffer314 = CacheRequestWorker.buffer;
+                    var23 = Js5Worker.archiveBuffer;
+                    var23.pos += var10;
+                    Js5Worker.anInt1499 += var10;
+                    if (var9 == Js5Worker.archiveBuffer.pos) {
+                        if (16711935L == Js5Worker.current.key) {
+                            WorldMapIcon.aBuffer314 = Js5Worker.archiveBuffer;
 
                             for (var11 = 0; var11 < 256; ++var11) {
-                                Archive var18 = NetWorker.A_ARCHIVE_RESOURCE_PROVIDER_ARRAY_1498[var11];
+                                Archive var18 = Js5Worker.ARCHIVES[var11];
                                 if (var18 != null) {
-                                    WorldMapIcon.aBuffer314.caret = var11 * 8 + 5;
-                                    var13 = WorldMapIcon.aBuffer314.readInt();
-                                    int var19 = WorldMapIcon.aBuffer314.readInt();
+                                    WorldMapIcon.aBuffer314.pos = var11 * 8 + 5;
+                                    var13 = WorldMapIcon.aBuffer314.g4();
+                                    int var19 = WorldMapIcon.aBuffer314.g4();
                                     var18.method493(var13, var19);
                                 }
                             }
                         } else {
-                            NetWorker.crc.reset();
-                            NetWorker.crc.update(CacheRequestWorker.buffer.payload, 0, var9);
-                            var11 = (int) NetWorker.crc.getValue();
-                            if (var11 != NetWorker.current.crc) {
+                            Js5Worker.crc.reset();
+                            Js5Worker.crc.update(Js5Worker.archiveBuffer.payload, 0, var9);
+                            var11 = (int) Js5Worker.crc.getValue();
+                            if (var11 != Js5Worker.current.crc) {
                                 try {
-                                    NetWorker.connection.stop();
+                                    Js5Worker.connection.stop();
                                 } catch (Exception ignored) {
 
                                 }
 
-                                ++NetWorker.anInt1492;
-                                NetWorker.connection = null;
-                                NetWorker.encryptionKey = (byte) ((int) (Math.random() * 255.0D + 1.0D));
+                                ++Js5Worker.mismatchedCrcCount;
+                                Js5Worker.connection = null;
+                                Js5Worker.encryptionKey = (byte) ((int) (Math.random() * 255.0D + 1.0D));
                                 return false;
                             }
 
-                            NetWorker.anInt1492 = 0;
-                            NetWorker.anInt1488 = 0;
-                            NetWorker.current.aArchive1221.method498((int) (NetWorker.current.key & 65535L), CacheRequestWorker.buffer.payload, (NetWorker.current.key & 16711680L) == 16711680L, AssociateComparator_Sub4.aBoolean804);
+                            Js5Worker.mismatchedCrcCount = 0;
+                            Js5Worker.ioExceptionCount = 0;
+                            Js5Worker.current.archive.method498((int) (Js5Worker.current.key & 65535L), Js5Worker.archiveBuffer.payload, (Js5Worker.current.key & 16711680L) == 16711680L, AssociateComparator_Sub4.aBoolean804);
                         }
 
-                        NetWorker.current.unlink();
+                        Js5Worker.current.unlink();
                         if (AssociateComparator_Sub4.aBoolean804) {
-                            --NetWorker.anInt1496;
+                            --Js5Worker.pendingPriorityResponseCount;
                         } else {
-                            --NetWorker.anInt1486;
+                            --Js5Worker.pendingResponseCount;
                         }
 
-                        NetWorker.anInt1499 = 0;
-                        NetWorker.current = null;
-                        CacheRequestWorker.buffer = null;
+                        Js5Worker.anInt1499 = 0;
+                        Js5Worker.current = null;
+                        Js5Worker.archiveBuffer = null;
                     } else {
-                        if (NetWorker.anInt1499 != 512) {
+                        if (Js5Worker.anInt1499 != 512) {
                             break;
                         }
 
-                        NetWorker.anInt1499 = 0;
+                        Js5Worker.anInt1499 = 0;
                     }
                 }
             }
@@ -225,12 +225,12 @@ public class ResourceRequest extends DoublyLinkedNode {
             return true;
         } catch (IOException var22) {
             try {
-                NetWorker.connection.stop();
+                Js5Worker.connection.stop();
             } catch (Exception ignored) {
             }
 
-            ++NetWorker.anInt1488;
-            NetWorker.connection = null;
+            ++Js5Worker.ioExceptionCount;
+            Js5Worker.connection = null;
             return false;
         }
     }

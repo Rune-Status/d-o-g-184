@@ -7,8 +7,8 @@ public final class EffectObject extends Entity {
 
     public final int id;
     public final int floorLevel;
-    public final int fineX;
-    public final int fineY;
+    public final int absoluteX;
+    public final int absoluteY;
     public final int height;
     public final int endCycle;
     public boolean finished;
@@ -16,17 +16,17 @@ public final class EffectObject extends Entity {
     public int frame;
     public AnimationSequence sequence;
 
-    public EffectObject(int id, int floorLevel, int fineX, int fineY, int height, int endCycle, int cycle) {
-        this.frame = 0;
-        this.anInt379 = 0;
-        this.finished = false;
+    public EffectObject(int id, int floorLevel, int absoluteX, int absoluteY, int height, int endCycle, int cycle) {
+        frame = 0;
+        anInt379 = 0;
+        finished = false;
         this.id = id;
         this.floorLevel = floorLevel;
-        this.fineX = fineX;
-        this.fineY = fineY;
+        this.absoluteX = absoluteX;
+        this.absoluteY = absoluteY;
         this.height = height;
         this.endCycle = cycle + endCycle;
-        int animation = EffectAnimation.get(this.id).animation;
+        int animation = EffectAnimation.get(id).animation;
         if (animation != -1) {
             finished = false;
             sequence = AnimationSequence.get(animation);
@@ -52,10 +52,10 @@ public final class EffectObject extends Entity {
             anInt379 += var1;
 
             while (anInt379 > sequence.frameLengths[frame]) {
-                this.anInt379 -= sequence.frameLengths[frame];
+                anInt379 -= sequence.frameLengths[frame];
                 ++frame;
                 if (frame >= sequence.frameIds.length) {
-                    this.finished = true;
+                    finished = true;
                     break;
                 }
             }

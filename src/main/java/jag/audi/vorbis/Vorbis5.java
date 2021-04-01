@@ -21,18 +21,18 @@ public class Vorbis5 {
     int[][] anIntArrayArray759;
 
     Vorbis5() {
-        int var1 = Vorbis9.method396(16);
+        int var1 = VorbisSample.read(16);
         if (var1 != 1) {
             throw new RuntimeException();
         }
-        int var2 = Vorbis9.method396(5);
+        int var2 = VorbisSample.read(5);
         int var3 = 0;
         anIntArray754 = new int[var2];
 
         int var4;
         int var5;
         for (var4 = 0; var4 < var2; ++var4) {
-            var5 = Vorbis9.method396(4);
+            var5 = VorbisSample.read(4);
             anIntArray754[var4] = var5;
             if (var5 >= var3) {
                 var3 = var5 + 1;
@@ -46,10 +46,10 @@ public class Vorbis5 {
 
         int var7;
         for (var4 = 0; var4 < var3; ++var4) {
-            anIntArray751[var4] = Vorbis9.method396(3) + 1;
-            var5 = anIntArray752[var4] = Vorbis9.method396(2);
+            anIntArray751[var4] = VorbisSample.read(3) + 1;
+            var5 = anIntArray752[var4] = VorbisSample.read(2);
             if (var5 != 0) {
-                anIntArray761[var4] = Vorbis9.method396(8);
+                anIntArray761[var4] = VorbisSample.read(8);
             }
 
             var5 = 1 << var5;
@@ -57,12 +57,12 @@ public class Vorbis5 {
             anIntArrayArray759[var4] = var6;
 
             for (var7 = 0; var7 < var5; ++var7) {
-                var6[var7] = Vorbis9.method396(8) - 1;
+                var6[var7] = VorbisSample.read(8) - 1;
             }
         }
 
-        anInt756 = Vorbis9.method396(2) + 1;
-        var4 = Vorbis9.method396(4);
+        anInt756 = VorbisSample.read(2) + 1;
+        var4 = VorbisSample.read(4);
         var5 = 2;
 
         int var8;
@@ -79,7 +79,7 @@ public class Vorbis5 {
             var7 = anIntArray754[var8];
 
             for (int var9 = 0; var9 < anIntArray751[var7]; ++var9) {
-                anIntArray757[var5++] = Vorbis9.method396(var4);
+                anIntArray757[var5++] = VorbisSample.read(var4);
             }
         }
 
@@ -189,7 +189,7 @@ public class Vorbis5 {
     }
 
     boolean method557() {
-        boolean var1 = Vorbis9.method397() != 0;
+        boolean var1 = VorbisSample.read() != 0;
         if (!var1) {
             return false;
         }
@@ -201,9 +201,9 @@ public class Vorbis5 {
         }
 
         var3 = anIntArray760[anInt756 - 1];
-        int var4 = Vorbis1.method726(var3 - 1);
-        anIntArray755[0] = Vorbis9.method396(var4);
-        anIntArray755[1] = Vorbis9.method396(var4);
+        int var4 = Codebook.log(var3 - 1);
+        anIntArray755[0] = VorbisSample.read(var4);
+        anIntArray755[1] = VorbisSample.read(var4);
         int var5 = 2;
 
         for (int var7 : anIntArray754) {
@@ -212,13 +212,13 @@ public class Vorbis5 {
             int var10 = (1 << var9) - 1;
             int var11 = 0;
             if (var9 > 0) {
-                var11 = Vorbis9.aClass86Array557[anIntArray761[var7]].method461();
+                var11 = VorbisSample.aClass86Array557[anIntArray761[var7]].method461();
             }
 
             for (int var12 = 0; var12 < var8; ++var12) {
                 int var13 = anIntArrayArray759[var7][var11 & var10];
                 var11 >>>= var9;
-                anIntArray755[var5++] = var13 >= 0 ? Vorbis9.aClass86Array557[var13].method461() : 0;
+                anIntArray755[var5++] = var13 >= 0 ? VorbisSample.aClass86Array557[var13].method461() : 0;
             }
         }
 

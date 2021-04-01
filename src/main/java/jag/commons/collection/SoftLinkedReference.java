@@ -2,20 +2,20 @@ package jag.commons.collection;
 
 import java.lang.ref.SoftReference;
 
-public class SoftLinkedReference extends LinkedReference {
+public class SoftLinkedReference<T> extends LinkedReference<T> {
 
-    public final SoftReference referent;
+    public final SoftReference<T> referent;
 
-    public SoftLinkedReference(Object referent, int size) {
+    public SoftLinkedReference(T referent, int size) {
         super(size);
-        this.referent = new SoftReference(referent);
+        this.referent = new SoftReference<>(referent);
     }
 
     public boolean isSoft() {
         return true;
     }
 
-    public Object getReferent() {
-        return this.referent.get();
+    public T getReferent() {
+        return referent.get();
     }
 }

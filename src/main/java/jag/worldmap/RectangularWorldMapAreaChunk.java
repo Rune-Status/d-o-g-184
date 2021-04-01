@@ -4,8 +4,6 @@ import jag.opcode.Buffer;
 
 public class RectangularWorldMapAreaChunk implements WorldMapAreaChunk {
 
-    public static int cameraYaw;
-
     int anInt278;
     int minLevel;
     int levelCount;
@@ -32,21 +30,21 @@ public class RectangularWorldMapAreaChunk implements WorldMapAreaChunk {
         return false;
     }
 
-    public void method93(WorldMapArea var1) {
-        if (var1.anInt134 > this.anInt278) {
-            var1.anInt134 = this.anInt278;
+    public void method93(WorldMapCacheArea var1) {
+        if (var1.regionMinX > this.anInt278) {
+            var1.regionMinX = this.anInt278;
         }
 
-        if (var1.anInt131 < this.anInt282) {
-            var1.anInt131 = this.anInt282;
+        if (var1.regionMaxX < this.anInt282) {
+            var1.regionMaxX = this.anInt282;
         }
 
-        if (var1.anInt138 > this.anInt286) {
-            var1.anInt138 = this.anInt286;
+        if (var1.regionMinY > this.anInt286) {
+            var1.regionMinY = this.anInt286;
         }
 
-        if (var1.anInt129 < this.anInt283) {
-            var1.anInt129 = this.anInt283;
+        if (var1.regionMaxY < this.anInt283) {
+            var1.regionMaxY = this.anInt283;
         }
 
     }
@@ -68,16 +66,16 @@ public class RectangularWorldMapAreaChunk implements WorldMapAreaChunk {
     }
 
     public void decode(Buffer buffer) {
-        minLevel = buffer.readUByte();
-        levelCount = buffer.readUByte();
-        minX = buffer.readUShort();
-        minY = buffer.readUShort();
-        maxX = buffer.readUShort();
-        maxY = buffer.readUShort();
-        anInt278 = buffer.readUShort();
-        anInt286 = buffer.readUShort();
-        anInt282 = buffer.readUShort();
-        anInt283 = buffer.readUShort();
+        minLevel = buffer.g1();
+        levelCount = buffer.g1();
+        minX = buffer.g2();
+        minY = buffer.g2();
+        maxX = buffer.g2();
+        maxY = buffer.g2();
+        anInt278 = buffer.g2();
+        anInt286 = buffer.g2();
+        anInt282 = buffer.g2();
+        anInt283 = buffer.g2();
         method148();
     }
 

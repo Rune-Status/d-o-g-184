@@ -13,10 +13,10 @@ public class DefaultOperatingSystemProvider implements OperatingSystemProvider {
         String[] var2 = var1.split("\\.");
 
         try {
-            this.anInt1866 = Integer.parseInt(var2[1]);
+            anInt1866 = Integer.parseInt(var2[1]);
             var2 = var2[2].split("_");
-            this.anInt1865 = Integer.parseInt(var2[0]);
-            this.anInt1864 = Integer.parseInt(var2[1]);
+            anInt1865 = Integer.parseInt(var2[0]);
+            anInt1864 = Integer.parseInt(var2[1]);
         } catch (Exception ignored) {
         }
 
@@ -26,9 +26,9 @@ public class DefaultOperatingSystemProvider implements OperatingSystemProvider {
         String[] var2 = var1.split("\\.");
 
         try {
-            this.anInt1866 = Integer.parseInt(var2[0]);
-            this.anInt1865 = Integer.parseInt(var2[1]);
-            this.anInt1864 = Integer.parseInt(var2[2]);
+            anInt1866 = Integer.parseInt(var2[0]);
+            anInt1865 = Integer.parseInt(var2[1]);
+            anInt1864 = Integer.parseInt(var2[2]);
         } catch (Exception ignored) {
         }
 
@@ -36,9 +36,9 @@ public class DefaultOperatingSystemProvider implements OperatingSystemProvider {
 
     void parseVersion(String var1) {
         if (var1.startsWith("1.")) {
-            this.parseOldVersion(var1);
+            parseOldVersion(var1);
         } else {
-            this.parseNewVersion(var1);
+            parseNewVersion(var1);
         }
     }
 
@@ -141,10 +141,10 @@ public class DefaultOperatingSystemProvider implements OperatingSystemProvider {
             var9 = 4;
         }
 
-        this.parseVersion(var5);
+        parseVersion(var5);
         int var10 = (int) (Runtime.getRuntime().maxMemory() / 1048576L) + 1;
         int var11;
-        if (this.anInt1866 > 3) {
+        if (anInt1866 > 3) {
             var11 = Runtime.getRuntime().availableProcessors();
         } else {
             var11 = 0;
@@ -158,6 +158,6 @@ public class DefaultOperatingSystemProvider implements OperatingSystemProvider {
         String var17 = "";
         String var18 = "";
         int[] var19 = new int[3];
-        return new OperatingSystemNode(var1, var7, var8, var9, this.anInt1866, this.anInt1865, this.anInt1864, var10, var11, var12, var13, var14, var15, var16, var17, var18, var19);
+        return new OperatingSystemNode(var1, var7, var8, var9, anInt1866, anInt1865, anInt1864, var10, var11, var12, var13, var14, var15, var16, var17, var18, var19);
     }
 }

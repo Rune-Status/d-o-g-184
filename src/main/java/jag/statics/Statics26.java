@@ -10,7 +10,7 @@ public class Statics26 {
         }
     }
 
-    public static String method1111(int var0) {
+    public static String addImgTags(int var0) {
         return "<img=" + var0 + ">";
     }
 

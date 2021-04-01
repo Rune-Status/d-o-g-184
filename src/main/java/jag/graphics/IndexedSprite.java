@@ -91,8 +91,8 @@ public final class IndexedSprite extends JagGraphics {
     }
 
     public static IndexedSprite[] method474(ReferenceTable var0, String var1, String var2) {
-        int var3 = var0.get(var1);
-        int var4 = var0.method907(var3, var2);
+        int var3 = var0.getGroup(var1);
+        int var4 = var0.getFile(var3, var2);
         return Statics38.method1194(var0, var3, var4);
     }
 
@@ -115,7 +115,7 @@ public final class IndexedSprite extends JagGraphics {
         }
     }
 
-    public void method1324(int var1, int var2) {
+    public void renderAt(int var1, int var2) {
         var1 += this.insetX;
         var2 += this.insetY;
         int var3 = var1 + var2 * drawingAreaWidth;

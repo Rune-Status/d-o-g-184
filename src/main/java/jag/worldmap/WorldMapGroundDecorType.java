@@ -9,8 +9,6 @@ public class WorldMapGroundDecorType {
 
     public static int anInt310;
 
-    public static Sprite aSprite308;
-
     static {
         A_WORLD_MAP_TYPE___311 = new WorldMapGroundDecorType(0);
         A_WORLD_MAP_TYPE___312 = new WorldMapGroundDecorType(1);

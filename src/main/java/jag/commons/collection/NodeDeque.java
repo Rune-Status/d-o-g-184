@@ -6,9 +6,9 @@ public class NodeDeque<T extends Node> {
     public Node current;
 
     public NodeDeque() {
-        this.sentinel = new Node();
-        this.sentinel.next = this.sentinel;
-        this.sentinel.previous = this.sentinel;
+        sentinel = new Node();
+        sentinel.next = sentinel;
+        sentinel.previous = sentinel;
     }
 
     public static void replace(Node a, Node b) {
@@ -27,29 +27,29 @@ public class NodeDeque<T extends Node> {
             node.unlink();
         }
 
-        node.previous = this.sentinel;
-        node.next = this.sentinel.next;
+        node.previous = sentinel;
+        node.next = sentinel.next;
         node.previous.next = node;
         node.next.previous = node;
     }
 
     public T head() {
-        Node first = this.sentinel.next;
-        if (first == this.sentinel) {
-            this.current = null;
+        Node first = sentinel.next;
+        if (first == sentinel) {
+            current = null;
             return null;
         }
-        this.current = first.next;
+        current = first.next;
         return (T) first;
     }
 
     public T next() {
-        Node next = this.current;
-        if (next == this.sentinel) {
-            this.current = null;
+        Node next = current;
+        if (next == sentinel) {
+            current = null;
             return null;
         }
-        this.current = next.next;
+        current = next.next;
         return (T) next;
     }
 
@@ -58,55 +58,55 @@ public class NodeDeque<T extends Node> {
             node.unlink();
         }
 
-        node.previous = this.sentinel.previous;
-        node.next = this.sentinel;
+        node.previous = sentinel.previous;
+        node.next = sentinel;
         node.previous.next = node;
         node.next.previous = node;
     }
 
     public T popFirst() {
-        Node var1 = this.sentinel.next;
-        if (var1 == this.sentinel) {
+        Node node = sentinel.next;
+        if (node == sentinel) {
             return null;
         }
-        var1.unlink();
-        return (T) var1;
+        node.unlink();
+        return (T) node;
     }
 
     public T tail() {
-        Node var1 = this.sentinel.previous;
-        if (var1 == this.sentinel) {
-            this.current = null;
+        Node node = sentinel.previous;
+        if (node == sentinel) {
+            current = null;
             return null;
         }
-        this.current = var1.previous;
-        return (T) var1;
+        current = node.previous;
+        return (T) node;
     }
 
     public T popLast() {
-        Node var1 = this.sentinel.previous;
-        if (var1 == this.sentinel) {
+        Node node = sentinel.previous;
+        if (node == sentinel) {
             return null;
         }
-        var1.unlink();
-        return (T) var1;
+        node.unlink();
+        return (T) node;
     }
 
     public T previous() {
-        Node var1 = this.current;
-        if (var1 == this.sentinel) {
-            this.current = null;
+        Node node = current;
+        if (node == sentinel) {
+            current = null;
             return null;
         }
-        this.current = var1.previous;
-        return (T) var1;
+        current = node.previous;
+        return (T) node;
     }
 
     public void clear() {
         while (true) {
-            Node remove = this.sentinel.next;
-            if (remove == this.sentinel) {
-                this.current = null;
+            Node remove = sentinel.next;
+            if (remove == sentinel) {
+                current = null;
                 return;
             }
             remove.unlink();

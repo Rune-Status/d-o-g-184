@@ -1,7 +1,5 @@
 package jag.game.relationship;
 
-import jag.game.InterfaceComponent;
-
 public class AssociateComparator_Sub5 extends AssociateComparator {
 
     public final boolean aBoolean764;

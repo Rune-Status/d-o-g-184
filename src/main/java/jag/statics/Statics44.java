@@ -1,12 +1,11 @@
 package jag.statics;
 
-import jag.EntityUID;
 import jag.audi.ObjectSound;
 import jag.game.client;
 import jag.game.scene.SceneGraph;
+import jag.game.scene.entity.EntityUID;
 import jag.game.type.ObjectDefinition;
 import jag.worldmap.WorldMapFunction;
-import jag.worldmap.WorldMapAreaChunk_Sub2;
 
 public class Statics44 {
 
@@ -75,7 +74,7 @@ public class Statics44 {
                 }
             }
 
-            WorldMapAreaChunk_Sub2.aGraphicsProvider_284.method1318();
+            client.graphicsProvider.method1318();
         }
 
     }

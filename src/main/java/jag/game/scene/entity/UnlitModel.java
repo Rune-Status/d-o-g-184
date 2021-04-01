@@ -1,7 +1,7 @@
 package jag.game.scene.entity;
 
 import jag.Face;
-import jag.Vertex;
+import jag.Vector3i;
 import jag.graphics.JagGraphics3D;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
@@ -27,7 +27,7 @@ public class UnlitModel extends Entity {
     public short aShort1439;
     public boolean aBoolean1420;
     public int[] anIntArray787;
-    public Vertex[] aClass96Array1431;
+    public Vector3i[] aClass96Array1431;
     public int[] xVertices;
     public short[] aShortArray1421;
     public int anInt380;
@@ -38,7 +38,7 @@ public class UnlitModel extends Entity {
     public byte[] aByteArray1440;
     public int[] zVertices;
     public short[] aShortArray1435;
-    public Vertex[] aClass96Array1422;
+    public Vector3i[] aClass96Array1422;
     public int anInt556;
     public int anInt1105;
     public Face[] aClass104Array1432;
@@ -60,44 +60,44 @@ public class UnlitModel extends Entity {
     public short[] aShortArray719;
 
     public UnlitModel() {
-        this.anInt380 = 0;
-        this.anInt574 = 0;
-        this.defaultRenderPriority = 0;
-        this.aBoolean1420 = false;
+        anInt380 = 0;
+        anInt574 = 0;
+        defaultRenderPriority = 0;
+        aBoolean1420 = false;
     }
 
     public UnlitModel(UnlitModel[] var1, int var2) {
-        this.anInt380 = 0;
-        this.anInt574 = 0;
-        this.defaultRenderPriority = 0;
-        this.aBoolean1420 = false;
+        anInt380 = 0;
+        anInt574 = 0;
+        defaultRenderPriority = 0;
+        aBoolean1420 = false;
         boolean var3 = false;
         boolean var4 = false;
         boolean var5 = false;
         boolean var6 = false;
         boolean var7 = false;
         boolean var8 = false;
-        this.anInt380 = 0;
-        this.anInt574 = 0;
-        this.anInt702 = 0;
-        this.defaultRenderPriority = -1;
+        anInt380 = 0;
+        anInt574 = 0;
+        anInt702 = 0;
+        defaultRenderPriority = -1;
 
         int var9;
         UnlitModel var10;
         for (var9 = 0; var9 < var2; ++var9) {
             var10 = var1[var9];
             if (var10 != null) {
-                this.anInt380 += var10.anInt380;
-                this.anInt574 += var10.anInt574;
-                this.anInt702 += var10.anInt702;
+                anInt380 += var10.anInt380;
+                anInt574 += var10.anInt574;
+                anInt702 += var10.anInt702;
                 if (var10.aByteArray1428 != null) {
                     var4 = true;
                 } else {
-                    if (this.defaultRenderPriority == -1) {
-                        this.defaultRenderPriority = var10.defaultRenderPriority;
+                    if (defaultRenderPriority == -1) {
+                        defaultRenderPriority = var10.defaultRenderPriority;
                     }
 
-                    if (this.defaultRenderPriority != var10.defaultRenderPriority) {
+                    if (defaultRenderPriority != var10.defaultRenderPriority) {
                         var4 = true;
                     }
                 }
@@ -110,48 +110,48 @@ public class UnlitModel extends Entity {
             }
         }
 
-        this.xVertices = new int[this.anInt380];
-        this.yVertices = new int[this.anInt380];
-        this.zVertices = new int[this.anInt380];
-        this.anIntArray787 = new int[this.anInt380];
-        this.anIntArray747 = new int[this.anInt574];
-        this.anIntArray687 = new int[this.anInt574];
-        this.anIntArray692 = new int[this.anInt574];
+        xVertices = new int[anInt380];
+        yVertices = new int[anInt380];
+        zVertices = new int[anInt380];
+        anIntArray787 = new int[anInt380];
+        anIntArray747 = new int[anInt574];
+        anIntArray687 = new int[anInt574];
+        anIntArray692 = new int[anInt574];
         if (var3) {
-            this.aByteArray1440 = new byte[this.anInt574];
+            aByteArray1440 = new byte[anInt574];
         }
 
         if (var4) {
-            this.aByteArray1428 = new byte[this.anInt574];
+            aByteArray1428 = new byte[anInt574];
         }
 
         if (var5) {
-            this.aByteArray1425 = new byte[this.anInt574];
+            aByteArray1425 = new byte[anInt574];
         }
 
         if (var6) {
-            this.anIntArray782 = new int[this.anInt574];
+            anIntArray782 = new int[anInt574];
         }
 
         if (var7) {
-            this.aShortArray1421 = new short[this.anInt574];
+            aShortArray1421 = new short[anInt574];
         }
 
         if (var8) {
-            this.aByteArray1423 = new byte[this.anInt574];
+            aByteArray1423 = new byte[anInt574];
         }
 
-        this.aShortArray1435 = new short[this.anInt574];
-        if (this.anInt702 > 0) {
-            this.aByteArray1438 = new byte[this.anInt702];
-            this.aShortArray718 = new short[this.anInt702];
-            this.aShortArray724 = new short[this.anInt702];
-            this.aShortArray719 = new short[this.anInt702];
+        aShortArray1435 = new short[anInt574];
+        if (anInt702 > 0) {
+            aByteArray1438 = new byte[anInt702];
+            aShortArray718 = new short[anInt702];
+            aShortArray724 = new short[anInt702];
+            aShortArray719 = new short[anInt702];
         }
 
-        this.anInt380 = 0;
-        this.anInt574 = 0;
-        this.anInt702 = 0;
+        anInt380 = 0;
+        anInt574 = 0;
+        anInt702 = 0;
 
         for (var9 = 0; var9 < var2; ++var9) {
             var10 = var1[var9];
@@ -159,57 +159,57 @@ public class UnlitModel extends Entity {
                 int var11;
                 for (var11 = 0; var11 < var10.anInt574; ++var11) {
                     if (var3 && var10.aByteArray1440 != null) {
-                        this.aByteArray1440[this.anInt574] = var10.aByteArray1440[var11];
+                        aByteArray1440[anInt574] = var10.aByteArray1440[var11];
                     }
 
                     if (var4) {
                         if (var10.aByteArray1428 != null) {
-                            this.aByteArray1428[this.anInt574] = var10.aByteArray1428[var11];
+                            aByteArray1428[anInt574] = var10.aByteArray1428[var11];
                         } else {
-                            this.aByteArray1428[this.anInt574] = var10.defaultRenderPriority;
+                            aByteArray1428[anInt574] = var10.defaultRenderPriority;
                         }
                     }
 
                     if (var5 && var10.aByteArray1425 != null) {
-                        this.aByteArray1425[this.anInt574] = var10.aByteArray1425[var11];
+                        aByteArray1425[anInt574] = var10.aByteArray1425[var11];
                     }
 
                     if (var6 && var10.anIntArray782 != null) {
-                        this.anIntArray782[this.anInt574] = var10.anIntArray782[var11];
+                        anIntArray782[anInt574] = var10.anIntArray782[var11];
                     }
 
                     if (var7) {
                         if (var10.aShortArray1421 != null) {
-                            this.aShortArray1421[this.anInt574] = var10.aShortArray1421[var11];
+                            aShortArray1421[anInt574] = var10.aShortArray1421[var11];
                         } else {
-                            this.aShortArray1421[this.anInt574] = -1;
+                            aShortArray1421[anInt574] = -1;
                         }
                     }
 
                     if (var8) {
                         if (var10.aByteArray1423 != null && var10.aByteArray1423[var11] != -1) {
-                            this.aByteArray1423[this.anInt574] = (byte) (this.anInt702 + var10.aByteArray1423[var11]);
+                            aByteArray1423[anInt574] = (byte) (anInt702 + var10.aByteArray1423[var11]);
                         } else {
-                            this.aByteArray1423[this.anInt574] = -1;
+                            aByteArray1423[anInt574] = -1;
                         }
                     }
 
-                    this.aShortArray1435[this.anInt574] = var10.aShortArray1435[var11];
-                    this.anIntArray747[this.anInt574] = this.method979(var10, var10.anIntArray747[var11]);
-                    this.anIntArray687[this.anInt574] = this.method979(var10, var10.anIntArray687[var11]);
-                    this.anIntArray692[this.anInt574] = this.method979(var10, var10.anIntArray692[var11]);
-                    ++this.anInt574;
+                    aShortArray1435[anInt574] = var10.aShortArray1435[var11];
+                    anIntArray747[anInt574] = method979(var10, var10.anIntArray747[var11]);
+                    anIntArray687[anInt574] = method979(var10, var10.anIntArray687[var11]);
+                    anIntArray692[anInt574] = method979(var10, var10.anIntArray692[var11]);
+                    ++anInt574;
                 }
 
                 for (var11 = 0; var11 < var10.anInt702; ++var11) {
-                    byte var12 = this.aByteArray1438[this.anInt702] = var10.aByteArray1438[var11];
+                    byte var12 = aByteArray1438[anInt702] = var10.aByteArray1438[var11];
                     if (var12 == 0) {
-                        this.aShortArray718[this.anInt702] = (short) this.method979(var10, var10.aShortArray718[var11]);
-                        this.aShortArray724[this.anInt702] = (short) this.method979(var10, var10.aShortArray724[var11]);
-                        this.aShortArray719[this.anInt702] = (short) this.method979(var10, var10.aShortArray719[var11]);
+                        aShortArray718[anInt702] = (short) method979(var10, var10.aShortArray718[var11]);
+                        aShortArray724[anInt702] = (short) method979(var10, var10.aShortArray724[var11]);
+                        aShortArray719[anInt702] = (short) method979(var10, var10.aShortArray719[var11]);
                     }
 
-                    ++this.anInt702;
+                    ++anInt702;
                 }
             }
         }
@@ -217,84 +217,84 @@ public class UnlitModel extends Entity {
     }
 
     public UnlitModel(byte[] var1) {
-        this.anInt380 = 0;
-        this.anInt574 = 0;
-        this.defaultRenderPriority = 0;
-        this.aBoolean1420 = false;
+        anInt380 = 0;
+        anInt574 = 0;
+        defaultRenderPriority = 0;
+        aBoolean1420 = false;
         if (var1[var1.length - 1] == -1 && var1[var1.length - 2] == -1) {
-            this.method975(var1);
+            method975(var1);
         } else {
-            this.method980(var1);
+            method980(var1);
         }
 
     }
 
     public UnlitModel(UnlitModel var1, boolean var2, boolean var3, boolean var4) {
-        this.anInt380 = 0;
-        this.anInt574 = 0;
-        this.defaultRenderPriority = 0;
-        this.aBoolean1420 = false;
-        this.anInt380 = var1.anInt380;
-        this.anInt574 = var1.anInt574;
-        this.anInt702 = var1.anInt702;
+        anInt380 = 0;
+        anInt574 = 0;
+        defaultRenderPriority = 0;
+        aBoolean1420 = false;
+        anInt380 = var1.anInt380;
+        anInt574 = var1.anInt574;
+        anInt702 = var1.anInt702;
         int var6;
         if (var2) {
-            this.xVertices = var1.xVertices;
-            this.yVertices = var1.yVertices;
-            this.zVertices = var1.zVertices;
+            xVertices = var1.xVertices;
+            yVertices = var1.yVertices;
+            zVertices = var1.zVertices;
         } else {
-            this.xVertices = new int[this.anInt380];
-            this.yVertices = new int[this.anInt380];
-            this.zVertices = new int[this.anInt380];
+            xVertices = new int[anInt380];
+            yVertices = new int[anInt380];
+            zVertices = new int[anInt380];
 
-            for (var6 = 0; var6 < this.anInt380; ++var6) {
-                this.xVertices[var6] = var1.xVertices[var6];
-                this.yVertices[var6] = var1.yVertices[var6];
-                this.zVertices[var6] = var1.zVertices[var6];
+            for (var6 = 0; var6 < anInt380; ++var6) {
+                xVertices[var6] = var1.xVertices[var6];
+                yVertices[var6] = var1.yVertices[var6];
+                zVertices[var6] = var1.zVertices[var6];
             }
         }
 
         if (var3) {
-            this.aShortArray1435 = var1.aShortArray1435;
+            aShortArray1435 = var1.aShortArray1435;
         } else {
-            this.aShortArray1435 = new short[this.anInt574];
+            aShortArray1435 = new short[anInt574];
 
-            for (var6 = 0; var6 < this.anInt574; ++var6) {
-                this.aShortArray1435[var6] = var1.aShortArray1435[var6];
+            for (var6 = 0; var6 < anInt574; ++var6) {
+                aShortArray1435[var6] = var1.aShortArray1435[var6];
             }
         }
 
         if (!var4 && var1.aShortArray1421 != null) {
-            this.aShortArray1421 = new short[this.anInt574];
+            aShortArray1421 = new short[anInt574];
 
-            for (var6 = 0; var6 < this.anInt574; ++var6) {
-                this.aShortArray1421[var6] = var1.aShortArray1421[var6];
+            for (var6 = 0; var6 < anInt574; ++var6) {
+                aShortArray1421[var6] = var1.aShortArray1421[var6];
             }
         } else {
-            this.aShortArray1421 = var1.aShortArray1421;
+            aShortArray1421 = var1.aShortArray1421;
         }
 
-        this.aByteArray1425 = var1.aByteArray1425;
-        this.anIntArray747 = var1.anIntArray747;
-        this.anIntArray687 = var1.anIntArray687;
-        this.anIntArray692 = var1.anIntArray692;
-        this.aByteArray1440 = var1.aByteArray1440;
-        this.aByteArray1428 = var1.aByteArray1428;
-        this.aByteArray1423 = var1.aByteArray1423;
-        this.defaultRenderPriority = var1.defaultRenderPriority;
-        this.aByteArray1438 = var1.aByteArray1438;
-        this.aShortArray718 = var1.aShortArray718;
-        this.aShortArray724 = var1.aShortArray724;
-        this.aShortArray719 = var1.aShortArray719;
-        this.anIntArray787 = var1.anIntArray787;
-        this.anIntArray782 = var1.anIntArray782;
-        this.anIntArrayArray1429 = var1.anIntArrayArray1429;
-        this.anIntArrayArray1426 = var1.anIntArrayArray1426;
-        this.aClass96Array1431 = var1.aClass96Array1431;
-        this.aClass104Array1432 = var1.aClass104Array1432;
-        this.aClass96Array1422 = var1.aClass96Array1422;
-        this.aShort1441 = var1.aShort1441;
-        this.aShort1439 = var1.aShort1439;
+        aByteArray1425 = var1.aByteArray1425;
+        anIntArray747 = var1.anIntArray747;
+        anIntArray687 = var1.anIntArray687;
+        anIntArray692 = var1.anIntArray692;
+        aByteArray1440 = var1.aByteArray1440;
+        aByteArray1428 = var1.aByteArray1428;
+        aByteArray1423 = var1.aByteArray1423;
+        defaultRenderPriority = var1.defaultRenderPriority;
+        aByteArray1438 = var1.aByteArray1438;
+        aShortArray718 = var1.aShortArray718;
+        aShortArray724 = var1.aShortArray724;
+        aShortArray719 = var1.aShortArray719;
+        anIntArray787 = var1.anIntArray787;
+        anIntArray782 = var1.anIntArray782;
+        anIntArrayArray1429 = var1.anIntArrayArray1429;
+        anIntArrayArray1426 = var1.anIntArrayArray1426;
+        aClass96Array1431 = var1.aClass96Array1431;
+        aClass104Array1432 = var1.aClass104Array1432;
+        aClass96Array1422 = var1.aClass96Array1422;
+        aShort1441 = var1.aShort1441;
+        aShort1439 = var1.aShort1439;
     }
 
     public static UnlitModel method982(ReferenceTable var0, int var1, int var2) {
@@ -314,8 +314,8 @@ public class UnlitModel extends Entity {
 
         int var9;
         for (var9 = 0; var9 < var0.anInt380; ++var9) {
-            Vertex var10 = var0.aClass96Array1431[var9];
-            if (var10.anInt728 != 0) {
+            Vector3i var10 = var0.aClass96Array1431[var9];
+            if (var10.magnitude != 0) {
                 int var11 = var0.yVertices[var9] - var3;
                 if (var11 <= var1.anInt1105) {
                     int var12 = var0.xVertices[var9] - var2;
@@ -323,34 +323,34 @@ public class UnlitModel extends Entity {
                         int var13 = var0.zVertices[var9] - var4;
                         if (var13 >= var1.anInt1437 && var13 <= var1.anInt579) {
                             for (int var14 = 0; var14 < var8; ++var14) {
-                                Vertex var15 = var1.aClass96Array1431[var14];
-                                if (var12 == var7[var14] && var13 == var1.zVertices[var14] && var11 == var1.yVertices[var14] && var15.anInt728 != 0) {
+                                Vector3i var15 = var1.aClass96Array1431[var14];
+                                if (var12 == var7[var14] && var13 == var1.zVertices[var14] && var11 == var1.yVertices[var14] && var15.magnitude != 0) {
                                     if (var0.aClass96Array1422 == null) {
-                                        var0.aClass96Array1422 = new Vertex[var0.anInt380];
+                                        var0.aClass96Array1422 = new Vector3i[var0.anInt380];
                                     }
 
                                     if (var1.aClass96Array1422 == null) {
-                                        var1.aClass96Array1422 = new Vertex[var8];
+                                        var1.aClass96Array1422 = new Vector3i[var8];
                                     }
 
-                                    Vertex var16 = var0.aClass96Array1422[var9];
+                                    Vector3i var16 = var0.aClass96Array1422[var9];
                                     if (var16 == null) {
-                                        var16 = var0.aClass96Array1422[var9] = new Vertex(var10);
+                                        var16 = var0.aClass96Array1422[var9] = new Vector3i(var10);
                                     }
 
-                                    Vertex var17 = var1.aClass96Array1422[var14];
+                                    Vector3i var17 = var1.aClass96Array1422[var14];
                                     if (var17 == null) {
-                                        var17 = var1.aClass96Array1422[var14] = new Vertex(var15);
+                                        var17 = var1.aClass96Array1422[var14] = new Vector3i(var15);
                                     }
 
-                                    var16.anInt729 += var15.anInt729;
-                                    var16.anInt727 += var15.anInt727;
-                                    var16.anInt726 += var15.anInt726;
-                                    var16.anInt728 += var15.anInt728;
-                                    var17.anInt729 += var10.anInt729;
-                                    var17.anInt727 += var10.anInt727;
-                                    var17.anInt726 += var10.anInt726;
-                                    var17.anInt728 += var10.anInt728;
+                                    var16.x += var15.x;
+                                    var16.y += var15.y;
+                                    var16.z += var15.z;
+                                    var16.magnitude += var15.magnitude;
+                                    var17.x += var10.x;
+                                    var17.y += var10.y;
+                                    var17.z += var10.z;
+                                    var17.magnitude += var10.magnitude;
                                     ++var6;
                                     anIntArray1434[var9] = anInt1424;
                                     anIntArray1430[var14] = anInt1424;
@@ -408,66 +408,66 @@ public class UnlitModel extends Entity {
     }
 
     public void method973() {
-        if (!this.aBoolean1420) {
+        if (!aBoolean1420) {
             super.height = 0;
-            this.anInt1105 = 0;
-            this.anInt1436 = 999999;
-            this.anInt556 = -999999;
-            this.anInt579 = -99999;
-            this.anInt1437 = 99999;
+            anInt1105 = 0;
+            anInt1436 = 999999;
+            anInt556 = -999999;
+            anInt579 = -99999;
+            anInt1437 = 99999;
 
-            for (int var1 = 0; var1 < this.anInt380; ++var1) {
-                int var2 = this.xVertices[var1];
-                int var3 = this.yVertices[var1];
-                int var4 = this.zVertices[var1];
-                if (var2 < this.anInt1436) {
-                    this.anInt1436 = var2;
+            for (int var1 = 0; var1 < anInt380; ++var1) {
+                int var2 = xVertices[var1];
+                int var3 = yVertices[var1];
+                int var4 = zVertices[var1];
+                if (var2 < anInt1436) {
+                    anInt1436 = var2;
                 }
 
-                if (var2 > this.anInt556) {
-                    this.anInt556 = var2;
+                if (var2 > anInt556) {
+                    anInt556 = var2;
                 }
 
-                if (var4 < this.anInt1437) {
-                    this.anInt1437 = var4;
+                if (var4 < anInt1437) {
+                    anInt1437 = var4;
                 }
 
-                if (var4 > this.anInt579) {
-                    this.anInt579 = var4;
+                if (var4 > anInt579) {
+                    anInt579 = var4;
                 }
 
                 if (-var3 > super.height) {
                     super.height = -var3;
                 }
 
-                if (var3 > this.anInt1105) {
-                    this.anInt1105 = var3;
+                if (var3 > anInt1105) {
+                    anInt1105 = var3;
                 }
             }
 
-            this.aBoolean1420 = true;
+            aBoolean1420 = true;
         }
     }
 
     public void method593() {
-        if (this.aClass96Array1431 == null) {
-            this.aClass96Array1431 = new Vertex[this.anInt380];
+        if (aClass96Array1431 == null) {
+            aClass96Array1431 = new Vector3i[anInt380];
 
             int var1;
-            for (var1 = 0; var1 < this.anInt380; ++var1) {
-                this.aClass96Array1431[var1] = new Vertex();
+            for (var1 = 0; var1 < anInt380; ++var1) {
+                aClass96Array1431[var1] = new Vector3i();
             }
 
-            for (var1 = 0; var1 < this.anInt574; ++var1) {
-                int var2 = this.anIntArray747[var1];
-                int var3 = this.anIntArray687[var1];
-                int var4 = this.anIntArray692[var1];
-                int var5 = this.xVertices[var3] - this.xVertices[var2];
-                int var6 = this.yVertices[var3] - this.yVertices[var2];
-                int var7 = this.zVertices[var3] - this.zVertices[var2];
-                int var8 = this.xVertices[var4] - this.xVertices[var2];
-                int var9 = this.yVertices[var4] - this.yVertices[var2];
-                int var10 = this.zVertices[var4] - this.zVertices[var2];
+            for (var1 = 0; var1 < anInt574; ++var1) {
+                int var2 = anIntArray747[var1];
+                int var3 = anIntArray687[var1];
+                int var4 = anIntArray692[var1];
+                int var5 = xVertices[var3] - xVertices[var2];
+                int var6 = yVertices[var3] - yVertices[var2];
+                int var7 = zVertices[var3] - zVertices[var2];
+                int var8 = xVertices[var4] - xVertices[var2];
+                int var9 = yVertices[var4] - yVertices[var2];
+                int var10 = zVertices[var4] - zVertices[var2];
                 int var11 = var6 * var10 - var9 * var7;
                 int var12 = var7 * var8 - var10 * var5;
 
@@ -486,34 +486,34 @@ public class UnlitModel extends Entity {
                 var12 = var12 * 256 / var14;
                 var13 = var13 * 256 / var14;
                 byte var15;
-                if (this.aByteArray1440 == null) {
+                if (aByteArray1440 == null) {
                     var15 = 0;
                 } else {
-                    var15 = this.aByteArray1440[var1];
+                    var15 = aByteArray1440[var1];
                 }
 
                 if (var15 == 0) {
-                    Vertex var16 = this.aClass96Array1431[var2];
-                    var16.anInt729 += var11;
-                    var16.anInt727 += var12;
-                    var16.anInt726 += var13;
-                    ++var16.anInt728;
-                    var16 = this.aClass96Array1431[var3];
-                    var16.anInt729 += var11;
-                    var16.anInt727 += var12;
-                    var16.anInt726 += var13;
-                    ++var16.anInt728;
-                    var16 = this.aClass96Array1431[var4];
-                    var16.anInt729 += var11;
-                    var16.anInt727 += var12;
-                    var16.anInt726 += var13;
-                    ++var16.anInt728;
+                    Vector3i var16 = aClass96Array1431[var2];
+                    var16.x += var11;
+                    var16.y += var12;
+                    var16.z += var13;
+                    ++var16.magnitude;
+                    var16 = aClass96Array1431[var3];
+                    var16.x += var11;
+                    var16.y += var12;
+                    var16.z += var13;
+                    ++var16.magnitude;
+                    var16 = aClass96Array1431[var4];
+                    var16.x += var11;
+                    var16.y += var12;
+                    var16.z += var13;
+                    ++var16.magnitude;
                 } else if (var15 == 1) {
-                    if (this.aClass104Array1432 == null) {
-                        this.aClass104Array1432 = new Face[this.anInt574];
+                    if (aClass104Array1432 == null) {
+                        aClass104Array1432 = new Face[anInt574];
                     }
 
-                    Face var17 = this.aClass104Array1432[var1] = new Face();
+                    Face var17 = aClass104Array1432[var1] = new Face();
                     var17.anInt772 = var11;
                     var17.anInt770 = var12;
                     var17.anInt769 = var13;
@@ -524,67 +524,67 @@ public class UnlitModel extends Entity {
     }
 
     public void method580() {
-        this.aClass96Array1431 = null;
-        this.aClass96Array1422 = null;
-        this.aClass104Array1432 = null;
-        this.aBoolean1420 = false;
+        aClass96Array1431 = null;
+        aClass96Array1422 = null;
+        aClass104Array1432 = null;
+        aBoolean1420 = false;
     }
 
     public UnlitModel method978() {
         UnlitModel var1 = new UnlitModel();
-        if (this.aByteArray1440 != null) {
-            var1.aByteArray1440 = new byte[this.anInt574];
+        if (aByteArray1440 != null) {
+            var1.aByteArray1440 = new byte[anInt574];
 
-            System.arraycopy(this.aByteArray1440, 0, var1.aByteArray1440, 0, this.anInt574);
+            System.arraycopy(aByteArray1440, 0, var1.aByteArray1440, 0, anInt574);
         }
 
-        var1.anInt380 = this.anInt380;
-        var1.anInt574 = this.anInt574;
-        var1.anInt702 = this.anInt702;
-        var1.xVertices = this.xVertices;
-        var1.yVertices = this.yVertices;
-        var1.zVertices = this.zVertices;
-        var1.anIntArray747 = this.anIntArray747;
-        var1.anIntArray687 = this.anIntArray687;
-        var1.anIntArray692 = this.anIntArray692;
-        var1.aByteArray1428 = this.aByteArray1428;
-        var1.aByteArray1425 = this.aByteArray1425;
-        var1.aByteArray1423 = this.aByteArray1423;
-        var1.aShortArray1435 = this.aShortArray1435;
-        var1.aShortArray1421 = this.aShortArray1421;
-        var1.defaultRenderPriority = this.defaultRenderPriority;
-        var1.aByteArray1438 = this.aByteArray1438;
-        var1.aShortArray718 = this.aShortArray718;
-        var1.aShortArray724 = this.aShortArray724;
-        var1.aShortArray719 = this.aShortArray719;
-        var1.anIntArray787 = this.anIntArray787;
-        var1.anIntArray782 = this.anIntArray782;
-        var1.anIntArrayArray1429 = this.anIntArrayArray1429;
-        var1.anIntArrayArray1426 = this.anIntArrayArray1426;
-        var1.aClass96Array1431 = this.aClass96Array1431;
-        var1.aClass104Array1432 = this.aClass104Array1432;
-        var1.aShort1441 = this.aShort1441;
-        var1.aShort1439 = this.aShort1439;
+        var1.anInt380 = anInt380;
+        var1.anInt574 = anInt574;
+        var1.anInt702 = anInt702;
+        var1.xVertices = xVertices;
+        var1.yVertices = yVertices;
+        var1.zVertices = zVertices;
+        var1.anIntArray747 = anIntArray747;
+        var1.anIntArray687 = anIntArray687;
+        var1.anIntArray692 = anIntArray692;
+        var1.aByteArray1428 = aByteArray1428;
+        var1.aByteArray1425 = aByteArray1425;
+        var1.aByteArray1423 = aByteArray1423;
+        var1.aShortArray1435 = aShortArray1435;
+        var1.aShortArray1421 = aShortArray1421;
+        var1.defaultRenderPriority = defaultRenderPriority;
+        var1.aByteArray1438 = aByteArray1438;
+        var1.aShortArray718 = aShortArray718;
+        var1.aShortArray724 = aShortArray724;
+        var1.aShortArray719 = aShortArray719;
+        var1.anIntArray787 = anIntArray787;
+        var1.anIntArray782 = anIntArray782;
+        var1.anIntArrayArray1429 = anIntArrayArray1429;
+        var1.anIntArrayArray1426 = anIntArrayArray1426;
+        var1.aClass96Array1431 = aClass96Array1431;
+        var1.aClass104Array1432 = aClass104Array1432;
+        var1.aShort1441 = aShort1441;
+        var1.aShort1439 = aShort1439;
         return var1;
     }
 
     public void texturize(short var1, short var2) {
-        for (int var3 = 0; var3 < this.anInt574; ++var3) {
-            if (this.aShortArray1435[var3] == var1) {
-                this.aShortArray1435[var3] = var2;
+        for (int var3 = 0; var3 < anInt574; ++var3) {
+            if (aShortArray1435[var3] == var1) {
+                aShortArray1435[var3] = var2;
             }
         }
 
     }
 
     public void method764(int var1, int var2, int var3) {
-        for (int var4 = 0; var4 < this.anInt380; ++var4) {
-            this.xVertices[var4] = this.xVertices[var4] * var1 / 128;
-            this.yVertices[var4] = var2 * this.yVertices[var4] / 128;
-            this.zVertices[var4] = var3 * this.zVertices[var4] / 128;
+        for (int var4 = 0; var4 < anInt380; ++var4) {
+            xVertices[var4] = xVertices[var4] * var1 / 128;
+            yVertices[var4] = var2 * yVertices[var4] / 128;
+            zVertices[var4] = var3 * zVertices[var4] / 128;
         }
 
-        this.method580();
+        method580();
     }
 
     public void method980(byte[] var1) {
@@ -595,19 +595,19 @@ public class UnlitModel extends Entity {
         Buffer var6 = new Buffer(var1);
         Buffer var7 = new Buffer(var1);
         Buffer var8 = new Buffer(var1);
-        var4.caret = var1.length - 18;
-        int var9 = var4.readUShort();
-        int var10 = var4.readUShort();
-        int var11 = var4.readUByte();
-        int var12 = var4.readUByte();
-        int var13 = var4.readUByte();
-        int var14 = var4.readUByte();
-        int var15 = var4.readUByte();
-        int var16 = var4.readUByte();
-        int var17 = var4.readUShort();
-        int var18 = var4.readUShort();
-        int var19 = var4.readUShort();
-        int var20 = var4.readUShort();
+        var4.pos = var1.length - 18;
+        int var9 = var4.g2();
+        int var10 = var4.g2();
+        int var11 = var4.g1();
+        int var12 = var4.g1();
+        int var13 = var4.g1();
+        int var14 = var4.g1();
+        int var15 = var4.g1();
+        int var16 = var4.g1();
+        int var17 = var4.g2();
+        int var18 = var4.g2();
+        int var19 = var4.g2();
+        int var20 = var4.g2();
         byte var21 = 0;
         int var45 = var21 + var9;
         int var23 = var45;
@@ -647,53 +647,53 @@ public class UnlitModel extends Entity {
         var45 += var17;
         int var33 = var45;
         var45 += var18;
-        int var10000 = var45 + var19;
-        this.anInt380 = var9;
-        this.anInt574 = var10;
-        this.anInt702 = var11;
-        this.xVertices = new int[var9];
-        this.yVertices = new int[var9];
-        this.zVertices = new int[var9];
-        this.anIntArray747 = new int[var10];
-        this.anIntArray687 = new int[var10];
-        this.anIntArray692 = new int[var10];
+
+        anInt380 = var9;
+        anInt574 = var10;
+        anInt702 = var11;
+        xVertices = new int[var9];
+        yVertices = new int[var9];
+        zVertices = new int[var9];
+        anIntArray747 = new int[var10];
+        anIntArray687 = new int[var10];
+        anIntArray692 = new int[var10];
         if (var11 > 0) {
-            this.aByteArray1438 = new byte[var11];
-            this.aShortArray718 = new short[var11];
-            this.aShortArray724 = new short[var11];
-            this.aShortArray719 = new short[var11];
+            aByteArray1438 = new byte[var11];
+            aShortArray718 = new short[var11];
+            aShortArray724 = new short[var11];
+            aShortArray719 = new short[var11];
         }
 
         if (var16 == 1) {
-            this.anIntArray787 = new int[var9];
+            anIntArray787 = new int[var9];
         }
 
         if (var12 == 1) {
-            this.aByteArray1440 = new byte[var10];
-            this.aByteArray1423 = new byte[var10];
-            this.aShortArray1421 = new short[var10];
+            aByteArray1440 = new byte[var10];
+            aByteArray1423 = new byte[var10];
+            aShortArray1421 = new short[var10];
         }
 
         if (var13 == 255) {
-            this.aByteArray1428 = new byte[var10];
+            aByteArray1428 = new byte[var10];
         } else {
-            this.defaultRenderPriority = (byte) var13;
+            defaultRenderPriority = (byte) var13;
         }
 
         if (var14 == 1) {
-            this.aByteArray1425 = new byte[var10];
+            aByteArray1425 = new byte[var10];
         }
 
         if (var15 == 1) {
-            this.anIntArray782 = new int[var10];
+            anIntArray782 = new int[var10];
         }
 
-        this.aShortArray1435 = new short[var10];
-        var4.caret = var21;
-        var5.caret = var32;
-        var6.caret = var33;
-        var7.caret = var45;
-        var8.caret = var27;
+        aShortArray1435 = new short[var10];
+        var4.pos = var21;
+        var5.pos = var32;
+        var6.pos = var33;
+        var7.pos = var45;
+        var8.pos = var27;
         int var35 = 0;
         int var36 = 0;
         int var37 = 0;
@@ -704,78 +704,78 @@ public class UnlitModel extends Entity {
         int var41;
         int var42;
         for (var38 = 0; var38 < var9; ++var38) {
-            var39 = var4.readUByte();
+            var39 = var4.g1();
             var40 = 0;
             if ((var39 & 1) != 0) {
-                var40 = var5.method1046();
+                var40 = var5.gsmart();
             }
 
             var41 = 0;
             if ((var39 & 2) != 0) {
-                var41 = var6.method1046();
+                var41 = var6.gsmart();
             }
 
             var42 = 0;
             if ((var39 & 4) != 0) {
-                var42 = var7.method1046();
+                var42 = var7.gsmart();
             }
 
-            this.xVertices[var38] = var35 + var40;
-            this.yVertices[var38] = var36 + var41;
-            this.zVertices[var38] = var37 + var42;
-            var35 = this.xVertices[var38];
-            var36 = this.yVertices[var38];
-            var37 = this.zVertices[var38];
+            xVertices[var38] = var35 + var40;
+            yVertices[var38] = var36 + var41;
+            zVertices[var38] = var37 + var42;
+            var35 = xVertices[var38];
+            var36 = yVertices[var38];
+            var37 = zVertices[var38];
             if (var16 == 1) {
-                this.anIntArray787[var38] = var8.readUByte();
+                anIntArray787[var38] = var8.g1();
             }
         }
 
-        var4.caret = var30;
-        var5.caret = var26;
-        var6.caret = var24;
-        var7.caret = var28;
-        var8.caret = var25;
+        var4.pos = var30;
+        var5.pos = var26;
+        var6.pos = var24;
+        var7.pos = var28;
+        var8.pos = var25;
 
         for (var38 = 0; var38 < var10; ++var38) {
-            this.aShortArray1435[var38] = (short) var4.readUShort();
+            aShortArray1435[var38] = (short) var4.g2();
             if (var12 == 1) {
-                var39 = var5.readUByte();
+                var39 = var5.g1();
                 if ((var39 & 1) == 1) {
-                    this.aByteArray1440[var38] = 1;
+                    aByteArray1440[var38] = 1;
                     var2 = true;
                 } else {
-                    this.aByteArray1440[var38] = 0;
+                    aByteArray1440[var38] = 0;
                 }
 
                 if ((var39 & 2) == 2) {
-                    this.aByteArray1423[var38] = (byte) (var39 >> 2);
-                    this.aShortArray1421[var38] = this.aShortArray1435[var38];
-                    this.aShortArray1435[var38] = 127;
-                    if (this.aShortArray1421[var38] != -1) {
+                    aByteArray1423[var38] = (byte) (var39 >> 2);
+                    aShortArray1421[var38] = aShortArray1435[var38];
+                    aShortArray1435[var38] = 127;
+                    if (aShortArray1421[var38] != -1) {
                         var3 = true;
                     }
                 } else {
-                    this.aByteArray1423[var38] = -1;
-                    this.aShortArray1421[var38] = -1;
+                    aByteArray1423[var38] = -1;
+                    aShortArray1421[var38] = -1;
                 }
             }
 
             if (var13 == 255) {
-                this.aByteArray1428[var38] = var6.readByte();
+                aByteArray1428[var38] = var6.g1b();
             }
 
             if (var14 == 1) {
-                this.aByteArray1425[var38] = var7.readByte();
+                aByteArray1425[var38] = var7.g1b();
             }
 
             if (var15 == 1) {
-                this.anIntArray782[var38] = var8.readUByte();
+                anIntArray782[var38] = var8.g1();
             }
         }
 
-        var4.caret = var29;
-        var5.caret = var23;
+        var4.pos = var29;
+        var5.pos = var23;
         var38 = 0;
         var39 = 0;
         var40 = 0;
@@ -784,64 +784,64 @@ public class UnlitModel extends Entity {
         int var43;
         int var44;
         for (var42 = 0; var42 < var10; ++var42) {
-            var43 = var5.readUByte();
+            var43 = var5.g1();
             if (var43 == 1) {
-                var38 = var4.method1046() + var41;
-                var39 = var4.method1046() + var38;
-                var40 = var4.method1046() + var39;
+                var38 = var4.gsmart() + var41;
+                var39 = var4.gsmart() + var38;
+                var40 = var4.gsmart() + var39;
                 var41 = var40;
-                this.anIntArray747[var42] = var38;
-                this.anIntArray687[var42] = var39;
-                this.anIntArray692[var42] = var40;
+                anIntArray747[var42] = var38;
+                anIntArray687[var42] = var39;
+                anIntArray692[var42] = var40;
             }
 
             if (var43 == 2) {
                 var39 = var40;
-                var40 = var4.method1046() + var41;
+                var40 = var4.gsmart() + var41;
                 var41 = var40;
-                this.anIntArray747[var42] = var38;
-                this.anIntArray687[var42] = var39;
-                this.anIntArray692[var42] = var40;
+                anIntArray747[var42] = var38;
+                anIntArray687[var42] = var39;
+                anIntArray692[var42] = var40;
             }
 
             if (var43 == 3) {
                 var38 = var40;
-                var40 = var4.method1046() + var41;
+                var40 = var4.gsmart() + var41;
                 var41 = var40;
-                this.anIntArray747[var42] = var38;
-                this.anIntArray687[var42] = var39;
-                this.anIntArray692[var42] = var40;
+                anIntArray747[var42] = var38;
+                anIntArray687[var42] = var39;
+                anIntArray692[var42] = var40;
             }
 
             if (var43 == 4) {
                 var44 = var38;
                 var38 = var39;
                 var39 = var44;
-                var40 = var4.method1046() + var41;
+                var40 = var4.gsmart() + var41;
                 var41 = var40;
-                this.anIntArray747[var42] = var38;
-                this.anIntArray687[var42] = var44;
-                this.anIntArray692[var42] = var40;
+                anIntArray747[var42] = var38;
+                anIntArray687[var42] = var44;
+                anIntArray692[var42] = var40;
             }
         }
 
-        var4.caret = var31;
+        var4.pos = var31;
 
         for (var42 = 0; var42 < var11; ++var42) {
-            this.aByteArray1438[var42] = 0;
-            this.aShortArray718[var42] = (short) var4.readUShort();
-            this.aShortArray724[var42] = (short) var4.readUShort();
-            this.aShortArray719[var42] = (short) var4.readUShort();
+            aByteArray1438[var42] = 0;
+            aShortArray718[var42] = (short) var4.g2();
+            aShortArray724[var42] = (short) var4.g2();
+            aShortArray719[var42] = (short) var4.g2();
         }
 
-        if (this.aByteArray1423 != null) {
+        if (aByteArray1423 != null) {
             boolean var46 = false;
 
             for (var43 = 0; var43 < var10; ++var43) {
-                var44 = this.aByteArray1423[var43] & 255;
+                var44 = aByteArray1423[var43] & 255;
                 if (var44 != 255) {
-                    if (this.anIntArray747[var43] == (this.aShortArray718[var44] & '\uffff') && this.anIntArray687[var43] == (this.aShortArray724[var44] & '\uffff') && this.anIntArray692[var43] == (this.aShortArray719[var44] & '\uffff')) {
-                        this.aByteArray1423[var43] = -1;
+                    if (anIntArray747[var43] == (aShortArray718[var44] & '\uffff') && anIntArray687[var43] == (aShortArray724[var44] & '\uffff') && anIntArray692[var43] == (aShortArray719[var44] & '\uffff')) {
+                        aByteArray1423[var43] = -1;
                     } else {
                         var46 = true;
                     }
@@ -849,25 +849,25 @@ public class UnlitModel extends Entity {
             }
 
             if (!var46) {
-                this.aByteArray1423 = null;
+                aByteArray1423 = null;
             }
         }
 
         if (!var3) {
-            this.aShortArray1421 = null;
+            aShortArray1421 = null;
         }
 
         if (!var2) {
-            this.aByteArray1440 = null;
+            aByteArray1440 = null;
         }
 
     }
 
     public void colorize(short var1, short var2) {
-        if (this.aShortArray1421 != null) {
-            for (int var3 = 0; var3 < this.anInt574; ++var3) {
-                if (this.aShortArray1421[var3] == var1) {
-                    this.aShortArray1421[var3] = var2;
+        if (aShortArray1421 != null) {
+            for (int var3 = 0; var3 < anInt574; ++var3) {
+                if (aShortArray1421[var3] == var1) {
+                    aShortArray1421[var3] = var2;
                 }
             }
 
@@ -875,79 +875,79 @@ public class UnlitModel extends Entity {
     }
 
     public final Model light(int var1, int var2, int var3, int var4, int var5) {
-        this.method593();
+        method593();
         int var6 = (int) Math.sqrt(var5 * var5 + var3 * var3 + var4 * var4);
         int var7 = var6 * var2 >> 8;
         Model var8 = new Model();
-        var8.anIntArray374 = new int[this.anInt574];
-        var8.anIntArray1469 = new int[this.anInt574];
-        var8.anIntArray689 = new int[this.anInt574];
-        if (this.anInt702 > 0 && this.aByteArray1423 != null) {
-            int[] var9 = new int[this.anInt702];
+        var8.triangleColors = new int[anInt574];
+        var8.yTexturedTriangles = new int[anInt574];
+        var8.zTexturedTriangles = new int[anInt574];
+        if (anInt702 > 0 && aByteArray1423 != null) {
+            int[] var9 = new int[anInt702];
 
             int var10;
-            for (var10 = 0; var10 < this.anInt574; ++var10) {
-                if (this.aByteArray1423[var10] != -1) {
-                    ++var9[this.aByteArray1423[var10] & 255];
+            for (var10 = 0; var10 < anInt574; ++var10) {
+                if (aByteArray1423[var10] != -1) {
+                    ++var9[aByteArray1423[var10] & 255];
                 }
             }
 
-            var8.anInt575 = 0;
+            var8.texturedTriangleCount = 0;
 
-            for (var10 = 0; var10 < this.anInt702; ++var10) {
-                if (var9[var10] > 0 && this.aByteArray1438[var10] == 0) {
-                    ++var8.anInt575;
+            for (var10 = 0; var10 < anInt702; ++var10) {
+                if (var9[var10] > 0 && aByteArray1438[var10] == 0) {
+                    ++var8.texturedTriangleCount;
                 }
             }
 
-            var8.anIntArray782 = new int[var8.anInt575];
-            var8.anIntArray1103 = new int[var8.anInt575];
-            var8.anIntArray781 = new int[var8.anInt575];
+            var8.anIntArray782 = new int[var8.texturedTriangleCount];
+            var8.anIntArray1103 = new int[var8.texturedTriangleCount];
+            var8.anIntArray781 = new int[var8.texturedTriangleCount];
             var10 = 0;
 
             int var12;
-            for (var12 = 0; var12 < this.anInt702; ++var12) {
-                if (var9[var12] > 0 && this.aByteArray1438[var12] == 0) {
-                    var8.anIntArray782[var10] = this.aShortArray718[var12] & '\uffff';
-                    var8.anIntArray1103[var10] = this.aShortArray724[var12] & '\uffff';
-                    var8.anIntArray781[var10] = this.aShortArray719[var12] & '\uffff';
+            for (var12 = 0; var12 < anInt702; ++var12) {
+                if (var9[var12] > 0 && aByteArray1438[var12] == 0) {
+                    var8.anIntArray782[var10] = aShortArray718[var12] & '\uffff';
+                    var8.anIntArray1103[var10] = aShortArray724[var12] & '\uffff';
+                    var8.anIntArray781[var10] = aShortArray719[var12] & '\uffff';
                     var9[var12] = var10++;
                 } else {
                     var9[var12] = -1;
                 }
             }
 
-            var8.aByteArray1752 = new byte[this.anInt574];
+            var8.aByteArray1752 = new byte[anInt574];
 
-            for (var12 = 0; var12 < this.anInt574; ++var12) {
-                if (this.aByteArray1423[var12] != -1) {
-                    var8.aByteArray1752[var12] = (byte) var9[this.aByteArray1423[var12] & 255];
+            for (var12 = 0; var12 < anInt574; ++var12) {
+                if (aByteArray1423[var12] != -1) {
+                    var8.aByteArray1752[var12] = (byte) var9[aByteArray1423[var12] & 255];
                 } else {
                     var8.aByteArray1752[var12] = -1;
                 }
             }
         }
 
-        for (int var11 = 0; var11 < this.anInt574; ++var11) {
+        for (int var11 = 0; var11 < anInt574; ++var11) {
             byte var17;
-            if (this.aByteArray1440 == null) {
+            if (aByteArray1440 == null) {
                 var17 = 0;
             } else {
-                var17 = this.aByteArray1440[var11];
+                var17 = aByteArray1440[var11];
             }
 
             byte var18;
-            if (this.aByteArray1425 == null) {
+            if (aByteArray1425 == null) {
                 var18 = 0;
             } else {
-                var18 = this.aByteArray1425[var11];
+                var18 = aByteArray1425[var11];
             }
 
             short var13;
-            if (this.aShortArray1421 == null) {
+            if (aShortArray1421 == null) {
                 var13 = -1;
             } else {
-                var13 = this.aShortArray1421[var11];
+                var13 = aShortArray1421[var11];
             }
 
             if (var18 == -2) {
@@ -958,101 +958,101 @@ public class UnlitModel extends Entity {
                 var17 = 2;
             }
 
-            Vertex var15;
+            Vector3i var15;
             int var16;
             Face var19;
             if (var13 == -1) {
                 if (var17 != 0) {
                     if (var17 == 1) {
-                        var19 = this.aClass104Array1432[var11];
+                        var19 = aClass104Array1432[var11];
                         var16 = (var4 * var19.anInt770 + var5 * var19.anInt769 + var3 * var19.anInt772) / (var7 / 2 + var7) + var1;
-                        var8.anIntArray374[var11] = method974(this.aShortArray1435[var11] & '\uffff', var16);
-                        var8.anIntArray689[var11] = -1;
+                        var8.triangleColors[var11] = method974(aShortArray1435[var11] & '\uffff', var16);
+                        var8.zTexturedTriangles[var11] = -1;
                     } else if (var17 == 3) {
-                        var8.anIntArray374[var11] = 128;
-                        var8.anIntArray689[var11] = -1;
+                        var8.triangleColors[var11] = 128;
+                        var8.zTexturedTriangles[var11] = -1;
                     } else {
-                        var8.anIntArray689[var11] = -2;
+                        var8.zTexturedTriangles[var11] = -2;
                     }
                 } else {
-                    int var14 = this.aShortArray1435[var11] & '\uffff';
-                    if (this.aClass96Array1422 != null && this.aClass96Array1422[this.anIntArray747[var11]] != null) {
-                        var15 = this.aClass96Array1422[this.anIntArray747[var11]];
+                    int var14 = aShortArray1435[var11] & '\uffff';
+                    if (aClass96Array1422 != null && aClass96Array1422[anIntArray747[var11]] != null) {
+                        var15 = aClass96Array1422[anIntArray747[var11]];
                     } else {
-                        var15 = this.aClass96Array1431[this.anIntArray747[var11]];
+                        var15 = aClass96Array1431[anIntArray747[var11]];
                     }
 
-                    var16 = (var4 * var15.anInt727 + var5 * var15.anInt726 + var3 * var15.anInt729) / (var7 * var15.anInt728) + var1;
-                    var8.anIntArray374[var11] = method974(var14, var16);
-                    if (this.aClass96Array1422 != null && this.aClass96Array1422[this.anIntArray687[var11]] != null) {
-                        var15 = this.aClass96Array1422[this.anIntArray687[var11]];
+                    var16 = (var4 * var15.y + var5 * var15.z + var3 * var15.x) / (var7 * var15.magnitude) + var1;
+                    var8.triangleColors[var11] = method974(var14, var16);
+                    if (aClass96Array1422 != null && aClass96Array1422[anIntArray687[var11]] != null) {
+                        var15 = aClass96Array1422[anIntArray687[var11]];
                     } else {
-                        var15 = this.aClass96Array1431[this.anIntArray687[var11]];
+                        var15 = aClass96Array1431[anIntArray687[var11]];
                     }
 
-                    var16 = (var4 * var15.anInt727 + var5 * var15.anInt726 + var3 * var15.anInt729) / (var7 * var15.anInt728) + var1;
-                    var8.anIntArray1469[var11] = method974(var14, var16);
-                    if (this.aClass96Array1422 != null && this.aClass96Array1422[this.anIntArray692[var11]] != null) {
-                        var15 = this.aClass96Array1422[this.anIntArray692[var11]];
+                    var16 = (var4 * var15.y + var5 * var15.z + var3 * var15.x) / (var7 * var15.magnitude) + var1;
+                    var8.yTexturedTriangles[var11] = method974(var14, var16);
+                    if (aClass96Array1422 != null && aClass96Array1422[anIntArray692[var11]] != null) {
+                        var15 = aClass96Array1422[anIntArray692[var11]];
                     } else {
-                        var15 = this.aClass96Array1431[this.anIntArray692[var11]];
+                        var15 = aClass96Array1431[anIntArray692[var11]];
                     }
 
-                    var16 = (var4 * var15.anInt727 + var5 * var15.anInt726 + var3 * var15.anInt729) / (var7 * var15.anInt728) + var1;
-                    var8.anIntArray689[var11] = method974(var14, var16);
+                    var16 = (var4 * var15.y + var5 * var15.z + var3 * var15.x) / (var7 * var15.magnitude) + var1;
+                    var8.zTexturedTriangles[var11] = method974(var14, var16);
                 }
             } else if (var17 != 0) {
                 if (var17 == 1) {
-                    var19 = this.aClass104Array1432[var11];
+                    var19 = aClass104Array1432[var11];
                     var16 = (var4 * var19.anInt770 + var5 * var19.anInt769 + var3 * var19.anInt772) / (var7 / 2 + var7) + var1;
-                    var8.anIntArray374[var11] = method968(var16);
-                    var8.anIntArray689[var11] = -1;
+                    var8.triangleColors[var11] = method968(var16);
+                    var8.zTexturedTriangles[var11] = -1;
                 } else {
-                    var8.anIntArray689[var11] = -2;
+                    var8.zTexturedTriangles[var11] = -2;
                 }
             } else {
-                if (this.aClass96Array1422 != null && this.aClass96Array1422[this.anIntArray747[var11]] != null) {
-                    var15 = this.aClass96Array1422[this.anIntArray747[var11]];
+                if (aClass96Array1422 != null && aClass96Array1422[anIntArray747[var11]] != null) {
+                    var15 = aClass96Array1422[anIntArray747[var11]];
                 } else {
-                    var15 = this.aClass96Array1431[this.anIntArray747[var11]];
+                    var15 = aClass96Array1431[anIntArray747[var11]];
                 }
 
-                var16 = (var4 * var15.anInt727 + var5 * var15.anInt726 + var3 * var15.anInt729) / (var7 * var15.anInt728) + var1;
-                var8.anIntArray374[var11] = method968(var16);
-                if (this.aClass96Array1422 != null && this.aClass96Array1422[this.anIntArray687[var11]] != null) {
-                    var15 = this.aClass96Array1422[this.anIntArray687[var11]];
+                var16 = (var4 * var15.y + var5 * var15.z + var3 * var15.x) / (var7 * var15.magnitude) + var1;
+                var8.triangleColors[var11] = method968(var16);
+                if (aClass96Array1422 != null && aClass96Array1422[anIntArray687[var11]] != null) {
+                    var15 = aClass96Array1422[anIntArray687[var11]];
                 } else {
-                    var15 = this.aClass96Array1431[this.anIntArray687[var11]];
+                    var15 = aClass96Array1431[anIntArray687[var11]];
                 }
 
-                var16 = (var4 * var15.anInt727 + var5 * var15.anInt726 + var3 * var15.anInt729) / (var7 * var15.anInt728) + var1;
-                var8.anIntArray1469[var11] = method968(var16);
-                if (this.aClass96Array1422 != null && this.aClass96Array1422[this.anIntArray692[var11]] != null) {
-                    var15 = this.aClass96Array1422[this.anIntArray692[var11]];
+                var16 = (var4 * var15.y + var5 * var15.z + var3 * var15.x) / (var7 * var15.magnitude) + var1;
+                var8.yTexturedTriangles[var11] = method968(var16);
+                if (aClass96Array1422 != null && aClass96Array1422[anIntArray692[var11]] != null) {
+                    var15 = aClass96Array1422[anIntArray692[var11]];
                 } else {
-                    var15 = this.aClass96Array1431[this.anIntArray692[var11]];
+                    var15 = aClass96Array1431[anIntArray692[var11]];
                 }
 
-                var16 = (var4 * var15.anInt727 + var5 * var15.anInt726 + var3 * var15.anInt729) / (var7 * var15.anInt728) + var1;
-                var8.anIntArray689[var11] = method968(var16);
+                var16 = (var4 * var15.y + var5 * var15.z + var3 * var15.x) / (var7 * var15.magnitude) + var1;
+                var8.zTexturedTriangles[var11] = method968(var16);
             }
         }
 
-        this.method828();
-        var8.anInt574 = this.anInt380;
-        var8.xVertices = this.xVertices;
-        var8.yVertices = this.yVertices;
-        var8.zVertices = this.zVertices;
-        var8.anInt379 = this.anInt574;
-        var8.xTriangles = this.anIntArray747;
-        var8.yTriangles = this.anIntArray687;
-        var8.zTriangles = this.anIntArray692;
-        var8.aByteArray1757 = this.aByteArray1428;
-        var8.aByteArray1438 = this.aByteArray1425;
-        var8.aByte1753 = this.defaultRenderPriority;
-        var8.anIntArrayArray1755 = this.anIntArrayArray1429;
-        var8.anIntArrayArray1754 = this.anIntArrayArray1426;
-        var8.aShortArray724 = this.aShortArray1421;
+        method828();
+        var8.vertexCount = anInt380;
+        var8.xVertices = xVertices;
+        var8.yVertices = yVertices;
+        var8.zVertices = zVertices;
+        var8.triangleCount = anInt574;
+        var8.xTriangles = anIntArray747;
+        var8.yTriangles = anIntArray687;
+        var8.zTriangles = anIntArray692;
+        var8.aByteArray1757 = aByteArray1428;
+        var8.aByteArray1438 = aByteArray1425;
+        var8.aByte1753 = defaultRenderPriority;
+        var8.anIntArrayArray1755 = anIntArrayArray1429;
+        var8.anIntArrayArray1754 = anIntArrayArray1426;
+        var8.aShortArray724 = aShortArray1421;
         return var8;
     }
 
@@ -1064,31 +1064,31 @@ public class UnlitModel extends Entity {
         Buffer var6 = new Buffer(var1);
         Buffer var7 = new Buffer(var1);
         Buffer var8 = new Buffer(var1);
-        var2.caret = var1.length - 23;
-        int var9 = var2.readUShort();
-        int var10 = var2.readUShort();
-        int var11 = var2.readUByte();
-        int var12 = var2.readUByte();
-        int var13 = var2.readUByte();
-        int var14 = var2.readUByte();
-        int var15 = var2.readUByte();
-        int var16 = var2.readUByte();
-        int var17 = var2.readUByte();
-        int var18 = var2.readUShort();
-        int var19 = var2.readUShort();
-        int var20 = var2.readUShort();
-        int var21 = var2.readUShort();
-        int var22 = var2.readUShort();
+        var2.pos = var1.length - 23;
+        int var9 = var2.g2();
+        int var10 = var2.g2();
+        int var11 = var2.g1();
+        int var12 = var2.g1();
+        int var13 = var2.g1();
+        int var14 = var2.g1();
+        int var15 = var2.g1();
+        int var16 = var2.g1();
+        int var17 = var2.g1();
+        int var18 = var2.g2();
+        int var19 = var2.g2();
+        int var20 = var2.g2();
+        int var21 = var2.g2();
+        int var22 = var2.g2();
         int var23 = 0;
         int var24 = 0;
         int var25 = 0;
         int var26;
         if (var11 > 0) {
-            this.aByteArray1438 = new byte[var11];
-            var2.caret = 0;
+            aByteArray1438 = new byte[var11];
+            var2.pos = 0;
 
             for (var26 = 0; var26 < var11; ++var26) {
-                byte var27 = this.aByteArray1438[var26] = var2.readByte();
+                byte var27 = aByteArray1438[var26] = var2.g1b();
                 if (var27 == 0) {
                     ++var23;
                 }
@@ -1160,57 +1160,57 @@ public class UnlitModel extends Entity {
         var26 += var24;
         int var46 = var26;
         var26 += var24 * 2 + var25 * 2;
-        this.anInt380 = var9;
-        this.anInt574 = var10;
-        this.anInt702 = var11;
-        this.xVertices = new int[var9];
-        this.yVertices = new int[var9];
-        this.zVertices = new int[var9];
-        this.anIntArray747 = new int[var10];
-        this.anIntArray687 = new int[var10];
-        this.anIntArray692 = new int[var10];
+        anInt380 = var9;
+        anInt574 = var10;
+        anInt702 = var11;
+        xVertices = new int[var9];
+        yVertices = new int[var9];
+        zVertices = new int[var9];
+        anIntArray747 = new int[var10];
+        anIntArray687 = new int[var10];
+        anIntArray692 = new int[var10];
         if (var17 == 1) {
-            this.anIntArray787 = new int[var9];
+            anIntArray787 = new int[var9];
         }
 
         if (var12 == 1) {
-            this.aByteArray1440 = new byte[var10];
+            aByteArray1440 = new byte[var10];
         }
 
         if (var13 == 255) {
-            this.aByteArray1428 = new byte[var10];
+            aByteArray1428 = new byte[var10];
         } else {
-            this.defaultRenderPriority = (byte) var13;
+            defaultRenderPriority = (byte) var13;
         }
 
         if (var14 == 1) {
-            this.aByteArray1425 = new byte[var10];
+            aByteArray1425 = new byte[var10];
         }
 
         if (var15 == 1) {
-            this.anIntArray782 = new int[var10];
+            anIntArray782 = new int[var10];
         }
 
         if (var16 == 1) {
-            this.aShortArray1421 = new short[var10];
+            aShortArray1421 = new short[var10];
         }
 
         if (var16 == 1 && var11 > 0) {
-            this.aByteArray1423 = new byte[var10];
+            aByteArray1423 = new byte[var10];
         }
 
-        this.aShortArray1435 = new short[var10];
+        aShortArray1435 = new short[var10];
         if (var11 > 0) {
-            this.aShortArray718 = new short[var11];
-            this.aShortArray724 = new short[var11];
-            this.aShortArray719 = new short[var11];
+            aShortArray718 = new short[var11];
+            aShortArray724 = new short[var11];
+            aShortArray719 = new short[var11];
         }
 
-        var2.caret = var11;
-        var3.caret = var38;
-        var4.caret = var39;
-        var5.caret = var40;
-        var6.caret = var32;
+        var2.pos = var11;
+        var3.pos = var38;
+        var4.pos = var39;
+        var5.pos = var40;
+        var6.pos = var32;
         int var48 = 0;
         int var49 = 0;
         int var50 = 0;
@@ -1221,70 +1221,70 @@ public class UnlitModel extends Entity {
         int var54;
         int var55;
         for (var51 = 0; var51 < var9; ++var51) {
-            var52 = var2.readUByte();
+            var52 = var2.g1();
             var53 = 0;
             if ((var52 & 1) != 0) {
-                var53 = var3.method1046();
+                var53 = var3.gsmart();
             }
 
             var54 = 0;
             if ((var52 & 2) != 0) {
-                var54 = var4.method1046();
+                var54 = var4.gsmart();
             }
 
             var55 = 0;
             if ((var52 & 4) != 0) {
-                var55 = var5.method1046();
+                var55 = var5.gsmart();
             }
 
-            this.xVertices[var51] = var48 + var53;
-            this.yVertices[var51] = var49 + var54;
-            this.zVertices[var51] = var50 + var55;
-            var48 = this.xVertices[var51];
-            var49 = this.yVertices[var51];
-            var50 = this.zVertices[var51];
+            xVertices[var51] = var48 + var53;
+            yVertices[var51] = var49 + var54;
+            zVertices[var51] = var50 + var55;
+            var48 = xVertices[var51];
+            var49 = yVertices[var51];
+            var50 = zVertices[var51];
             if (var17 == 1) {
-                this.anIntArray787[var51] = var6.readUByte();
+                anIntArray787[var51] = var6.g1();
             }
         }
 
-        var2.caret = var37;
-        var3.caret = var28;
-        var4.caret = var30;
-        var5.caret = var33;
-        var6.caret = var31;
-        var7.caret = var35;
-        var8.caret = var36;
+        var2.pos = var37;
+        var3.pos = var28;
+        var4.pos = var30;
+        var5.pos = var33;
+        var6.pos = var31;
+        var7.pos = var35;
+        var8.pos = var36;
 
         for (var51 = 0; var51 < var10; ++var51) {
-            this.aShortArray1435[var51] = (short) var2.readUShort();
+            aShortArray1435[var51] = (short) var2.g2();
             if (var12 == 1) {
-                this.aByteArray1440[var51] = var3.readByte();
+                aByteArray1440[var51] = var3.g1b();
             }
 
             if (var13 == 255) {
-                this.aByteArray1428[var51] = var4.readByte();
+                aByteArray1428[var51] = var4.g1b();
             }
 
             if (var14 == 1) {
-                this.aByteArray1425[var51] = var5.readByte();
+                aByteArray1425[var51] = var5.g1b();
             }
 
             if (var15 == 1) {
-                this.anIntArray782[var51] = var6.readUByte();
+                anIntArray782[var51] = var6.g1();
             }
 
             if (var16 == 1) {
-                this.aShortArray1421[var51] = (short) (var7.readUShort() - 1);
+                aShortArray1421[var51] = (short) (var7.g2() - 1);
             }
 
-            if (this.aByteArray1423 != null && this.aShortArray1421[var51] != -1) {
-                this.aByteArray1423[var51] = (byte) (var8.readUByte() - 1);
+            if (aByteArray1423 != null && aShortArray1421[var51] != -1) {
+                aByteArray1423[var51] = (byte) (var8.g1() - 1);
             }
         }
 
-        var2.caret = var34;
-        var3.caret = var29;
+        var2.pos = var34;
+        var3.pos = var29;
         var51 = 0;
         var52 = 0;
         var53 = 0;
@@ -1292,94 +1292,94 @@ public class UnlitModel extends Entity {
 
         int var56;
         for (var55 = 0; var55 < var10; ++var55) {
-            var56 = var3.readUByte();
+            var56 = var3.g1();
             if (var56 == 1) {
-                var51 = var2.method1046() + var54;
-                var52 = var2.method1046() + var51;
-                var53 = var2.method1046() + var52;
+                var51 = var2.gsmart() + var54;
+                var52 = var2.gsmart() + var51;
+                var53 = var2.gsmart() + var52;
                 var54 = var53;
-                this.anIntArray747[var55] = var51;
-                this.anIntArray687[var55] = var52;
-                this.anIntArray692[var55] = var53;
+                anIntArray747[var55] = var51;
+                anIntArray687[var55] = var52;
+                anIntArray692[var55] = var53;
             }
 
             if (var56 == 2) {
                 var52 = var53;
-                var53 = var2.method1046() + var54;
+                var53 = var2.gsmart() + var54;
                 var54 = var53;
-                this.anIntArray747[var55] = var51;
-                this.anIntArray687[var55] = var52;
-                this.anIntArray692[var55] = var53;
+                anIntArray747[var55] = var51;
+                anIntArray687[var55] = var52;
+                anIntArray692[var55] = var53;
             }
 
             if (var56 == 3) {
                 var51 = var53;
-                var53 = var2.method1046() + var54;
+                var53 = var2.gsmart() + var54;
                 var54 = var53;
-                this.anIntArray747[var55] = var51;
-                this.anIntArray687[var55] = var52;
-                this.anIntArray692[var55] = var53;
+                anIntArray747[var55] = var51;
+                anIntArray687[var55] = var52;
+                anIntArray692[var55] = var53;
             }
 
             if (var56 == 4) {
                 int var57 = var51;
                 var51 = var52;
                 var52 = var57;
-                var53 = var2.method1046() + var54;
+                var53 = var2.gsmart() + var54;
                 var54 = var53;
-                this.anIntArray747[var55] = var51;
-                this.anIntArray687[var55] = var57;
-                this.anIntArray692[var55] = var53;
+                anIntArray747[var55] = var51;
+                anIntArray687[var55] = var57;
+                anIntArray692[var55] = var53;
             }
         }
 
-        var2.caret = var41;
-        var3.caret = var42;
-        var4.caret = var43;
-        var5.caret = var44;
-        var6.caret = var45;
-        var7.caret = var46;
+        var2.pos = var41;
+        var3.pos = var42;
+        var4.pos = var43;
+        var5.pos = var44;
+        var6.pos = var45;
+        var7.pos = var46;
 
         for (var55 = 0; var55 < var11; ++var55) {
-            var56 = this.aByteArray1438[var55] & 255;
+            var56 = aByteArray1438[var55] & 255;
             if (var56 == 0) {
-                this.aShortArray718[var55] = (short) var2.readUShort();
-                this.aShortArray724[var55] = (short) var2.readUShort();
-                this.aShortArray719[var55] = (short) var2.readUShort();
+                aShortArray718[var55] = (short) var2.g2();
+                aShortArray724[var55] = (short) var2.g2();
+                aShortArray719[var55] = (short) var2.g2();
             }
         }
 
-        var2.caret = var26;
-        var55 = var2.readUByte();
+        var2.pos = var26;
+        var55 = var2.g1();
         if (var55 != 0) {
             new Statics3();
-            var2.readUShort();
-            var2.readUShort();
-            var2.readUShort();
-            var2.readInt();
+            var2.g2();
+            var2.g2();
+            var2.g2();
+            var2.g4();
         }
 
     }
 
     public void method976(int var1, int var2, int var3) {
-        for (int var4 = 0; var4 < this.anInt380; ++var4) {
-            int[] var10000 = this.xVertices;
+        for (int var4 = 0; var4 < anInt380; ++var4) {
+            int[] var10000 = xVertices;
             var10000[var4] += var1;
-            var10000 = this.yVertices;
+            var10000 = yVertices;
             var10000[var4] += var2;
-            var10000 = this.zVertices;
+            var10000 = zVertices;
             var10000[var4] += var3;
         }
 
-        this.method580();
+        method580();
     }
 
     public UnlitModel method977(int[][] var1, int var2, int var3, int var4, int var6) {
-        this.method973();
-        int var7 = var2 + this.anInt1436;
-        int var8 = var2 + this.anInt556;
-        int var9 = var4 + this.anInt1437;
-        int var10 = var4 + this.anInt579;
+        method973();
+        int var7 = var2 + anInt1436;
+        int var8 = var2 + anInt556;
+        int var9 = var4 + anInt1437;
+        int var10 = var4 + anInt579;
         if (var7 >= 0 && var8 + 128 >> 7 < var1.length && var9 >= 0 && var10 + 128 >> 7 < var1[0].length) {
             var7 >>= 7;
             var8 = var8 + 127 >> 7;
@@ -1389,31 +1389,31 @@ public class UnlitModel extends Entity {
                 return this;
             }
             UnlitModel var11 = new UnlitModel();
-            var11.anInt380 = this.anInt380;
-            var11.anInt574 = this.anInt574;
-            var11.anInt702 = this.anInt702;
-            var11.xVertices = this.xVertices;
-            var11.zVertices = this.zVertices;
-            var11.anIntArray747 = this.anIntArray747;
-            var11.anIntArray687 = this.anIntArray687;
-            var11.anIntArray692 = this.anIntArray692;
-            var11.aByteArray1440 = this.aByteArray1440;
-            var11.aByteArray1428 = this.aByteArray1428;
-            var11.aByteArray1425 = this.aByteArray1425;
-            var11.aByteArray1423 = this.aByteArray1423;
-            var11.aShortArray1435 = this.aShortArray1435;
-            var11.aShortArray1421 = this.aShortArray1421;
-            var11.defaultRenderPriority = this.defaultRenderPriority;
-            var11.aByteArray1438 = this.aByteArray1438;
-            var11.aShortArray718 = this.aShortArray718;
-            var11.aShortArray724 = this.aShortArray724;
-            var11.aShortArray719 = this.aShortArray719;
-            var11.anIntArray787 = this.anIntArray787;
-            var11.anIntArray782 = this.anIntArray782;
-            var11.anIntArrayArray1429 = this.anIntArrayArray1429;
-            var11.anIntArrayArray1426 = this.anIntArrayArray1426;
-            var11.aShort1441 = this.aShort1441;
-            var11.aShort1439 = this.aShort1439;
+            var11.anInt380 = anInt380;
+            var11.anInt574 = anInt574;
+            var11.anInt702 = anInt702;
+            var11.xVertices = xVertices;
+            var11.zVertices = zVertices;
+            var11.anIntArray747 = anIntArray747;
+            var11.anIntArray687 = anIntArray687;
+            var11.anIntArray692 = anIntArray692;
+            var11.aByteArray1440 = aByteArray1440;
+            var11.aByteArray1428 = aByteArray1428;
+            var11.aByteArray1425 = aByteArray1425;
+            var11.aByteArray1423 = aByteArray1423;
+            var11.aShortArray1435 = aShortArray1435;
+            var11.aShortArray1421 = aShortArray1421;
+            var11.defaultRenderPriority = defaultRenderPriority;
+            var11.aByteArray1438 = aByteArray1438;
+            var11.aShortArray718 = aShortArray718;
+            var11.aShortArray724 = aShortArray724;
+            var11.aShortArray719 = aShortArray719;
+            var11.anIntArray787 = anIntArray787;
+            var11.anIntArray782 = anIntArray782;
+            var11.anIntArrayArray1429 = anIntArrayArray1429;
+            var11.anIntArrayArray1426 = anIntArrayArray1426;
+            var11.aShort1441 = aShort1441;
+            var11.aShort1439 = aShort1439;
             var11.yVertices = new int[var11.anInt380];
             int var12;
             int var13;
@@ -1427,8 +1427,8 @@ public class UnlitModel extends Entity {
             int var21;
             if (var6 == 0) {
                 for (var12 = 0; var12 < var11.anInt380; ++var12) {
-                    var13 = var2 + this.xVertices[var12];
-                    var14 = var4 + this.zVertices[var12];
+                    var13 = var2 + xVertices[var12];
+                    var14 = var4 + zVertices[var12];
                     var15 = var13 & 127;
                     var16 = var14 & 127;
                     var17 = var13 >> 7;
@@ -1436,14 +1436,14 @@ public class UnlitModel extends Entity {
                     var19 = var1[var17][var18] * (128 - var15) + var1[var17 + 1][var18] * var15 >> 7;
                     var20 = var1[var17][var18 + 1] * (128 - var15) + var15 * var1[var17 + 1][var18 + 1] >> 7;
                     var21 = var19 * (128 - var16) + var20 * var16 >> 7;
-                    var11.yVertices[var12] = var21 + this.yVertices[var12] - var3;
+                    var11.yVertices[var12] = var21 + yVertices[var12] - var3;
                 }
             } else {
                 for (var12 = 0; var12 < var11.anInt380; ++var12) {
-                    var13 = (-this.yVertices[var12] << 16) / super.height;
+                    var13 = (-yVertices[var12] << 16) / super.height;
                     if (var13 < var6) {
-                        var14 = var2 + this.xVertices[var12];
-                        var15 = var4 + this.zVertices[var12];
+                        var14 = var2 + xVertices[var12];
+                        var15 = var4 + zVertices[var12];
                         var16 = var14 & 127;
                         var17 = var15 & 127;
                         var18 = var14 >> 7;
@@ -1451,7 +1451,7 @@ public class UnlitModel extends Entity {
                         var20 = var1[var18][var19] * (128 - var16) + var1[var18 + 1][var19] * var16 >> 7;
                         var21 = var1[var18][var19 + 1] * (128 - var16) + var16 * var1[var18 + 1][var19 + 1] >> 7;
                         int var22 = var20 * (128 - var17) + var21 * var17 >> 7;
-                        var11.yVertices[var12] = (var6 - var13) * (var22 - var3) / var6 + this.yVertices[var12];
+                        var11.yVertices[var12] = (var6 - var13) * (var22 - var3) / var6 + yVertices[var12];
                     }
                 }
             }
@@ -1468,115 +1468,115 @@ public class UnlitModel extends Entity {
         int var10002;
         int var3;
         int var4;
-        if (this.anIntArray787 != null) {
+        if (anIntArray787 != null) {
             var1 = new int[256];
             var2 = 0;
 
-            for (var3 = 0; var3 < this.anInt380; ++var3) {
-                var4 = this.anIntArray787[var3];
+            for (var3 = 0; var3 < anInt380; ++var3) {
+                var4 = anIntArray787[var3];
                 var10002 = var1[var4]++;
                 if (var4 > var2) {
                     var2 = var4;
                 }
             }
 
-            this.anIntArrayArray1429 = new int[var2 + 1][];
+            anIntArrayArray1429 = new int[var2 + 1][];
 
             for (var3 = 0; var3 <= var2; ++var3) {
-                this.anIntArrayArray1429[var3] = new int[var1[var3]];
+                anIntArrayArray1429[var3] = new int[var1[var3]];
                 var1[var3] = 0;
             }
 
-            for (var3 = 0; var3 < this.anInt380; this.anIntArrayArray1429[var4][var1[var4]++] = var3++) {
-                var4 = this.anIntArray787[var3];
+            for (var3 = 0; var3 < anInt380; anIntArrayArray1429[var4][var1[var4]++] = var3++) {
+                var4 = anIntArray787[var3];
             }
 
-            this.anIntArray787 = null;
+            anIntArray787 = null;
         }
 
-        if (this.anIntArray782 != null) {
+        if (anIntArray782 != null) {
             var1 = new int[256];
             var2 = 0;
 
-            for (var3 = 0; var3 < this.anInt574; ++var3) {
-                var4 = this.anIntArray782[var3];
+            for (var3 = 0; var3 < anInt574; ++var3) {
+                var4 = anIntArray782[var3];
                 var10002 = var1[var4]++;
                 if (var4 > var2) {
                     var2 = var4;
                 }
             }
 
-            this.anIntArrayArray1426 = new int[var2 + 1][];
+            anIntArrayArray1426 = new int[var2 + 1][];
 
             for (var3 = 0; var3 <= var2; ++var3) {
-                this.anIntArrayArray1426[var3] = new int[var1[var3]];
+                anIntArrayArray1426[var3] = new int[var1[var3]];
                 var1[var3] = 0;
             }
 
-            for (var3 = 0; var3 < this.anInt574; this.anIntArrayArray1426[var4][var1[var4]++] = var3++) {
-                var4 = this.anIntArray782[var3];
+            for (var3 = 0; var3 < anInt574; anIntArrayArray1426[var4][var1[var4]++] = var3++) {
+                var4 = anIntArray782[var3];
             }
 
-            this.anIntArray782 = null;
+            anIntArray782 = null;
         }
 
     }
 
     public void method981() {
         int var1;
-        for (var1 = 0; var1 < this.anInt380; ++var1) {
-            this.zVertices[var1] = -this.zVertices[var1];
+        for (var1 = 0; var1 < anInt380; ++var1) {
+            zVertices[var1] = -zVertices[var1];
         }
 
-        for (var1 = 0; var1 < this.anInt574; ++var1) {
-            int var2 = this.anIntArray747[var1];
-            this.anIntArray747[var1] = this.anIntArray692[var1];
-            this.anIntArray692[var1] = var2;
+        for (var1 = 0; var1 < anInt574; ++var1) {
+            int var2 = anIntArray747[var1];
+            anIntArray747[var1] = anIntArray692[var1];
+            anIntArray692[var1] = var2;
         }
 
-        this.method580();
+        method580();
     }
 
     public void method302(int var1) {
         int var2 = anIntArray1433[var1];
         int var3 = anIntArray1427[var1];
 
-        for (int var4 = 0; var4 < this.anInt380; ++var4) {
-            int var5 = var2 * this.zVertices[var4] + var3 * this.xVertices[var4] >> 16;
-            this.zVertices[var4] = var3 * this.zVertices[var4] - var2 * this.xVertices[var4] >> 16;
-            this.xVertices[var4] = var5;
+        for (int var4 = 0; var4 < anInt380; ++var4) {
+            int var5 = var2 * zVertices[var4] + var3 * xVertices[var4] >> 16;
+            zVertices[var4] = var3 * zVertices[var4] - var2 * xVertices[var4] >> 16;
+            xVertices[var4] = var5;
         }
 
-        this.method580();
+        method580();
     }
 
     public void method886() {
-        for (int var1 = 0; var1 < this.anInt380; ++var1) {
-            int var2 = this.xVertices[var1];
-            this.xVertices[var1] = this.zVertices[var1];
-            this.zVertices[var1] = -var2;
+        for (int var1 = 0; var1 < anInt380; ++var1) {
+            int var2 = xVertices[var1];
+            xVertices[var1] = zVertices[var1];
+            zVertices[var1] = -var2;
         }
 
-        this.method580();
+        method580();
     }
 
     public void method972() {
-        for (int var1 = 0; var1 < this.anInt380; ++var1) {
-            this.xVertices[var1] = -this.xVertices[var1];
-            this.zVertices[var1] = -this.zVertices[var1];
+        for (int var1 = 0; var1 < anInt380; ++var1) {
+            xVertices[var1] = -xVertices[var1];
+            zVertices[var1] = -zVertices[var1];
         }
 
-        this.method580();
+        method580();
     }
 
     public void method969() {
-        for (int var1 = 0; var1 < this.anInt380; ++var1) {
-            int var2 = this.zVertices[var1];
-            this.zVertices[var1] = this.xVertices[var1];
-            this.xVertices[var1] = -var2;
+        for (int var1 = 0; var1 < anInt380; ++var1) {
+            int var2 = zVertices[var1];
+            zVertices[var1] = xVertices[var1];
+            xVertices[var1] = -var2;
         }
 
-        this.method580();
+        method580();
     }
 
     public final int method979(UnlitModel var1, int var2) {
@@ -1585,22 +1585,22 @@ public class UnlitModel extends Entity {
         int var5 = var1.yVertices[var2];
         int var6 = var1.zVertices[var2];
 
-        for (int var7 = 0; var7 < this.anInt380; ++var7) {
-            if (var4 == this.xVertices[var7] && var5 == this.yVertices[var7] && var6 == this.zVertices[var7]) {
+        for (int var7 = 0; var7 < anInt380; ++var7) {
+            if (var4 == xVertices[var7] && var5 == yVertices[var7] && var6 == zVertices[var7]) {
                 var3 = var7;
                 break;
             }
         }
 
         if (var3 == -1) {
-            this.xVertices[this.anInt380] = var4;
-            this.yVertices[this.anInt380] = var5;
-            this.zVertices[this.anInt380] = var6;
+            xVertices[anInt380] = var4;
+            yVertices[anInt380] = var5;
+            zVertices[anInt380] = var6;
             if (var1.anIntArray787 != null) {
-                this.anIntArray787[this.anInt380] = var1.anIntArray787[var2];
+                anIntArray787[anInt380] = var1.anIntArray787[var2];
             }
 
-            var3 = this.anInt380++;
+            var3 = anInt380++;
         }
 
         return var3;

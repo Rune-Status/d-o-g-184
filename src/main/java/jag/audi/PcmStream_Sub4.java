@@ -4,13 +4,15 @@ import jag.URLRequest;
 import jag.commons.collection.NodeDeque;
 
 public class PcmStream_Sub4 extends PcmStream {
+
     public static int[] anIntArray1107;
+
     final PcmStream_Sub1 aClass5_Sub6_Sub1_1153;
     final PcmStream_Sub3 aClass5_Sub6_Sub3_1154;
-    final NodeDeque aNodeDeque373;
+    final NodeDeque<Node_Sub19> aNodeDeque373;
 
     PcmStream_Sub4(PcmStream_Sub3 var1) {
-        this.aNodeDeque373 = new NodeDeque();
+        this.aNodeDeque373 = new NodeDeque<>();
         this.aClass5_Sub6_Sub1_1153 = new PcmStream_Sub1();
         this.aClass5_Sub6_Sub3_1154 = var1;
     }
@@ -18,7 +20,7 @@ public class PcmStream_Sub4 extends PcmStream {
     public void method311(int[] var1, int var2, int var3) {
         this.aClass5_Sub6_Sub1_1153.method311(var1, var2, var3);
 
-        for (Node_Sub19 var4 = (Node_Sub19) this.aNodeDeque373.head(); var4 != null; var4 = (Node_Sub19) this.aNodeDeque373.next()) {
+        for (Node_Sub19 var4 = this.aNodeDeque373.head(); var4 != null; var4 = this.aNodeDeque373.next()) {
             if (!this.aClass5_Sub6_Sub3_1154.method754(var4)) {
                 int var5 = var2;
                 int var6 = var3;
@@ -42,7 +44,7 @@ public class PcmStream_Sub4 extends PcmStream {
     public void method303(int var1) {
         this.aClass5_Sub6_Sub1_1153.method303(var1);
 
-        for (Node_Sub19 var2 = (Node_Sub19) this.aNodeDeque373.head(); var2 != null; var2 = (Node_Sub19) this.aNodeDeque373.next()) {
+        for (Node_Sub19 var2 = this.aNodeDeque373.head(); var2 != null; var2 = this.aNodeDeque373.next()) {
             if (!this.aClass5_Sub6_Sub3_1154.method754(var2)) {
                 int var3 = var1;
 
@@ -64,7 +66,7 @@ public class PcmStream_Sub4 extends PcmStream {
     public PcmStream method308() {
         Node_Sub19 var1;
         do {
-            var1 = (Node_Sub19) this.aNodeDeque373.next();
+            var1 = this.aNodeDeque373.next();
             if (var1 == null) {
                 return null;
             }
@@ -143,7 +145,7 @@ public class PcmStream_Sub4 extends PcmStream {
     }
 
     public PcmStream method307() {
-        Node_Sub19 var1 = (Node_Sub19) this.aNodeDeque373.head();
+        Node_Sub19 var1 = this.aNodeDeque373.head();
         if (var1 == null) {
             return null;
         }

@@ -6,10 +6,11 @@ import java.awt.event.MouseWheelListener;
 
 public final class MouseWheel implements MouseWheelProvider, MouseWheelListener {
 
-    public int anInt328;
+    public static MouseWheelProvider provider;
+    public int ptr;
 
     public MouseWheel() {
-        this.anInt328 = 0;
+        ptr = 0;
     }
 
     public void method223(Component var1) {
@@ -20,13 +21,13 @@ public final class MouseWheel implements MouseWheelProvider, MouseWheelListener 
         var1.removeMouseWheelListener(this);
     }
 
-    public synchronized int method222() {
-        int var1 = this.anInt328;
-        this.anInt328 = 0;
-        return var1;
+    public synchronized int getAndReset() {
+        int old = ptr;
+        ptr = 0;
+        return old;
     }
 
-    public synchronized void mouseWheelMoved(MouseWheelEvent var1) {
-        this.anInt328 += var1.getWheelRotation();
+    public synchronized void mouseWheelMoved(MouseWheelEvent e) {
+        ptr += e.getWheelRotation();
     }
 }

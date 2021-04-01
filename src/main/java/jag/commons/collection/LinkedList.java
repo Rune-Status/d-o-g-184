@@ -3,151 +3,149 @@ package jag.commons.collection;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class LinkedList implements Iterable, Collection {
+public class LinkedList<T extends Node> implements Iterable<T>, Collection<T> {
 
     public final Node sentinel;
     public Node tail;
 
     public LinkedList() {
-        this.sentinel = new Node();
-        this.sentinel.next = this.sentinel;
-        this.sentinel.previous = this.sentinel;
+        sentinel = new Node();
+        sentinel.next = sentinel;
+        sentinel.previous = sentinel;
     }
 
-    public static void insertBefore(Node var0, Node var1) {
-        if (var0.previous != null) {
-            var0.unlink();
+    public static void insertBefore(Node n1, Node n2) {
+        if (n1.previous != null) {
+            n1.unlink();
         }
 
-        var0.previous = var1;
-        var0.next = var1.next;
-        var0.previous.next = var0;
-        var0.next.previous = var0;
+        n1.previous = n2;
+        n1.next = n2.next;
+        n1.previous.next = n1;
+        n1.next.previous = n1;
     }
 
-    public boolean method653(Node var1) {
-        this.pushBack(var1);
+    public boolean _pushBack(Node node) {
+        pushBack(node);
         return true;
     }
 
-    public Node[] method654() {
-        Node[] var1 = new Node[this.method655()];
-        int var2 = 0;
+    public T[] toArray() {
+        Node[] nodes = new Node[_size()];
 
-        for (Node var3 = this.sentinel.next; var3 != this.sentinel; var3 = var3.next) {
-            var1[var2++] = var3;
+        int ptr = 0;
+        for (Node node = sentinel.next; node != sentinel; node = node.next) {
+            nodes[ptr++] = node;
         }
 
-        return var1;
+        return (T[]) nodes;
     }
 
-    public int method655() {
-        int var1 = 0;
+    public int _size() {
+        int i = 0;
+        for (Node current = sentinel.next; current != sentinel; current = current.next) {
+            ++i;
+        }
+        return i;
+    }
 
-        for (Node var2 = this.sentinel.next; var2 != this.sentinel; var2 = var2.next) {
-            ++var1;
+    public void _clear() {
+        while (sentinel.next != sentinel) {
+            sentinel.next.unlink();
         }
 
-        return var1;
     }
 
-    public void removeAll() {
-        while (this.sentinel.next != this.sentinel) {
-            this.sentinel.next.unlink();
-        }
+    public T _head() {
+        Node node = sentinel.next;
 
-    }
-
-    public Node method657() {
-        Node var2 = this.sentinel.next;
-
-        if (var2 == this.sentinel) {
-            this.tail = null;
+        if (node == sentinel) {
+            tail = null;
             return null;
         }
-        this.tail = var2.next;
-        return var2;
+        tail = node.next;
+        return (T) node;
     }
 
-    public boolean method662() {
-        return this.sentinel.next == this.sentinel;
+    public boolean _isEmpty() {
+        return sentinel.next == sentinel;
     }
 
-    public void pushBack(Node var1) {
-        if (var1.previous != null) {
-            var1.unlink();
+    public void pushBack(Node node) {
+        if (node.previous != null) {
+            node.unlink();
         }
 
-        var1.previous = this.sentinel.previous;
-        var1.next = this.sentinel;
-        var1.previous.next = var1;
-        var1.next.previous = var1;
+        node.previous = sentinel.previous;
+        node.next = sentinel;
+        node.previous.next = node;
+        node.next.previous = node;
     }
 
-    public Node head() {
-        return this.method657();
+    public T head() {
+        return _head();
     }
 
-    public Node next() {
-        Node var1 = this.tail;
-        if (var1 == this.sentinel) {
-            this.tail = null;
+    public T next() {
+        Node node = tail;
+        if (node == sentinel) {
+            tail = null;
             return null;
         }
-        this.tail = var1.next;
-        return var1;
+        tail = node.next;
+        return (T) node;
     }
 
-    public void addElement(Node var1) {
-        if (var1.previous != null) {
-            var1.unlink();
+    public void _add(Node node) {
+        if (node.previous != null) {
+            node.unlink();
         }
 
-        var1.previous = this.sentinel;
-        var1.next = this.sentinel.next;
-        var1.previous.next = var1;
-        var1.next.previous = var1;
+        node.previous = sentinel;
+        node.next = sentinel.next;
+        node.previous.next = node;
+        node.next.previous = node;
     }
 
-    public Iterator iterator() {
-        return new LinkedListIterator(this);
+    public Iterator<T> iterator() {
+        return new LinkedListIterator<>(this);
     }
 
     public int size() {
-        return this.method655();
+        return _size();
     }
 
     public boolean isEmpty() {
-        return this.method662();
+        return _isEmpty();
     }
 
-    public boolean contains(Object var1) {
+    public boolean contains(Object o) {
         throw new RuntimeException();
     }
 
-    public Object[] toArray(Object[] var1) {
-        int var2 = 0;
-
-        for (Node var3 = this.sentinel.next; var3 != this.sentinel; var3 = var3.next) {
-            var1[var2++] = var3;
+    public Object[] toArray(Object[] dst) {
+        int current = 0;
+        Node node = sentinel.next;
+        while (node != sentinel) {
+            dst[current++] = node;
+            node = node.next;
         }
-
-        return var1;
+        return dst;
     }
 
     public void clear() {
-        this.removeAll();
+        _clear();
     }
 
-    public boolean add(Object var1) {
-        return this.method653((Node) var1);
+    public boolean add(T node) {
+        return _pushBack(node);
     }
 
-    public boolean equals(Object var1) {
-        return super.equals(var1);
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 
-    public boolean retainAll(Collection var1) {
+    public boolean retainAll(Collection<?> c) {
         throw new RuntimeException();
     }
 
@@ -155,23 +153,19 @@ public class LinkedList implements Iterable, Collection {
         return super.hashCode();
     }
 
-    public boolean containsAll(Collection var1) {
+    public boolean containsAll(Collection<?> c) {
         throw new RuntimeException();
     }
 
-    public boolean addAll(Collection var1) {
+    public boolean addAll(Collection<? extends T> c) {
         throw new RuntimeException();
     }
 
-    public boolean remove(Object var1) {
+    public boolean remove(Object o) {
         throw new RuntimeException();
     }
 
-    public Object[] toArray() {
-        return this.method654();
-    }
-
-    public boolean removeAll(Collection var1) {
+    public boolean removeAll(Collection<?> c) {
         throw new RuntimeException();
     }
 }

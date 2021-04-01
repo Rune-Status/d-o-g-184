@@ -1,6 +1,5 @@
 package jag;
 
-import jag.game.World;
 import jag.game.client;
 import jag.game.stockmarket.StockMarketOfferQuantityComparator;
 import jag.graphics.JagGraphics;
@@ -79,8 +78,18 @@ public abstract class ByteBufferProvider {
         client.viewportHeight = var3;
     }
 
-    public static World method866() {
-        return World.anInt1872 < World.anInt1871 ? World.worlds[++World.anInt1872 - 1] : null;
+    public static Object allocateDirect(byte[] data) {
+        if (data == null) {
+            return null;
+        }
+
+        if (data.length > 136) {
+            DirectByteBufferProvider provider = new DirectByteBufferProvider();
+            provider.allocate(data);
+            return provider;
+        }
+
+        return data;
     }
 
     public abstract byte[] get();

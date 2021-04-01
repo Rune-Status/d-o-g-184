@@ -1,10 +1,10 @@
 package jag.statics;
 
 import jag.ClientLocale;
-import jag.script.RuneScriptFrame;
 import jag.audi.Node_Sub19;
-import jag.audi.vorbis.Vorbis4;
-import jag.game.GameEngine;
+import jag.audi.vorbis.Decimator;
+import jag.game.GameShell;
+import jag.script.ClientScriptFrame;
 import jag.script.ScriptEvent;
 
 import java.util.Calendar;
@@ -14,13 +14,13 @@ public class Statics46 {
     public static final double aDouble437;
     public static final int[] anIntArray445;
     public static final int[][] anIntArrayArray443;
-    public static final RuneScriptFrame[] A_RUNE_SCRIPT_FRAME_ARRAY_435;
+    public static final ClientScriptFrame[] A_RUNE_SCRIPT_FRAME_ARRAY_435;
     public static final Calendar aCalendar438;
     public static int anInt436;
     public static boolean aBoolean439;
     public static boolean aBoolean449;
     public static int anInt440;
-    public static Vorbis4 aClass98_446;
+    public static Decimator aClass98_446;
     public static int anInt442;
     public static int anInt441;
     public static int[] anIntArray447;
@@ -31,7 +31,7 @@ public class Statics46 {
         ScriptEvent.intStack = new int[1000];
         ScriptEvent.stringStack = new String[1000];
         anInt436 = 0;
-        A_RUNE_SCRIPT_FRAME_ARRAY_435 = new RuneScriptFrame[50];
+        A_RUNE_SCRIPT_FRAME_ARRAY_435 = new ClientScriptFrame[50];
         aCalendar438 = Calendar.getInstance();
         aStringArray448 = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         aBoolean439 = false;
@@ -41,7 +41,7 @@ public class Statics46 {
     }
 
     public static boolean method297(String var0, int var1) {
-        return GameEngine.method191(var0, var1);
+        return GameShell.method191(var0, var1);
     }
 
     public static int method298(CharSequence var0, CharSequence var1, ClientLocale var2) {

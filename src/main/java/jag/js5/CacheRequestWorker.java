@@ -1,7 +1,7 @@
 package jag.js5;
 
 import jag.commons.collection.NodeDeque;
-import jag.game.GameEngine;
+import jag.game.GameShell;
 import jag.game.client;
 import jag.opcode.Buffer;
 
@@ -9,33 +9,32 @@ public class CacheRequestWorker implements Runnable {
 
     public static final NodeDeque<CacheRequest> requests;
     public static final NodeDeque<CacheRequest> read;
-    public static final Object anObject1463;
-    public static int anInt1464;
+    public static final Object mutex;
+    public static int state;
     public static Thread thread;
-    public static Buffer buffer;
 
     static {
         requests = new NodeDeque<>();
         read = new NodeDeque<>();
-        anInt1464 = 0;
-        anObject1463 = new Object();
+        state = 0;
+        mutex = new Object();
     }
 
     public CacheRequestWorker() {
 
     }
 
-    public static void method1006(String var0, boolean var1, boolean var2) {
-        GameEngine.method192(var0, var1, var2);
+    public static void openURL(String var0, boolean var1, boolean var2) {
+        GameShell.openURL(var0, var1, var2);
     }
 
     public static void release() {
-        synchronized (anObject1463) {
-            if (anInt1464 != 0) {
-                anInt1464 = 1;
+        synchronized (mutex) {
+            if (state != 0) {
+                state = 1;
 
                 try {
-                    anObject1463.wait();
+                    mutex.wait();
                 } catch (InterruptedException ignored) {
 
                 }
@@ -65,14 +64,14 @@ public class CacheRequestWorker implements Runnable {
                         }
                     }
 
-                    synchronized (anObject1463) {
-                        if (anInt1464 <= 1) {
-                            anInt1464 = 0;
-                            anObject1463.notifyAll();
+                    synchronized (mutex) {
+                        if (state <= 1) {
+                            state = 0;
+                            mutex.notifyAll();
                             return;
                         }
 
-                        anInt1464 = 600;
+                        state = 600;
                     }
                 } else {
                     long var7 = 99L;
@@ -87,14 +86,14 @@ public class CacheRequestWorker implements Runnable {
                     } catch (InterruptedException ignored) {
                     }
 
-                    synchronized (anObject1463) {
-                        if (anInt1464 <= 1) {
-                            anInt1464 = 0;
-                            anObject1463.notifyAll();
+                    synchronized (mutex) {
+                        if (state <= 1) {
+                            state = 0;
+                            mutex.notifyAll();
                             return;
                         }
 
-                        --anInt1464;
+                        --state;
                     }
                 }
             }

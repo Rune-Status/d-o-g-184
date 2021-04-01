@@ -11,21 +11,21 @@ public class GzipDecompressor {
     public GzipDecompressor() {
     }
 
-    public void method1326(Buffer var1, byte[] var2) {
-        if (var1.payload[var1.caret] == 31 && var1.payload[var1.caret + 1] == -117) {
-            if (this.inflater == null) {
-                this.inflater = new Inflater(true);
+    public void decompress(Buffer buffer, byte[] b) {
+        if (buffer.payload[buffer.pos] == 31 && buffer.payload[buffer.pos + 1] == -117) {
+            if (inflater == null) {
+                inflater = new Inflater(true);
             }
 
             try {
-                this.inflater.setInput(var1.payload, var1.caret + 10, var1.payload.length - (var1.caret + 8 + 10));
-                this.inflater.inflate(var2);
+                inflater.setInput(buffer.payload, buffer.pos + 10, buffer.payload.length - (buffer.pos + 8 + 10));
+                inflater.inflate(b);
             } catch (Exception var4) {
-                this.inflater.reset();
+                inflater.reset();
                 throw new RuntimeException("");
             }
 
-            this.inflater.reset();
+            inflater.reset();
         } else {
             throw new RuntimeException("");
         }

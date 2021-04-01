@@ -5,71 +5,70 @@ public final class NodeTable<T extends Node> {
     public final Node[] buckets;
     public final int size;
     public int index;
-    public Node tail;
-    public Node head;
+    public Node current;
+    public Node query;
 
-    public NodeTable(int var1) {
-        this.index = 0;
-        this.size = var1;
-        this.buckets = new Node[var1];
+    public NodeTable(int capacity) {
+        index = 0;
+        size = capacity;
+        buckets = new Node[capacity];
 
-        for (int var2 = 0; var2 < var1; ++var2) {
-            Node var3 = this.buckets[var2] = new Node();
-            var3.next = var3;
-            var3.previous = var3;
+        for (int i = 0; i < capacity; ++i) {
+            Node node = buckets[i] = new Node();
+            node.next = node;
+            node.previous = node;
         }
-
     }
 
     public T head() {
-        this.index = 0;
-        return this.next();
+        index = 0;
+        return next();
     }
 
-    public T lookup(long var1) {
-        Node var3 = this.buckets[(int) (var1 & (long) (this.size - 1))];
+    public T lookup(long key) {
+        Node node = buckets[(int) (key & (long) (size - 1))];
 
-        for (this.head = var3.next; var3 != this.head; this.head = this.head.next) {
-            if (this.head.key == var1) {
-                Node var4 = this.head;
-                this.head = this.head.next;
-                return (T) var4;
+        for (query = node.next; node != query; query = query.next) {
+            if (query.key == key) {
+                Node match = query;
+                query = query.next;
+                return (T) match;
             }
         }
 
-        this.head = null;
+        query = null;
         return null;
     }
 
     public T next() {
-        Node var1;
-        if (this.index > 0 && this.buckets[this.index - 1] != this.tail) {
-            var1 = this.tail;
-            this.tail = var1.next;
-            return (T) var1;
+        Node node;
+        if (index > 0 && buckets[index - 1] != current) {
+            node = current;
+            current = node.next;
+            return (T) node;
         }
         do {
-            if (this.index >= this.size) {
+            if (index >= size) {
                 return null;
             }
 
-            var1 = this.buckets[this.index++].next;
-        } while (var1 == this.buckets[this.index - 1]);
+            node = buckets[index++].next;
+        } while (node == buckets[index - 1]);
 
-        this.tail = var1.next;
-        return (T) var1;
+        current = node.next;
+        return (T) node;
     }
 
-    public void put(T var1, long var2) {
-        if (var1.previous != null) {
-            var1.unlink();
+    public void put(T v, long key) {
+        if (v.previous != null) {
+            v.unlink();
         }
 
-        Node var4 = this.buckets[(int) (var2 & (long) (this.size - 1))];
-        var1.previous = var4.previous;
-        var1.next = var4;
-        var1.previous.next = var1;
-        var1.next.previous = var1;
-        var1.key = var2;
+        Node node = buckets[(int) (key & (long) (size - 1))];
+        v.previous = node.previous;
+        v.next = node;
+        v.previous.next = v;
+        v.next.previous = v;
+        v.key = key;
     }
 }

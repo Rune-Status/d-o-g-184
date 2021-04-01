@@ -1,15 +1,11 @@
 package jag.game.relationship;
 
-import jag.Vertex;
 import jag.game.client;
 import jag.graphics.Font;
-import jag.js5.Archive;
 import jag.js5.ReferenceTable;
 import jag.statics.Statics50;
 
 public class ClanMember extends Associate {
-
-    public static Archive aArchive867;
 
     public ChatLinePrivacyType aChatLinePrivacyType_869;
     public ChatLinePrivacyType aChatLinePrivacyType_868;
@@ -20,7 +16,7 @@ public class ClanMember extends Associate {
     }
 
     public static Font method708(ReferenceTable var0, ReferenceTable var1, int var2, int var3) {
-        return !Vertex.method534(var0, var2, var3) ? null : Statics50.method221(var1.unpack(var2, var3));
+        return !ReferenceTable.method534(var0, var2, var3) ? null : Statics50.method221(var1.unpack(var2, var3));
     }
 
     public void method709() {

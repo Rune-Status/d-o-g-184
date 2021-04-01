@@ -5,44 +5,44 @@ import jag.commons.collection.LinkableDeque;
 import jag.opcode.Buffer;
 import jag.opcode.FriendLoginUpdate;
 
-public class FriendListContext extends ChatterContext {
+public class FriendListContext extends ChatterContext<BefriendedPlayer> {
 
-    public final ClientParameter aClientParameter_486;
-    public final LinkableDeque loginUpdates;
+    public final ClientParameter nameLengthParameter;
+    public final LinkableDeque<FriendLoginUpdate> loginUpdates;
     public int anInt833;
 
     public FriendListContext(ClientParameter var1) {
         super(400);
-        this.anInt833 = 1;
-        this.loginUpdates = new LinkableDeque();
-        this.aClientParameter_486 = var1;
+        anInt833 = 1;
+        loginUpdates = new LinkableDeque<>();
+        nameLengthParameter = var1;
     }
 
     public void decode(Buffer buffer, int available) {
         while (true) {
-            if (buffer.caret < available) {
-                boolean var3 = buffer.readUByte() == 1;
-                NamePair displayName = new NamePair(buffer.readString(), this.aClientParameter_486);
-                NamePair previousName = new NamePair(buffer.readString(), this.aClientParameter_486);
-                int var6 = buffer.readUShort();
-                int var7 = buffer.readUByte();
-                int var8 = buffer.readUByte();
+            if (buffer.pos < available) {
+                boolean var3 = buffer.g1() == 1;
+                NamePair displayName = new NamePair(buffer.gstr(), nameLengthParameter);
+                NamePair previousName = new NamePair(buffer.gstr(), nameLengthParameter);
+                int var6 = buffer.g2();
+                int var7 = buffer.g1();
+                int var8 = buffer.g1();
                 boolean var9 = (var8 & 2) != 0;
                 boolean var10 = (var8 & 1) != 0;
                 if (var6 > 0) {
-                    buffer.readString();
-                    buffer.readUByte();
-                    buffer.readInt();
+                    buffer.gstr();
+                    buffer.g1();
+                    buffer.g4();
                 }
 
-                buffer.readString();
+                buffer.gstr();
                 if (displayName.isFormattedPresent()) {
-                    BefriendedPlayer var11 = (BefriendedPlayer) this.getChatterByDisplayName(displayName);
+                    BefriendedPlayer var11 = getChatterByDisplayName(displayName);
                     if (var3) {
-                        BefriendedPlayer var12 = (BefriendedPlayer) this.getChatterByDisplayName(previousName);
+                        BefriendedPlayer var12 = getChatterByDisplayName(previousName);
                         if (var12 != null && var11 != var12) {
                             if (var11 != null) {
-                                this.remove(var12);
+                                remove(var12);
                             } else {
                                 var11 = var12;
                             }
@@ -50,11 +50,11 @@ public class FriendListContext extends ChatterContext {
                     }
 
                     if (var11 != null) {
-                        this.update(var11, displayName, previousName);
+                        update(var11, displayName, previousName);
                         if (var6 != var11.world) {
                             boolean var13 = true;
 
-                            for (FriendLoginUpdate update = (FriendLoginUpdate) this.loginUpdates.current(); update != null; update = (FriendLoginUpdate) this.loginUpdates.next()) {
+                            for (FriendLoginUpdate update = loginUpdates.current(); update != null; update = loginUpdates.next()) {
                                 if (update.namePair.equals(displayName)) {
                                     if (var6 != 0 && update.world == 0) {
                                         update.unlink();
@@ -67,19 +67,19 @@ public class FriendListContext extends ChatterContext {
                             }
 
                             if (var13) {
-                                this.loginUpdates.method1125(new FriendLoginUpdate(displayName, var6));
+                                loginUpdates.insert(new FriendLoginUpdate(displayName, var6));
                             }
                         }
                     } else {
-                        if (this.getCount() >= 400) {
+                        if (getMemberCount() >= 400) {
                             continue;
                         }
 
-                        var11 = (BefriendedPlayer) this.addAndCache(displayName, previousName);
+                        var11 = addAndCache(displayName, previousName);
                     }
 
                     if (var6 != var11.world) {
-                        var11.index = ++this.anInt833 - 1;
+                        var11.index = ++anInt833 - 1;
                         if (var11.world == -1 && var6 == 0) {
                             var11.index = -(var11.index);
                         }
@@ -96,24 +96,24 @@ public class FriendListContext extends ChatterContext {
                 throw new IllegalStateException();
             }
 
-            this.sort();
+            sort();
             return;
         }
     }
 
-    Chatter newChatter() {
+    BefriendedPlayer newChatter() {
         return new BefriendedPlayer();
     }
 
     public boolean isCached(NamePair var1, boolean requireLoggedIn) {
-        BefriendedPlayer friend = (BefriendedPlayer) this.getChatterByAnyName(var1);
+        BefriendedPlayer friend = getChatterByAnyName(var1);
         if (friend == null) {
             return false;
         }
         return !requireLoggedIn || friend.world != 0;
     }
 
-    Chatter[] newArray(int size) {
+    BefriendedPlayer[] newArray(int size) {
         return new BefriendedPlayer[size];
     }
 }

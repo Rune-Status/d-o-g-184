@@ -1,32 +1,32 @@
 package jag.worldmap;
 
+import jag.EnumType;
 import jag.commons.collection.DoublyLinkedNode;
 import jag.commons.collection.ReferenceCache;
 import jag.graphics.Sprite;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
-import jag.opcode.OldConnection;
 
 public class WorldMapFunction extends DoublyLinkedNode {
 
     public static final ReferenceCache cache;
     public static WorldMapFunction[] aDoublyNode_Sub15Array1475;
-    public static int anInt378;
+    public static int count;
     public static ReferenceTable table;
 
     static {
         cache = new ReferenceCache(256);
     }
 
-    public final int anInt574;
+    public final int objectId;
     public int spriteId;
     public String aString1474;
-    public Enum_Sub9 anEnum_Sub9_1477;
+    public HAlign hAlign;
     public int anInt379;
-    public Enum_Sub8 anEnum_Sub8_1472;
-    public int anInt564;
-    public String[] aStringArray1470;
-    public int anInt1473;
+    public VAlign vAlign;
+    public int fontSize;
+    public String[] menuActions;
+    public int category;
     public String aString1476;
     int[] anIntArray1469;
     int anInt375;
@@ -37,19 +37,19 @@ public class WorldMapFunction extends DoublyLinkedNode {
     int[] anIntArray787;
     byte[] aByteArray1471;
 
-    public WorldMapFunction(int var1) {
-        this.spriteId = -1;
-        this.anInt375 = -1;
-        this.anInt564 = 0;
-        this.aStringArray1470 = new String[5];
-        this.anInt696 = Integer.MAX_VALUE;
-        this.anInt702 = Integer.MAX_VALUE;
-        this.anInt788 = Integer.MIN_VALUE;
-        this.anInt666 = Integer.MIN_VALUE;
-        this.anEnum_Sub9_1477 = Enum_Sub9.anEnum_Sub9_1485;
-        this.anEnum_Sub8_1472 = Enum_Sub8.anEnum_Sub8_1481;
-        this.anInt1473 = -1;
-        this.anInt574 = var1;
+    public WorldMapFunction(int objectId) {
+        spriteId = -1;
+        anInt375 = -1;
+        fontSize = 0;
+        menuActions = new String[5];
+        anInt696 = Integer.MAX_VALUE;
+        anInt702 = Integer.MAX_VALUE;
+        anInt788 = Integer.MIN_VALUE;
+        anInt666 = Integer.MIN_VALUE;
+        hAlign = HAlign.anEnum_Sub9_1485;
+        vAlign = VAlign.anEnum_Sub8_1481;
+        category = -1;
+        this.objectId = objectId;
     }
 
     public static WorldMapFunction get(int var0) {
@@ -83,17 +83,17 @@ public class WorldMapFunction extends DoublyLinkedNode {
         } else if (var2 == 2) {
             this.anInt375 = var1.method1051();
         } else if (var2 == 3) {
-            this.aString1474 = var1.readString();
+            this.aString1474 = var1.gstr();
         } else if (var2 == 4) {
-            this.anInt379 = var1.readMediumInt();
+            this.anInt379 = var1.g3();
         } else if (var2 == 5) {
-            var1.readMediumInt();
+            var1.g3();
         } else if (var2 == 6) {
-            this.anInt564 = var1.readUByte();
+            this.fontSize = var1.g1();
         } else {
             int var3;
             if (var2 == 7) {
-                var3 = var1.readUByte();
+                var3 = var1.g1();
                 if ((var3 & 1) == 0) {
 
                 }
@@ -102,57 +102,57 @@ public class WorldMapFunction extends DoublyLinkedNode {
 
                 }
             } else if (var2 == 8) {
-                var1.readUByte();
+                var1.g1();
             } else if (var2 >= 10 && var2 <= 14) {
-                this.aStringArray1470[var2 - 10] = var1.readString();
+                this.menuActions[var2 - 10] = var1.gstr();
             } else if (var2 == 15) {
-                var3 = var1.readUByte();
+                var3 = var1.g1();
                 this.anIntArray1469 = new int[var3 * 2];
 
                 for (int var4 = 0; var4 < var3 * 2; ++var4) {
-                    this.anIntArray1469[var4] = var1.method1029();
+                    this.anIntArray1469[var4] = var1.g2b();
                 }
 
-                var1.readInt();
-                int var4 = var1.readUByte();
+                var1.g4();
+                int var4 = var1.g1();
                 this.anIntArray787 = new int[var4];
 
                 for (int var5 = 0; var5 < this.anIntArray787.length; ++var5) {
-                    this.anIntArray787[var5] = var1.readInt();
+                    this.anIntArray787[var5] = var1.g4();
                 }
 
                 this.aByteArray1471 = new byte[var3];
 
                 for (int var5 = 0; var5 < var3; ++var5) {
-                    this.aByteArray1471[var5] = var1.readByte();
+                    this.aByteArray1471[var5] = var1.g1b();
                 }
             } else if (var2 != 16) {
                 if (var2 == 17) {
-                    this.aString1476 = var1.readString();
+                    this.aString1476 = var1.gstr();
                 } else if (var2 == 18) {
                     var1.method1051();
                 } else if (var2 == 19) {
-                    this.anInt1473 = var1.readUShort();
+                    this.category = var1.g2();
                 } else if (var2 == 21) {
-                    var1.readInt();
+                    var1.g4();
                 } else if (var2 == 22) {
-                    var1.readInt();
+                    var1.g4();
                 } else if (var2 == 23) {
-                    var1.readUByte();
-                    var1.readUByte();
-                    var1.readUByte();
+                    var1.g1();
+                    var1.g1();
+                    var1.g1();
                 } else if (var2 == 24) {
-                    var1.method1029();
-                    var1.method1029();
+                    var1.g2b();
+                    var1.g2b();
                 } else if (var2 == 25) {
                     var1.method1051();
                 } else if (var2 == 28) {
-                    var1.readUByte();
+                    var1.g1();
                 } else if (var2 == 29) {
-                    this.anEnum_Sub9_1477 = (Enum_Sub9) OldConnection.method716(Enum_Sub9.valuess(), var1.readUByte());
+                    this.hAlign = (HAlign) EnumType.getByOrdinal(HAlign.valuess(), var1.g1());
                 } else if (var2 == 30) {
-                    Enum_Sub8[] var6 = new Enum_Sub8[]{Enum_Sub8.anEnum_Sub8_1480, Enum_Sub8.anEnum_Sub8_1479, Enum_Sub8.anEnum_Sub8_1481};
-                    this.anEnum_Sub8_1472 = (Enum_Sub8) OldConnection.method716(var6, var1.readUByte());
+                    VAlign[] var6 = new VAlign[]{VAlign.anEnum_Sub8_1480, VAlign.anEnum_Sub8_1479, VAlign.anEnum_Sub8_1481};
+                    this.vAlign = (VAlign) EnumType.getByOrdinal(var6, var1.g1());
                 }
             }
         }
@@ -160,12 +160,12 @@ public class WorldMapFunction extends DoublyLinkedNode {
     }
 
     public int method1082() {
-        return this.anInt574;
+        return this.objectId;
     }
 
     public void decode(Buffer var1) {
         while (true) {
-            int var2 = var1.readUByte();
+            int var2 = var1.g1();
             if (var2 == 0) {
                 return;
             }

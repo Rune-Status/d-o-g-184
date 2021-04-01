@@ -47,7 +47,7 @@ public abstract class WorldMapIcon {
         WorldMapFunction function = WorldMapFunction.get(getMapFunction());
         int var4 = getWidth();
         int var5 = getHeight();
-        switch (function.anEnum_Sub9_1477.anInt633) {
+        switch (function.hAlign.anInt633) {
             case 0:
                 if (var1 >= anInt315 && var1 < var4 + anInt315) {
                     break;
@@ -66,7 +66,7 @@ public abstract class WorldMapIcon {
                 }
         }
 
-        switch (function.anEnum_Sub8_1472.anInt633) {
+        switch (function.vAlign.anInt633) {
             case 0:
                 if (var2 <= anInt316 - var5 || var2 > anInt316) {
                     return false;

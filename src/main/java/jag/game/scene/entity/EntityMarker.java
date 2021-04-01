@@ -1,7 +1,5 @@
 package jag.game.scene.entity;
 
-import jag.graphics.Sprite;
-
 public final class EntityMarker {
 
     public long uid;
@@ -12,15 +10,15 @@ public final class EntityMarker {
     public int sceneY;
     public int maxSceneY;
     public int floorLevel;
-    public int centerFineX;
-    public int centerFineY;
+    public int centerAbsoluteX;
+    public int centerAbsoluteY;
     public int height;
     public int orientation;
     public int anInt452;
     public int anInt453;
 
     public EntityMarker() {
-        this.uid = 0L;
-        this.config = 0;
+        uid = 0L;
+        config = 0;
     }
 }

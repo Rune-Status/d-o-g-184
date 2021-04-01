@@ -3,8 +3,8 @@ package jag.audi;
 import jag.game.InterfaceComponent;
 import jag.game.client;
 import jag.game.option.AttackOptionPriority;
+import jag.graphics.ComponentSprite;
 import jag.graphics.JagGraphics;
-import jag.graphics.SpriteClip;
 import jag.js5.BufferedFile;
 import jag.opcode.Buffer;
 
@@ -17,10 +17,10 @@ public class AudioRunnable implements Runnable {
     }
 
     public static void method985(InterfaceComponent var0, int var1, int var2) {
-        SpriteClip var4 = var0.method959(false);
+        ComponentSprite var4 = var0.getSprite(false);
         if (var4 != null) {
             if (client.mapState < 3) {
-                AttackOptionPriority.compass.rotate(var1, var2, var4.anInt380, var4.anInt568, 25, 25, client.mapRotation, 256, var4.anIntArray1108, var4.anIntArray749);
+                AttackOptionPriority.compass.rotate(var1, var2, var4.anInt380, var4.anInt568, 25, 25, client.cameraY, 256, var4.anIntArray1108, var4.anIntArray749);
             } else {
                 JagGraphics.method1362(var1, var2, 0, var4.anIntArray1108, var4.anIntArray749);
             }
@@ -36,7 +36,6 @@ public class AudioRunnable implements Runnable {
             } catch (Exception ignored) {
             }
         }
-
     }
 
     public void run() {

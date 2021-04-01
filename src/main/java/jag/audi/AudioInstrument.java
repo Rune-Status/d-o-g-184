@@ -72,27 +72,27 @@ public class AudioInstrument {
         this.pitchEnvelope.method1511(var1);
         this.anAudioEnvelope1782 = new AudioEnvelope();
         this.anAudioEnvelope1782.method1511(var1);
-        int var2 = var1.readUByte();
+        int var2 = var1.g1();
         if (var2 != 0) {
-            --var1.caret;
+            --var1.pos;
             this.anAudioEnvelope1789 = new AudioEnvelope();
             this.anAudioEnvelope1789.method1511(var1);
             this.anAudioEnvelope1788 = new AudioEnvelope();
             this.anAudioEnvelope1788.method1511(var1);
         }
 
-        var2 = var1.readUByte();
+        var2 = var1.g1();
         if (var2 != 0) {
-            --var1.caret;
+            --var1.pos;
             this.anAudioEnvelope1786 = new AudioEnvelope();
             this.anAudioEnvelope1786.method1511(var1);
             this.anAudioEnvelope1784 = new AudioEnvelope();
             this.anAudioEnvelope1784.method1511(var1);
         }
 
-        var2 = var1.readUByte();
+        var2 = var1.g1();
         if (var2 != 0) {
-            --var1.caret;
+            --var1.pos;
             this.anAudioEnvelope1785 = new AudioEnvelope();
             this.anAudioEnvelope1785.method1511(var1);
             this.anAudioEnvelope1781 = new AudioEnvelope();
@@ -100,20 +100,20 @@ public class AudioInstrument {
         }
 
         for (int var3 = 0; var3 < 10; ++var3) {
-            int var4 = var1.readSmart();
+            int var4 = var1.gsmarts();
             if (var4 == 0) {
                 break;
             }
 
             this.anIntArray1792[var3] = var4;
-            this.oscillatorPitch[var3] = var1.method1046();
-            this.anIntArray1772[var3] = var1.readSmart();
+            this.oscillatorPitch[var3] = var1.gsmart();
+            this.anIntArray1772[var3] = var1.gsmarts();
         }
 
-        this.anInt1771 = var1.readSmart();
-        this.anInt1783 = var1.readSmart();
-        this.anInt1790 = var1.readUShort();
-        this.anInt1787 = var1.readUShort();
+        this.anInt1771 = var1.gsmarts();
+        this.anInt1783 = var1.gsmarts();
+        this.anInt1790 = var1.g2();
+        this.anInt1787 = var1.g2();
         this.aAudioFilter_1770 = new AudioFilter();
         this.anAudioEnvelope1774 = new AudioEnvelope();
         this.aAudioFilter_1770.method547(var1, this.anAudioEnvelope1774);

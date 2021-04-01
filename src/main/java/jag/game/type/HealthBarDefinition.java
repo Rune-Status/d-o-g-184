@@ -8,14 +8,14 @@ import jag.opcode.Buffer;
 
 public class HealthBarDefinition extends DoublyLinkedNode {
 
-    public static final ReferenceCache cache;
-    public static final ReferenceCache aReferenceCache700;
+    public static final ReferenceCache<HealthBarDefinition> cache;
+    public static final ReferenceCache<Sprite> sprites;
     public static ReferenceTable table;
     public static ReferenceTable aReferenceTable697;
 
     static {
-        cache = new ReferenceCache(64);
-        aReferenceCache700 = new ReferenceCache(64);
+        cache = new ReferenceCache<>(64);
+        sprites = new ReferenceCache<>(64);
     }
 
     public int anInt372;
@@ -30,15 +30,15 @@ public class HealthBarDefinition extends DoublyLinkedNode {
     public int overlaySpriteId;
 
     public HealthBarDefinition() {
-        this.anInt372 = 255;
-        this.anInt379 = 255;
-        this.anInt564 = -1;
-        this.anInt368 = 1;
-        this.anInt367 = 70;
-        this.overlaySpriteId = -1;
-        this.underlaySpriteId = -1;
-        this.maxWidth = 30;
-        this.anInt702 = 0;
+        anInt372 = 255;
+        anInt379 = 255;
+        anInt564 = -1;
+        anInt368 = 1;
+        anInt367 = 70;
+        overlaySpriteId = -1;
+        underlaySpriteId = -1;
+        maxWidth = 30;
+        anInt702 = 0;
     }
 
     public static void method296(ReferenceTable var0, ReferenceTable var1) {
@@ -46,71 +46,71 @@ public class HealthBarDefinition extends DoublyLinkedNode {
         aReferenceTable697 = var1;
     }
 
-    public void method988(Buffer var1, int var2) {
+    public void decode(Buffer var1, int var2) {
         if (var2 == 1) {
-            var1.readUShort();
+            var1.g2();
         } else if (var2 == 2) {
-            this.anInt372 = var1.readUByte();
+            anInt372 = var1.g1();
         } else if (var2 == 3) {
-            this.anInt379 = var1.readUByte();
+            anInt379 = var1.g1();
         } else if (var2 == 4) {
-            this.anInt564 = 0;
+            anInt564 = 0;
         } else if (var2 == 5) {
-            this.anInt367 = var1.readUShort();
+            anInt367 = var1.g2();
         } else if (var2 == 6) {
-            var1.readUByte();
+            var1.g1();
         } else if (var2 == 7) {
-            this.overlaySpriteId = var1.method1051();
+            overlaySpriteId = var1.method1051();
         } else if (var2 == 8) {
-            this.underlaySpriteId = var1.method1051();
+            underlaySpriteId = var1.method1051();
         } else if (var2 == 11) {
-            this.anInt564 = var1.readUShort();
+            anInt564 = var1.g2();
         } else if (var2 == 14) {
-            this.maxWidth = var1.readUByte();
+            maxWidth = var1.g1();
         } else if (var2 == 15) {
-            this.anInt702 = var1.readUByte();
+            anInt702 = var1.g1();
         }
 
     }
 
     public void decode(Buffer var1) {
         while (true) {
-            int var2 = var1.readUByte();
+            int var2 = var1.g1();
             if (var2 == 0) {
                 return;
             }
 
-            this.method988(var1, var2);
+            decode(var1, var2);
         }
     }
 
     public Sprite method1378() {
-        if (this.underlaySpriteId < 0) {
+        if (underlaySpriteId < 0) {
             return null;
         }
-        Sprite var1 = (Sprite) aReferenceCache700.get(this.underlaySpriteId);
+        Sprite var1 = sprites.get(underlaySpriteId);
         if (var1 != null) {
             return var1;
         }
-        var1 = Sprite.get(aReferenceTable697, this.underlaySpriteId, 0);
+        var1 = Sprite.get(aReferenceTable697, underlaySpriteId, 0);
         if (var1 != null) {
-            aReferenceCache700.put(var1, this.underlaySpriteId);
+            sprites.put(var1, underlaySpriteId);
         }
 
         return var1;
     }
 
     public Sprite method1379() {
-        if (this.overlaySpriteId < 0) {
+        if (overlaySpriteId < 0) {
             return null;
         }
-        Sprite var1 = (Sprite) aReferenceCache700.get(this.overlaySpriteId);
+        Sprite var1 = sprites.get(overlaySpriteId);
         if (var1 != null) {
             return var1;
         }
-        var1 = Sprite.get(aReferenceTable697, this.overlaySpriteId, 0);
+        var1 = Sprite.get(aReferenceTable697, overlaySpriteId, 0);
         if (var1 != null) {
-            aReferenceCache700.put(var1, this.overlaySpriteId);
+            sprites.put(var1, overlaySpriteId);
         }
 
         return var1;

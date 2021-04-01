@@ -1,44 +1,44 @@
 package jag.commons.collection;
 
-public class LinkableDeque {
+public class LinkableDeque<T extends Linkable> {
 
-    public final Linkable aLinkable_1531;
-    public Linkable aLinkable_1532;
+    public final Linkable sentinel;
+    public Linkable current;
 
     public LinkableDeque() {
-        this.aLinkable_1531 = new Linkable();
-        this.aLinkable_1531.next = this.aLinkable_1531;
-        this.aLinkable_1531.previous = this.aLinkable_1531;
+        sentinel = new Linkable();
+        sentinel.next = sentinel;
+        sentinel.previous = sentinel;
     }
 
-    public Linkable current() {
-        Linkable var1 = this.aLinkable_1531.next;
-        if (var1 == this.aLinkable_1531) {
-            this.aLinkable_1532 = null;
+    public T current() {
+        Linkable linkable = sentinel.next;
+        if (linkable == sentinel) {
+            current = null;
             return null;
         }
-        this.aLinkable_1532 = var1.next;
-        return var1;
+        current = linkable.next;
+        return (T) linkable;
     }
 
-    public Linkable next() {
-        Linkable var1 = this.aLinkable_1532;
-        if (var1 == this.aLinkable_1531) {
-            this.aLinkable_1532 = null;
+    public T next() {
+        Linkable linkable = current;
+        if (linkable == sentinel) {
+            current = null;
             return null;
         }
-        this.aLinkable_1532 = var1.next;
-        return var1;
+        current = linkable.next;
+        return (T) linkable;
     }
 
-    public void method1125(Linkable var1) {
-        if (var1.previous != null) {
-            var1.unlink();
+    public void insert(T linkable) {
+        if (linkable.previous != null) {
+            linkable.unlink();
         }
 
-        var1.previous = this.aLinkable_1531.previous;
-        var1.next = this.aLinkable_1531;
-        var1.previous.next = var1;
-        var1.next.previous = var1;
+        linkable.previous = this.sentinel.previous;
+        linkable.next = this.sentinel;
+        linkable.previous.next = linkable;
+        linkable.next.previous = linkable;
     }
 }

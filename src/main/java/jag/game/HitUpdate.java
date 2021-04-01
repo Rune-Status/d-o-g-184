@@ -1,8 +1,6 @@
 package jag.game;
 
 import jag.commons.collection.Node;
-import jag.game.relationship.ChatHistory;
-import jag.game.relationship.ChatLine;
 
 public class HitUpdate extends Node {
 

@@ -1,8 +1,7 @@
 package jag.graphics;
 
-import jag.Vertex;
 import jag.audi.PcmStream_Sub4;
-import jag.commons.Jagception;
+import jag.commons.Jagexception;
 import jag.game.type.AnimationFrameGroup;
 import jag.js5.ReferenceTable;
 import jag.opcode.OutgoingPacket;
@@ -303,7 +302,7 @@ public final class Sprite extends JagGraphics {
     }
 
     public static Sprite get(ReferenceTable var0, int var1, int var2) {
-        return !Vertex.method534(var0, var1, var2) ? null : method1336();
+        return !ReferenceTable.method534(var0, var1, var2) ? null : method1336();
     }
 
     public static Sprite[] method194() {
@@ -316,7 +315,7 @@ public final class Sprite extends JagGraphics {
             var2.anInt377 = Statics41.anIntArray1821[var1];
             var2.anInt574 = PcmStream_Sub4.anIntArray1107[var1];
             var2.width = Statics41.anIntArray1820[var1];
-            var2.height = Jagception.anIntArray1878[var1];
+            var2.height = Jagexception.anIntArray1878[var1];
             int var3 = var2.height * var2.width;
             byte[] var4 = OutgoingPacket.aByteArrayArray114[var1];
             var2.pixels = new int[var3];
@@ -329,7 +328,7 @@ public final class Sprite extends JagGraphics {
         Statics41.anIntArray1821 = null;
         PcmStream_Sub4.anIntArray1107 = null;
         Statics41.anIntArray1820 = null;
-        Jagception.anIntArray1878 = null;
+        Jagexception.anIntArray1878 = null;
         Statics41.anIntArray1823 = null;
         OutgoingPacket.aByteArrayArray114 = null;
         return var0;
@@ -342,7 +341,7 @@ public final class Sprite extends JagGraphics {
         var0.anInt377 = Statics41.anIntArray1821[0];
         var0.anInt574 = PcmStream_Sub4.anIntArray1107[0];
         var0.width = Statics41.anIntArray1820[0];
-        var0.height = Jagception.anIntArray1878[0];
+        var0.height = Jagexception.anIntArray1878[0];
         int var1 = var0.height * var0.width;
         byte[] var2 = OutgoingPacket.aByteArrayArray114[0];
         var0.pixels = new int[var1];
@@ -354,13 +353,13 @@ public final class Sprite extends JagGraphics {
         Statics41.anIntArray1821 = null;
         PcmStream_Sub4.anIntArray1107 = null;
         Statics41.anIntArray1820 = null;
-        Jagception.anIntArray1878 = null;
+        Jagexception.anIntArray1878 = null;
         Statics41.anIntArray1823 = null;
         OutgoingPacket.aByteArrayArray114 = null;
         return var0;
     }
 
-    public void method809(int var1, int var2) {
+    public void renderAlphaAt(int var1, int var2) {
         var1 += this.anInt377;
         var2 += this.anInt574;
         int var3 = var1 + var2 * JagGraphics.drawingAreaWidth;
@@ -1057,7 +1056,7 @@ public final class Sprite extends JagGraphics {
         }
     }
 
-    public void method817(int var1, int var2) {
+    public void renderAt(int var1, int var2) {
         var1 += this.anInt377;
         var2 += this.anInt574;
         int var3 = var1 + var2 * JagGraphics.drawingAreaWidth;
@@ -1604,7 +1603,7 @@ public final class Sprite extends JagGraphics {
 
     public void method834(int var1, int var2, int var3, int var4) {
         if (var3 == 256) {
-            this.method809(var1, var2);
+            this.renderAlphaAt(var1, var2);
         } else {
             var1 += this.anInt377;
             var2 += this.anInt574;

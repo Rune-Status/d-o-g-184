@@ -3,19 +3,9 @@ package jag.statics;
 import jag.graphics.Font;
 
 public class Statics7 {
-    public static final int[][] anIntArrayArray860;
-    public static final int[][] anIntArrayArray859;
-    public static final int[] anIntArray862;
-    public static final int[] anIntArray861;
-    public static Font aFont863;
-    public static int anInt858;
 
-    static {
-        anIntArrayArray860 = new int[128][128];
-        anIntArrayArray859 = new int[128][128];
-        anIntArray862 = new int[4096];
-        anIntArray861 = new int[4096];
-    }
+    public static Font fontb12full;
+    public static int anInt858;
 
     public static int method702(CharSequence var0) {
         int var1 = var0.length();

@@ -1,6 +1,7 @@
 package jag.js5;
 
 public class IdentityTable {
+    
     final int[] contents;
 
     public IdentityTable(int[] var1) {
@@ -15,11 +16,11 @@ public class IdentityTable {
         }
 
         int pos;
-        for (int var3 = 0; var3 < var1.length; contents[pos + pos + 1] = var3++) {
-            for (pos = var1[var3] & size - 1; contents[pos + pos + 1] != -1; pos = pos + 1 & size - 1) {
+        for (int i = 0; i < var1.length; contents[pos + pos + 1] = i++) {
+            for (pos = var1[i] & size - 1; contents[pos + pos + 1] != -1; pos = pos + 1 & size - 1) {
 
             }
-            contents[pos + pos] = var1[var3];
+            contents[pos + pos] = var1[i];
         }
     }
 

@@ -2,10 +2,10 @@ package jag.worldmap;
 
 import jag.ClientLocale;
 import jag.game.client;
+import jag.game.relationship.ChatHistory;
 import jag.opcode.Buffer;
 import jag.opcode.OutgoingPacket;
 import jag.opcode.OutgoingPacketMeta;
-import jag.statics.Statics19;
 
 public class WorldMapAreaChunk_Sub3 implements WorldMapAreaChunk {
     int anInt535;
@@ -35,18 +35,18 @@ public class WorldMapAreaChunk_Sub3 implements WorldMapAreaChunk {
             client.preferences.roofsHidden = !client.preferences.roofsHidden;
             ClientLocale.method854();
             if (client.preferences.roofsHidden) {
-                Statics19.messageReceived(99, "", "Roofs are now all hidden");
+                ChatHistory.messageReceived(99, "", "Roofs are now all hidden");
             } else {
-                Statics19.messageReceived(99, "", "Roofs will only be removed selectively");
+                ChatHistory.messageReceived(99, "", "Roofs will only be removed selectively");
             }
         }
 
         if (var0.equalsIgnoreCase("displayfps")) {
-            client.aBoolean944 = !client.aBoolean944;
+            client.displayFps = !client.displayFps;
         }
 
         if (var0.equalsIgnoreCase("renderself")) {
-            client.aBoolean1020 = !client.aBoolean1020;
+            client.displaySelf = !client.displaySelf;
         }
 
         if (var0.equalsIgnoreCase("mouseovertext")) {
@@ -63,11 +63,11 @@ public class WorldMapAreaChunk_Sub3 implements WorldMapAreaChunk {
             }
 
             if (var0.equalsIgnoreCase("fpson")) {
-                client.aBoolean944 = true;
+                client.displayFps = true;
             }
 
             if (var0.equalsIgnoreCase("fpsoff")) {
-                client.aBoolean944 = false;
+                client.displayFps = false;
             }
 
             if (var0.equalsIgnoreCase("gc")) {
@@ -79,10 +79,10 @@ public class WorldMapAreaChunk_Sub3 implements WorldMapAreaChunk {
             }
         }
 
-        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_COMMAND, client.connectionContext.encryptor);
-        packet.buffer.writeByte(var0.length() + 1);
-        packet.buffer.writeCString(var0);
-        client.connectionContext.writeLater(packet);
+        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_COMMAND, client.netWriter.encryptor);
+        packet.buffer.p1(var0.length() + 1);
+        packet.buffer.pcstr(var0);
+        client.netWriter.writeLater(packet);
     }
 
     public boolean contains(int x, int y) {
@@ -96,21 +96,21 @@ public class WorldMapAreaChunk_Sub3 implements WorldMapAreaChunk {
         return false;
     }
 
-    public void method93(WorldMapArea var1) {
-        if (var1.anInt134 > this.anInt279) {
-            var1.anInt134 = this.anInt279;
+    public void method93(WorldMapCacheArea var1) {
+        if (var1.regionMinX > this.anInt279) {
+            var1.regionMinX = this.anInt279;
         }
 
-        if (var1.anInt131 < this.anInt279) {
-            var1.anInt131 = this.anInt279;
+        if (var1.regionMaxX < this.anInt279) {
+            var1.regionMaxX = this.anInt279;
         }
 
-        if (var1.anInt138 > this.anInt277) {
-            var1.anInt138 = this.anInt277;
+        if (var1.regionMinY > this.anInt277) {
+            var1.regionMinY = this.anInt277;
         }
 
-        if (var1.anInt129 < this.anInt277) {
-            var1.anInt129 = this.anInt277;
+        if (var1.regionMaxY < this.anInt277) {
+            var1.regionMaxY = this.anInt277;
         }
 
     }
@@ -132,20 +132,20 @@ public class WorldMapAreaChunk_Sub3 implements WorldMapAreaChunk {
     }
 
     public void decode(Buffer buffer) {
-        anInt285 = buffer.readUByte();
-        anInt287 = buffer.readUByte();
-        anInt281 = buffer.readUShort();
-        anInt278 = buffer.readUByte();
-        anInt282 = buffer.readUByte();
-        anInt280 = buffer.readUShort();
-        anInt286 = buffer.readUByte();
-        anInt283 = buffer.readUByte();
-        anInt279 = buffer.readUShort();
-        anInt535 = buffer.readUByte();
-        anInt536 = buffer.readUByte();
-        anInt277 = buffer.readUShort();
-        anInt534 = buffer.readUByte();
-        anInt533 = buffer.readUByte();
+        anInt285 = buffer.g1();
+        anInt287 = buffer.g1();
+        anInt281 = buffer.g2();
+        anInt278 = buffer.g1();
+        anInt282 = buffer.g1();
+        anInt280 = buffer.g2();
+        anInt286 = buffer.g1();
+        anInt283 = buffer.g1();
+        anInt279 = buffer.g2();
+        anInt535 = buffer.g1();
+        anInt536 = buffer.g1();
+        anInt277 = buffer.g2();
+        anInt534 = buffer.g1();
+        anInt533 = buffer.g1();
         method148();
     }
 

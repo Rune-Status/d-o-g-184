@@ -2,20 +2,18 @@ package jag;
 
 import jag.audi.ObjectSound;
 import jag.game.client;
-import jag.game.scene.CollisionMap;
 import jag.game.scene.SceneGraph;
+import jag.game.scene.entity.EntityUID;
 import jag.game.scene.entity.PlayerEntity;
 import jag.game.type.ItemDefinition;
 import jag.game.type.ObjectDefinition;
-import jag.js5.Archive;
+import jag.js5.Js5Worker;
 import jag.opcode.Buffer;
-import jag.js5.NetWorker;
 import jag.statics.Statics3;
 import jag.statics.Statics45;
 import jag.statics.Statics52;
 
 public final class SerializableInteger implements Serializable {
-    public static Archive aArchive583;
 
     public static void method409(boolean var0) {
         if (var0 != ItemDefinition.loadMembersItemDefinitions) {
@@ -36,8 +34,8 @@ public final class SerializableInteger implements Serializable {
                 client.routeStrategy.destinationY = var2;
                 client.routeStrategy.destinationSizeX = 1;
                 client.routeStrategy.destinationSizeY = 1;
-                RouteStrategy_Sub1 var10 = client.routeStrategy;
-                int var11 = CollisionMap.method850(var4, var5, var9, var10, client.collisionMaps[var0.anInt1473], client.anIntArray945, client.anIntArray942);
+                DefaultRouteStrategy var10 = client.routeStrategy;
+                int var11 = RouteStrategy.getPathLength(var4, var5, var9, var10, client.collisionMaps[var0.floorLevel], client.anIntArray945, client.anIntArray942);
                 if (var11 >= 1) {
                     for (int var12 = 0; var12 < var11 - 1; ++var12) {
                         var0.method1413(client.anIntArray945[var12], client.anIntArray942[var12], (byte) 2);
@@ -59,11 +57,11 @@ public final class SerializableInteger implements Serializable {
             boolean var10 = false;
             boolean var11 = false;
             if (var1 == 0) {
-                var7 = client.sceneGraph.method1456(var0, x, y);
+                var7 = client.sceneGraph.getBoundaryUidAt(var0, x, y);
             }
 
             if (var1 == 1) {
-                var7 = client.sceneGraph.method1440(var0, x, y);
+                var7 = client.sceneGraph.getBoundaryDecorUidAt(var0, x, y);
             }
 
             if (var1 == 2) {
@@ -76,7 +74,7 @@ public final class SerializableInteger implements Serializable {
 
             int var12;
             if (0L != var7) {
-                var12 = client.sceneGraph.method1453(var0, x, y, var7);
+                var12 = client.sceneGraph.getConfigAt(var0, x, y, var7);
                 int var14 = EntityUID.getObjectId(var7);
                 int var15 = var12 & 31;
                 int var16 = var12 >> 6 & 3;
@@ -127,39 +125,39 @@ public final class SerializableInteger implements Serializable {
     }
 
     public static void method407() {
-        if (client.aBoolean996 && PlayerEntity.local != null) {
+        if (client.oculusOrbOnPlayer && PlayerEntity.local != null) {
             int var0 = PlayerEntity.local.pathXQueue[0];
             int var1 = PlayerEntity.local.pathYQueue[0];
             if (var0 < 0 || var1 < 0 || var0 >= 104 || var1 >= 104) {
                 return;
             }
 
-            ObjectSound.anInt371 = PlayerEntity.local.fineX;
-            int var2 = SceneGraph.getTileHeight(PlayerEntity.local.fineX, PlayerEntity.local.fineY, SceneGraph.floorLevel) - client.anInt982;
+            ObjectSound.oculusOrbAbsoluteX = PlayerEntity.local.absoluteX;
+            int var2 = SceneGraph.getTileHeight(PlayerEntity.local.absoluteX, PlayerEntity.local.absoluteY, SceneGraph.floorLevel) - client.cameraFollowHeight;
             if (var2 < Statics3.anInt802) {
                 Statics3.anInt802 = var2;
             }
 
-            Statics52.anInt498 = PlayerEntity.local.fineY;
-            client.aBoolean996 = false;
+            Statics52.oculusOrbAbsoluteY = PlayerEntity.local.absoluteY;
+            client.oculusOrbOnPlayer = false;
         }
 
     }
 
     public static int method405() {
         byte var2 = 0;
-        return var2 + NetWorker.anInt1497 + NetWorker.anInt1496;
+        return var2 + Js5Worker.pendingPriorityCount + Js5Worker.pendingPriorityResponseCount;
     }
 
-    void method403(Integer var1, Buffer var2) {
-        var2.writeInt(var1);
+    void encodeAsInteger(Integer value, Buffer buffer) {
+        buffer.p4(value);
     }
 
-    public Object method410(Buffer var1) {
-        return var1.readInt();
+    public Object decode(Buffer buffer) {
+        return buffer.g4();
     }
 
-    public void method408(Object var1, Buffer var2) {
-        this.method403((Integer) var1, var2);
+    public void encode(Object value, Buffer buffer) {
+        encodeAsInteger((Integer) value, buffer);
     }
 }

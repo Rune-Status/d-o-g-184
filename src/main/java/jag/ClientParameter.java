@@ -24,20 +24,20 @@ public class ClientParameter {
         A_CLIENT_PARAMETER___1799 = new ClientParameter();
     }
 
-    public final int anInt1800;
+    public final int id;
     final String name;
 
-    ClientParameter(int var1) {
-        this.anInt1800 = var1;
-        this.name = "";
+    ClientParameter(int id) {
+        this.id = id;
+        name = "";
     }
 
     ClientParameter() {
-        this.anInt1800 = 1;
-        this.name = "";
+        id = 1;
+        name = "";
     }
 
     public String toString() {
-        return this.name;
+        return name;
     }
 }

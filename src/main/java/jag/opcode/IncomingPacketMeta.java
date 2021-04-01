@@ -1,7 +1,7 @@
 package jag.opcode;
 
 public class IncomingPacketMeta {
-    public static final IncomingPacketMeta anIncomingPacketMeta259;
+    public static final IncomingPacketMeta LOCK_CAMERA;
     public static final IncomingPacketMeta UPDATE_ITEM_TABLE;
     public static final IncomingPacketMeta anIncomingPacketMeta254;
     public static final IncomingPacketMeta OPEN_BROWSER_URL;
@@ -90,7 +90,7 @@ public class IncomingPacketMeta {
     public static int anInt206;
 
     static {
-        anIncomingPacketMeta259 = new IncomingPacketMeta(0, 6);
+        LOCK_CAMERA = new IncomingPacketMeta(0, 6);
         UPDATE_ITEM_TABLE = new IncomingPacketMeta(1, -2);
         anIncomingPacketMeta254 = new IncomingPacketMeta(2, 7);
         OPEN_BROWSER_URL = new IncomingPacketMeta(3, -2);
@@ -187,6 +187,6 @@ public class IncomingPacketMeta {
     }
 
     public static IncomingPacketMeta[] values() {
-        return new IncomingPacketMeta[]{anIncomingPacketMeta259, UPDATE_ITEM_TABLE, anIncomingPacketMeta254, OPEN_BROWSER_URL, anIncomingPacketMeta249, anIncomingPacketMeta246, UPDATE_CHAT_MODE, SET_WORLD, anIncomingPacketMeta258, UPDATE_STATS, SET_COMPONENT_HIDDEN, anIncomingPacketMeta228, anIncomingPacketMeta245, SET_COMPONENT_ZOOM, anIncomingPacketMeta232, UPDATE_REGION_CHUNK, LOGOUT, anIncomingPacketMeta234, UPDATE_GRAND_EXCHANGE, anIncomingPacketMeta235, anIncomingPacketMeta250, anIncomingPacketMeta233, anIncomingPacketMeta238, anIncomingPacketMeta230, anIncomingPacketMeta241, SET_DESTINATION, anIncomingPacketMeta175, UPDATE_COMPONENT_CONFIG, PROCESS_REFLECTION_REQUEST, SET_REGION_CHUNK, anIncomingPacketMeta188, anIncomingPacketMeta190, UPDATE_COMPONENT_TEXT, anIncomingPacketMeta196, UPDATE_VARP, DROP_CONNECTION, anIncomingPacketMeta184, SET_COMPONENT_MODEL_TYPE2, anIncomingPacketMeta186, anIncomingPacketMeta181, SET_COMPONENT_FOREGROUND, anIncomingPacketMeta189, UPDATE_VARP2, anIncomingPacketMeta177, anIncomingPacketMeta194, anIncomingPacketMeta180, UPDATE_HINT_ARROW, anIncomingPacketMeta182, anIncomingPacketMeta197, UPDATE_ITEMTABLE, anIncomingPacketMeta178, anIncomingPacketMeta192, anIncomingPacketMeta223, UPDATE_NPCS, anIncomingPacketMeta202, SET_MAP_STATE, FIRE_SCRIPT_EVENT, anIncomingPacketMeta209, anIncomingPacketMeta218, anIncomingPacketMeta225, anIncomingPacketMeta201, anIncomingPacketMeta210, ADD_CHAT_MESSAGE, SET_COMPONENT_MODEL_TYPE1, anIncomingPacketMeta203, RESET_REGION_CHUNK, UPDATE_MAP_REGION, anIncomingPacketMeta200, anIncomingPacketMeta219, anIncomingPacketMeta224, UPDATE_RANDOM, UPDATE_INSTANCE_REGION, anIncomingPacketMeta217, anIncomingPacketMeta211, UPDATE_VARPS, SET_COMPONENT_TO_ITEM_MODEL, UNLOCK_CAMERA, anIncomingPacketMeta215, ADD_PICKABLE, anIncomingPacketMeta236, SET_PLAYER_ACTION, SET_COMPONENT_MODEL_TYPE3, anIncomingPacketMeta247, anIncomingPacketMeta231, anIncomingPacketMeta240, anIncomingPacketMeta227};
+        return new IncomingPacketMeta[]{LOCK_CAMERA, UPDATE_ITEM_TABLE, anIncomingPacketMeta254, OPEN_BROWSER_URL, anIncomingPacketMeta249, anIncomingPacketMeta246, UPDATE_CHAT_MODE, SET_WORLD, anIncomingPacketMeta258, UPDATE_STATS, SET_COMPONENT_HIDDEN, anIncomingPacketMeta228, anIncomingPacketMeta245, SET_COMPONENT_ZOOM, anIncomingPacketMeta232, UPDATE_REGION_CHUNK, LOGOUT, anIncomingPacketMeta234, UPDATE_GRAND_EXCHANGE, anIncomingPacketMeta235, anIncomingPacketMeta250, anIncomingPacketMeta233, anIncomingPacketMeta238, anIncomingPacketMeta230, anIncomingPacketMeta241, SET_DESTINATION, anIncomingPacketMeta175, UPDATE_COMPONENT_CONFIG, PROCESS_REFLECTION_REQUEST, SET_REGION_CHUNK, anIncomingPacketMeta188, anIncomingPacketMeta190, UPDATE_COMPONENT_TEXT, anIncomingPacketMeta196, UPDATE_VARP, DROP_CONNECTION, anIncomingPacketMeta184, SET_COMPONENT_MODEL_TYPE2, anIncomingPacketMeta186, anIncomingPacketMeta181, SET_COMPONENT_FOREGROUND, anIncomingPacketMeta189, UPDATE_VARP2, anIncomingPacketMeta177, anIncomingPacketMeta194, anIncomingPacketMeta180, UPDATE_HINT_ARROW, anIncomingPacketMeta182, anIncomingPacketMeta197, UPDATE_ITEMTABLE, anIncomingPacketMeta178, anIncomingPacketMeta192, anIncomingPacketMeta223, UPDATE_NPCS, anIncomingPacketMeta202, SET_MAP_STATE, FIRE_SCRIPT_EVENT, anIncomingPacketMeta209, anIncomingPacketMeta218, anIncomingPacketMeta225, anIncomingPacketMeta201, anIncomingPacketMeta210, ADD_CHAT_MESSAGE, SET_COMPONENT_MODEL_TYPE1, anIncomingPacketMeta203, RESET_REGION_CHUNK, UPDATE_MAP_REGION, anIncomingPacketMeta200, anIncomingPacketMeta219, anIncomingPacketMeta224, UPDATE_RANDOM, UPDATE_INSTANCE_REGION, anIncomingPacketMeta217, anIncomingPacketMeta211, UPDATE_VARPS, SET_COMPONENT_TO_ITEM_MODEL, UNLOCK_CAMERA, anIncomingPacketMeta215, ADD_PICKABLE, anIncomingPacketMeta236, SET_PLAYER_ACTION, SET_COMPONENT_MODEL_TYPE3, anIncomingPacketMeta247, anIncomingPacketMeta231, anIncomingPacketMeta240, anIncomingPacketMeta227};
     }
 }

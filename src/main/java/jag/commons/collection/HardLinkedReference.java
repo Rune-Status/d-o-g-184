@@ -1,10 +1,10 @@
 package jag.commons.collection;
 
-public class HardLinkedReference extends LinkedReference {
+public class HardLinkedReference<T> extends LinkedReference<T> {
 
-    public final Object element;
+    public final T element;
 
-    public HardLinkedReference(Object element, int size) {
+    public HardLinkedReference(T element, int size) {
         super(size);
         this.element = element;
     }
@@ -13,7 +13,7 @@ public class HardLinkedReference extends LinkedReference {
         return false;
     }
 
-    public Object getReferent() {
-        return this.element;
+    public T getReferent() {
+        return element;
     }
 }

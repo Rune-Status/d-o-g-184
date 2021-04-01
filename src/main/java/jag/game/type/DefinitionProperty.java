@@ -1,23 +1,22 @@
 package jag.game.type;
 
-import jag.MenuItemNode;
+import jag.game.menu.MenuItemNode;
 import jag.commons.collection.DoublyLinkedNode;
 import jag.commons.collection.ReferenceCache;
-import jag.game.client;
+import jag.game.menu.ContextMenu;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
-import jag.script.ScriptEvent;
 import jag.worldmap.WorldMapScriptEvent;
 
 public class DefinitionProperty extends DoublyLinkedNode {
 
-    public static final ReferenceCache cache;
+    public static final ReferenceCache<DefinitionProperty> cache;
     public static ReferenceTable table;
     public static MenuItemNode aMenuItemNode_384;
     public static int anInt386;
 
     static {
-        cache = new ReferenceCache(64);
+        cache = new ReferenceCache<>(64);
     }
 
     public int defaultInteger;
@@ -26,59 +25,47 @@ public class DefinitionProperty extends DoublyLinkedNode {
     public boolean deleteOnUse;
 
     public DefinitionProperty() {
-        this.deleteOnUse = true;
+        deleteOnUse = true;
     }
 
-    public static boolean method261(int var0) {
-        if (var0 < 0) {
-            return false;
+    public static DefinitionProperty get(int id) {
+        DefinitionProperty prop = cache.get(id);
+        if (prop != null) {
+            return prop;
         }
-        int var1 = client.menuOpcodes[var0];
-        if (var1 >= 2000) {
-            var1 -= 2000;
-        }
-
-        return var1 == 1007;
-    }
-
-    public static DefinitionProperty get(int var0) {
-        DefinitionProperty var2 = (DefinitionProperty) cache.get(var0);
-        if (var2 != null) {
-            return var2;
-        }
-        byte[] var3 = table.unpack(11, var0);
-        var2 = new DefinitionProperty();
-        if (var3 != null) {
-            var2.method260(new Buffer(var3));
+        byte[] data = table.unpack(11, id);
+        prop = new DefinitionProperty();
+        if (data != null) {
+            prop.decode(new Buffer(data));
         }
 
-        var2.method254();
-        cache.put(var2, var0);
-        return var2;
+        prop.method254();
+        cache.put(prop, id);
+        return prop;
     }
 
     public static void method516(int var0) {
         aMenuItemNode_384 = new MenuItemNode();
-        aMenuItemNode_384.secondary = client.menuSecondaryArgs[var0];
-        aMenuItemNode_384.tertiary = client.menuTertiaryArgs[var0];
-        aMenuItemNode_384.opcode = client.menuOpcodes[var0];
-        aMenuItemNode_384.primary = client.menuPrimaryArgs[var0];
-        aMenuItemNode_384.action = client.menuActions[var0];
+        aMenuItemNode_384.secondaryArg = ContextMenu.secondaryArgs[var0];
+        aMenuItemNode_384.tertiaryArg = ContextMenu.tertiaryArgs[var0];
+        aMenuItemNode_384.opcode = ContextMenu.opcodes[var0];
+        aMenuItemNode_384.primaryArg = ContextMenu.primaryArgs[var0];
+        aMenuItemNode_384.action = ContextMenu.actions[var0];
     }
 
     public static void clear() {
         cache.clear();
     }
 
-    public void method259(Buffer var1, int var2) {
+    public void decode(Buffer var1, int var2) {
         if (var2 == 1) {
-            this.type = WorldMapScriptEvent.method186(var1.readByte());
+            type = WorldMapScriptEvent.method186(var1.g1b());
         } else if (var2 == 2) {
-            this.defaultInteger = var1.readInt();
+            defaultInteger = var1.g4();
         } else if (var2 == 4) {
-            this.deleteOnUse = false;
+            deleteOnUse = false;
         } else if (var2 == 5) {
-            this.defaultString = var1.readString();
+            defaultString = var1.gstr();
         }
 
     }
@@ -86,18 +73,18 @@ public class DefinitionProperty extends DoublyLinkedNode {
     public void method254() {
     }
 
-    public void method260(Buffer var1) {
+    public void decode(Buffer buffer) {
         while (true) {
-            int var2 = var1.readUByte();
-            if (var2 == 0) {
+            int opcode = buffer.g1();
+            if (opcode == 0) {
                 return;
             }
 
-            this.method259(var1, var2);
+            decode(buffer, opcode);
         }
     }
 
     public boolean method258() {
-        return this.type == 's';
+        return type == 's';
     }
 }

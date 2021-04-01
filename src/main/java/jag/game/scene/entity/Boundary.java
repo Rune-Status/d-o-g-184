@@ -6,14 +6,14 @@ public final class Boundary {
     public Entity entity;
     public Entity linkedEntity;
     public int config;
-    public int fineX;
-    public int fineY;
+    public int absoluteX;
+    public int absoluteY;
     public int height;
     public int orientation;
     public int linkedOrientation;
 
     public Boundary() {
-        this.uid = 0L;
-        this.config = 0;
+        uid = 0L;
+        config = 0;
     }
 }

@@ -6,12 +6,12 @@ import jag.audi.DefaultAudioSystemProvider;
 import jag.audi.ObjectSound;
 import jag.commons.input.Mouse;
 import jag.game.client;
+import jag.game.scene.HintArrow;
 import jag.game.scene.SceneGraph;
 import jag.game.scene.entity.DynamicObject;
 import jag.game.scene.entity.EffectObject;
 import jag.game.scene.entity.PlayerEntity;
-import jag.game.stockmarket.Class46;
-import jag.game.stockmarket.StockMarketOfferWorldComparator;
+import jag.js5.LoadedArchive;
 import jag.game.type.NpcDefinition;
 import jag.graphics.DefaultMaterialProvider;
 import jag.graphics.JagGraphics;
@@ -19,7 +19,7 @@ import jag.graphics.JagGraphics3D;
 import jag.graphics.NamedFont;
 import jag.opcode.GPI;
 import jag.statics.*;
-import jag.worldmap.*;
+import jag.worldmap.WorldMapElement;
 
 public class BefriendedPlayer extends Associate {
 
@@ -30,16 +30,16 @@ public class BefriendedPlayer extends Associate {
     }
 
     public static void method553(int var0, int var1, int width, int height) {
-        ++client.anInt1001;
-        if (PlayerEntity.local.fineX >> 7 == client.destinationX && PlayerEntity.local.fineY >> 7 == client.destinationY) {
+        ++client.viewportRenderCount;
+        if (PlayerEntity.local.absoluteX >> 7 == client.destinationX && PlayerEntity.local.absoluteY >> 7 == client.destinationY) {
             client.destinationX = 0;
         }
 
-        if (client.aBoolean1020) {
+        if (client.displaySelf) {
             GPI.loadPlayersIntoScene(PlayerEntity.local, false);
         }
 
-        URLRequest.loadPlayerIntoScene();
+        GPI.loadPlayerIntoScene();
         SerializableString.loadNpcsIntoScene(true);
         Login.loadPlayersIntoScene();
         SerializableString.loadNpcsIntoScene(false);
@@ -52,7 +52,7 @@ public class BefriendedPlayer extends Associate {
                     if (object.finished) {
                         object.unlink();
                     } else {
-                        client.sceneGraph.addEntityMarker(object.floorLevel, object.fineX, object.fineY, object.height, 60, object, 0, -1L, false);
+                        client.sceneGraph.addEntityMarker(object.floorLevel, object.absoluteX, object.absoluteY, object.height, 60, object, 0, -1L, false);
                     }
                 }
             } else {
@@ -74,7 +74,7 @@ public class BefriendedPlayer extends Associate {
         int var9;
         int var12;
         if (!client.cameraLocked) {
-            var5 = client.anInt985;
+            var5 = client.cameraX;
             if (client.anInt1008 / 256 > var5) {
                 var5 = client.anInt1008 / 256;
             }
@@ -83,10 +83,10 @@ public class BefriendedPlayer extends Associate {
                 var5 = client.anIntArray918[4] + 128;
             }
 
-            var6 = client.mapRotation & 2047;
-            var7 = ObjectSound.anInt371;
+            var6 = client.cameraY & 2047;
+            var7 = ObjectSound.oculusOrbAbsoluteX;
             var8 = Statics3.anInt802;
-            var9 = Statics52.anInt498;
+            var9 = Statics52.oculusOrbAbsoluteY;
             var12 = var5 * 3 + 600;
             NpcDefinition.method505(var7, var8, var9, var5, var6, var12, height);
 
@@ -104,17 +104,17 @@ public class BefriendedPlayer extends Associate {
                 label409:
                 {
                     var7 = 3;
-                    if (IgnoreListContext.cameraPitch < 310) {
-                        if (client.anInt988 == 1) {
-                            var8 = ObjectSound.anInt371 >> 7;
-                            var9 = Statics52.anInt498 >> 7;
+                    if (SceneGraph.cameraPitch < 310) {
+                        if (client.oculusOrbState == 1) {
+                            var8 = ObjectSound.oculusOrbAbsoluteX >> 7;
+                            var9 = Statics52.oculusOrbAbsoluteY >> 7;
                         } else {
-                            var8 = PlayerEntity.local.fineX >> 7;
-                            var9 = PlayerEntity.local.fineY >> 7;
+                            var8 = PlayerEntity.local.absoluteX >> 7;
+                            var9 = PlayerEntity.local.absoluteY >> 7;
                         }
 
-                        var10 = StockMarketOfferWorldComparator.cameraX >> 7;
-                        var11 = WorldMapIcon_Sub1.cameraY >> 7;
+                        var10 = SceneGraph.cameraX >> 7;
+                        var11 = SceneGraph.cameraY >> 7;
                         if (var10 < 0 || var11 < 0 || var10 >= 104 || var11 >= 104) {
                             var6 = SceneGraph.floorLevel;
                             break label409;
@@ -202,8 +202,8 @@ public class BefriendedPlayer extends Associate {
                         }
                     }
 
-                    if (PlayerEntity.local.fineX >= 0 && PlayerEntity.local.fineY >= 0 && PlayerEntity.local.fineX < 13312 && PlayerEntity.local.fineY < 13312) {
-                        if ((Statics45.sceneRenderRules[SceneGraph.floorLevel][PlayerEntity.local.fineX >> 7][PlayerEntity.local.fineY >> 7] & 4) != 0) {
+                    if (PlayerEntity.local.absoluteX >= 0 && PlayerEntity.local.absoluteY >= 0 && PlayerEntity.local.absoluteX < 13312 && PlayerEntity.local.absoluteY < 13312) {
+                        if ((Statics45.sceneRenderRules[SceneGraph.floorLevel][PlayerEntity.local.absoluteX >> 7][PlayerEntity.local.absoluteY >> 7] & 4) != 0) {
                             var7 = SceneGraph.floorLevel;
                         }
 
@@ -219,39 +219,39 @@ public class BefriendedPlayer extends Associate {
             var5 = Statics17.method892();
         }
 
-        var6 = StockMarketOfferWorldComparator.cameraX;
-        var7 = Varcs.cameraZ;
-        var8 = WorldMapIcon_Sub1.cameraY;
-        var9 = IgnoreListContext.cameraPitch;
-        var10 = RectangularWorldMapAreaChunk.cameraYaw;
+        var6 = SceneGraph.cameraX;
+        var7 = SceneGraph.cameraZ;
+        var8 = SceneGraph.cameraY;
+        var9 = SceneGraph.cameraPitch;
+        var10 = SceneGraph.cameraYaw;
 
         for (var11 = 0; var11 < 5; ++var11) {
             if (client.aBooleanArray919[var11]) {
                 var12 = (int) (Math.random() * (double) (client.anIntArray917[var11] * 2 + 1) - (double) client.anIntArray917[var11] + Math.sin((double) client.anIntArray914[var11] / 100.0D * (double) client.anIntArray916[var11]) * (double) client.anIntArray918[var11]);
                 if (var11 == 0) {
-                    StockMarketOfferWorldComparator.cameraX += var12;
+                    SceneGraph.cameraX += var12;
                 }
 
                 if (var11 == 1) {
-                    Varcs.cameraZ += var12;
+                    SceneGraph.cameraZ += var12;
                 }
 
                 if (var11 == 2) {
-                    WorldMapIcon_Sub1.cameraY += var12;
+                    SceneGraph.cameraY += var12;
                 }
 
                 if (var11 == 3) {
-                    RectangularWorldMapAreaChunk.cameraYaw = var12 + RectangularWorldMapAreaChunk.cameraYaw & 2047;
+                    SceneGraph.cameraYaw = var12 + SceneGraph.cameraYaw & 2047;
                 }
 
                 if (var11 == 4) {
-                    IgnoreListContext.cameraPitch += var12;
-                    if (IgnoreListContext.cameraPitch < 128) {
-                        IgnoreListContext.cameraPitch = 128;
+                    SceneGraph.cameraPitch += var12;
+                    if (SceneGraph.cameraPitch < 128) {
+                        SceneGraph.cameraPitch = 128;
                     }
 
-                    if (IgnoreListContext.cameraPitch > 383) {
-                        IgnoreListContext.cameraPitch = 383;
+                    if (SceneGraph.cameraPitch > 383) {
+                        SceneGraph.cameraPitch = 383;
                     }
                 }
             }
@@ -267,7 +267,7 @@ public class BefriendedPlayer extends Associate {
         if (var11 >= var0 && var11 < var0 + width && var12 >= var1 && var12 < height + var1) {
             Statics2.method238(var11 - var0, var12 - var1);
         } else {
-            MenuItemNode.method419();
+            Statics2.method419();
         }
 
         AudioSystem.process();
@@ -275,16 +275,16 @@ public class BefriendedPlayer extends Associate {
         AudioSystem.process();
         var13 = JagGraphics3D.anInt367;
         JagGraphics3D.anInt367 = client.viewportScale;
-        client.sceneGraph.renderScene(StockMarketOfferWorldComparator.cameraX, Varcs.cameraZ, WorldMapIcon_Sub1.cameraY, IgnoreListContext.cameraPitch, RectangularWorldMapAreaChunk.cameraYaw, var5);
+        client.sceneGraph.renderScene(SceneGraph.cameraX, SceneGraph.cameraZ, SceneGraph.cameraY, SceneGraph.cameraPitch, SceneGraph.cameraYaw, var5);
         JagGraphics3D.anInt367 = var13;
         AudioSystem.process();
         client.sceneGraph.method1472();
         Statics2.method481(var0, var1, width, height);
-        client.method883(var0, var1);
-        ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).method1518(client.anInt972);
+        HintArrow.draw(var0, var1);
+        ((DefaultMaterialProvider) JagGraphics3D.aMaterialProvider783).rotate(client.anInt972);
         client.anInt1014 = 0;
-        var14 = client.baseX + (PlayerEntity.local.fineX >> 7);
-        var15 = client.baseY + (PlayerEntity.local.fineY >> 7);
+        var14 = client.baseX + (PlayerEntity.local.absoluteX >> 7);
+        var15 = client.baseY + (PlayerEntity.local.absoluteY >> 7);
         if (var14 >= 3053 && var14 <= 3156 && var15 >= 3056 && var15 <= 3136) {
             client.anInt1014 = 1;
         }
@@ -297,18 +297,18 @@ public class BefriendedPlayer extends Associate {
             client.anInt1014 = 0;
         }
 
-        StockMarketOfferWorldComparator.cameraX = var6;
-        Varcs.cameraZ = var7;
-        WorldMapIcon_Sub1.cameraY = var8;
-        IgnoreListContext.cameraPitch = var9;
-        RectangularWorldMapAreaChunk.cameraYaw = var10;
-        if (client.aBoolean939 && SerializableInteger.method405() == 0) {
-            client.aBoolean939 = false;
+        SceneGraph.cameraX = var6;
+        SceneGraph.cameraZ = var7;
+        SceneGraph.cameraY = var8;
+        SceneGraph.cameraPitch = var9;
+        SceneGraph.cameraYaw = var10;
+        if (client.loadingPleaseWait && SerializableInteger.method405() == 0) {
+            client.loadingPleaseWait = false;
         }
 
-        if (client.aBoolean939) {
+        if (client.loadingPleaseWait) {
             JagGraphics.fillRect(var0, var1, width, height, 0);
-            WorldMapSprite.method242("Loading - please wait.", false);
+            WorldMapElement.method242("Loading - please wait.", false);
         }
 
     }
@@ -322,7 +322,7 @@ public class BefriendedPlayer extends Associate {
         Statics45.aByteArrayArrayArray400 = null;
         DefaultAudioSystemProvider.anIntArrayArray146 = null;
         Statics45.anIntArray396 = null;
-        Class46.anIntArray426 = null;
+        LoadedArchive.anIntArray426 = null;
         Statics45.anIntArray390 = null;
         NamedFont.anIntArray1626 = null;
         Statics45.anIntArray389 = null;

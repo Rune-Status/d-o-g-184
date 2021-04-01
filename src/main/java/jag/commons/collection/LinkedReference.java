@@ -1,6 +1,6 @@
 package jag.commons.collection;
 
-public abstract class LinkedReference extends DoublyLinkedNode {
+public abstract class LinkedReference<T> extends DoublyLinkedNode {
 
     public final int size;
 
@@ -10,5 +10,5 @@ public abstract class LinkedReference extends DoublyLinkedNode {
 
     public abstract boolean isSoft();
 
-    public abstract Object getReferent();
+    public abstract T getReferent();
 }

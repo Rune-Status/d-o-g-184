@@ -1,22 +1,20 @@
 package jag.statics;
 
-import jag.commons.collection.IterableDoublyLinkedNode;
+import jag.commons.collection.IterableDoublyLinkedNodeQueue;
 import jag.commons.collection.IterableNodeTable;
-import jag.game.client;
-
-import java.util.HashMap;
+import jag.game.relationship.ChatLine;
 
 public class Statics53 {
 
-    public static final IterableNodeTable A_ITERABLE_NODE_TABLE_523;
-    public static final IterableDoublyLinkedNode A_ITERABLE_DOUBLY_LINKED_NODE___522;
-    public static int anInt521;
+    public static final IterableNodeTable<ChatLine> CHAT_LINE_TABLE;
+    public static final IterableDoublyLinkedNodeQueue<ChatLine> CHAT_LINE_QUEUE;
+    public static int chatLineCount;
     public static int anInt520;
 
     static {
-        A_ITERABLE_NODE_TABLE_523 = new IterableNodeTable(1024);
-        A_ITERABLE_DOUBLY_LINKED_NODE___522 = new IterableDoublyLinkedNode();
-        anInt521 = 0;
+        CHAT_LINE_TABLE = new IterableNodeTable<>(1024);
+        CHAT_LINE_QUEUE = new IterableDoublyLinkedNodeQueue<>();
+        chatLineCount = 0;
     }
 
 }

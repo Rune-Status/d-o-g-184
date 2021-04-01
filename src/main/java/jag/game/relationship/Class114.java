@@ -15,15 +15,15 @@ public class Class114 implements Comparator {
     }
 
     public static void method672() {
-        if (client.anInt988 == 1) {
-            client.aBoolean996 = true;
+        if (client.oculusOrbState == 1) {
+            client.oculusOrbOnPlayer = true;
         }
 
     }
 
     public static void method674(ReferenceTable var0, String var1, String var2, int var3, boolean var4) {
-        int var5 = var0.get(var1);
-        int var6 = var0.method907(var5, var2);
+        int var5 = var0.getGroup(var1);
+        int var6 = var0.getFile(var5, var2);
         Statics51.method344(var0, var5, var6, var3, var4);
     }
 

@@ -1,18 +1,25 @@
 package jag.worldmap;
 
-import jag.*;
-import jag.commons.Jagception;
+import jag.SerializableProcessor;
+import jag.commons.Jagexception;
 import jag.graphics.IndexedSprite;
 import jag.graphics.JagGraphics;
 import jag.graphics.Sprite;
 import jag.js5.ReferenceTable;
-import jag.opcode.*;
+import jag.opcode.Buffer;
 
 import java.io.*;
 import java.util.*;
 
 public final class WorldMapController {
+
     public static String aString264;
+    public static String aString325;
+
+    static {
+        aString325 = "";
+    }
+
     final HashMap fonts;
     final ReferenceTable scenery;
     final ReferenceTable ground;
@@ -26,7 +33,7 @@ public final class WorldMapController {
     int anInt261;
     int anInt268;
     WorldMapChunkDefinition[][] aWorldMapChunkDefinitionArrayArray269;
-    WorldMapArea_Sub1 aClass9_Sub1_273;
+    WorldMapCacheArea_Sub1 aClass9_Sub1_273;
     int anInt260;
     int anInt263;
 
@@ -43,8 +50,8 @@ public final class WorldMapController {
 
     public static String method143(Throwable var0) throws IOException {
         StringBuilder var2;
-        if (var0 instanceof Jagception) {
-            Jagception var1 = (Jagception) var0;
+        if (var0 instanceof Jagexception) {
+            Jagexception var1 = (Jagexception) var0;
             var2 = new StringBuilder(var1.message + " | ");
             var0 = var1.throwable;
         } else {
@@ -119,8 +126,8 @@ public final class WorldMapController {
 
     }
 
-    Area method139(int var1, int var2, int var3, int var4) {
-        Area var5 = new Area(this);
+    WorldMapArea method139(int var1, int var2, int var3, int var4) {
+        WorldMapArea var5 = new WorldMapArea(this);
         int var6 = this.anInt261 * 4096 + var1;
         int var7 = this.anInt268 * 4096 + var2;
         int var8 = var3 + this.anInt261 * 4096;
@@ -131,8 +138,8 @@ public final class WorldMapController {
         int var13 = var9 / 64;
         var5.width = var12 - var10 + 1;
         var5.height = var13 - var11 + 1;
-        var5.x = var10 - this.aClass9_Sub1_273.method66();
-        var5.y = var11 - this.aClass9_Sub1_273.method85();
+        var5.x = var10 - this.aClass9_Sub1_273.getMinRegionX();
+        var5.y = var11 - this.aClass9_Sub1_273.getMinRegionY();
         if (var5.x < 0) {
             var5.width += var5.x;
             var5.x = 0;
@@ -168,11 +175,11 @@ public final class WorldMapController {
         return Math.abs((float) var4 - var3) < 0.05F ? (float) var4 : var3;
     }
 
-    public boolean method135() {
+    public boolean isLoaded() {
         return this.initialized;
     }
 
-    public HashMap<Integer, List<WorldMapIcon>> method144() {
+    public HashMap<Integer, List<WorldMapIcon>> defineIcons() {
         this.method134();
         return this.icons;
     }
@@ -195,7 +202,7 @@ public final class WorldMapController {
                         }
 
                         int var9 = (Integer) var8.next();
-                        var10 = (List) this.icons.get(var9);
+                        var10 = this.icons.get(var9);
                     } while (var10 == null);
 
                     for (Object aVar10 : var10) {
@@ -214,13 +221,13 @@ public final class WorldMapController {
             this.initialized = false;
             this.started = true;
             System.nanoTime();
-            int var4 = var1.get(WorldMapCacheFeature.DETAILS.name);
-            int var5 = var1.method907(var4, var2);
-            Buffer var6 = new Buffer(var1.method897(WorldMapCacheFeature.DETAILS.name, var2));
-            Buffer var7 = new Buffer(var1.method897(WorldMapCacheFeature.COMPOSITEMAP.name, var2));
+            int var4 = var1.getGroup(WorldMapCacheFeature.DETAILS.name);
+            int var5 = var1.getFile(var4, var2);
+            Buffer var6 = new Buffer(var1.unpack(WorldMapCacheFeature.DETAILS.name, var2));
+            Buffer var7 = new Buffer(var1.unpack(WorldMapCacheFeature.COMPOSITEMAP.name, var2));
             System.nanoTime();
             System.nanoTime();
-            this.aClass9_Sub1_273 = new WorldMapArea_Sub1();
+            this.aClass9_Sub1_273 = new WorldMapCacheArea_Sub1();
 
             try {
                 this.aClass9_Sub1_273.decode(var6, var7, var5, var3);
@@ -231,12 +238,12 @@ public final class WorldMapController {
             this.aClass9_Sub1_273.getBaseX();
             this.aClass9_Sub1_273.getLevel();
             this.aClass9_Sub1_273.getBaseY();
-            this.anInt261 = this.aClass9_Sub1_273.method66() * 64;
-            this.anInt268 = this.aClass9_Sub1_273.method85() * 64;
-            this.anInt260 = (this.aClass9_Sub1_273.method70() - this.aClass9_Sub1_273.method66() + 1) * 64;
-            this.anInt263 = (this.aClass9_Sub1_273.method72() - this.aClass9_Sub1_273.method85() + 1) * 64;
-            int var9 = this.aClass9_Sub1_273.method70() - this.aClass9_Sub1_273.method66() + 1;
-            int var10 = this.aClass9_Sub1_273.method72() - this.aClass9_Sub1_273.method85() + 1;
+            this.anInt261 = this.aClass9_Sub1_273.getMinRegionX() * 64;
+            this.anInt268 = this.aClass9_Sub1_273.getMinRegionY() * 64;
+            this.anInt260 = (this.aClass9_Sub1_273.method70() - this.aClass9_Sub1_273.getMinRegionX() + 1) * 64;
+            this.anInt263 = (this.aClass9_Sub1_273.method72() - this.aClass9_Sub1_273.getMinRegionY() + 1) * 64;
+            int var9 = this.aClass9_Sub1_273.method70() - this.aClass9_Sub1_273.getMinRegionX() + 1;
+            int var10 = this.aClass9_Sub1_273.method72() - this.aClass9_Sub1_273.getMinRegionY() + 1;
             System.nanoTime();
             System.nanoTime();
             SerializableProcessor.method453();
@@ -246,25 +253,25 @@ public final class WorldMapController {
                 WorldMapTileDecor_Sub2 var12 = (WorldMapTileDecor_Sub2) anAHashSet291;
                 int var13 = var12.anInt517;
                 int var14 = var12.anInt516;
-                int var15 = var13 - this.aClass9_Sub1_273.method66();
-                int var16 = var14 - this.aClass9_Sub1_273.method85();
+                int var15 = var13 - this.aClass9_Sub1_273.getMinRegionX();
+                int var16 = var14 - this.aClass9_Sub1_273.getMinRegionY();
                 this.aWorldMapChunkDefinitionArrayArray269[var15][var16] = new WorldMapChunkDefinition(var13, var14, this.aClass9_Sub1_273.method67(), this.fonts);
-                this.aWorldMapChunkDefinitionArrayArray269[var15][var16].method54(var12, this.aClass9_Sub1_273.aList290);
+                this.aWorldMapChunkDefinitionArrayArray269[var15][var16].method54(var12, this.aClass9_Sub1_273.icons);
             }
 
             for (int var17 = 0; var17 < var9; ++var17) {
                 for (int var18 = 0; var18 < var10; ++var18) {
                     if (this.aWorldMapChunkDefinitionArrayArray269[var17][var18] == null) {
-                        this.aWorldMapChunkDefinitionArrayArray269[var17][var18] = new WorldMapChunkDefinition(this.aClass9_Sub1_273.method66() + var17, this.aClass9_Sub1_273.method85() + var18, this.aClass9_Sub1_273.method67(), this.fonts);
-                        this.aWorldMapChunkDefinitionArrayArray269[var17][var18].method52(this.aClass9_Sub1_273.aHashSet289, this.aClass9_Sub1_273.aList290);
+                        this.aWorldMapChunkDefinitionArrayArray269[var17][var18] = new WorldMapChunkDefinition(this.aClass9_Sub1_273.getMinRegionX() + var17, this.aClass9_Sub1_273.getMinRegionY() + var18, this.aClass9_Sub1_273.method67(), this.fonts);
+                        this.aWorldMapChunkDefinitionArrayArray269[var17][var18].method52(this.aClass9_Sub1_273.aHashSet289, this.aClass9_Sub1_273.icons);
                     }
                 }
             }
 
             System.nanoTime();
             System.nanoTime();
-            if (var1.method906(WorldMapCacheFeature.COMPOSITETEXTURE.name, var2)) {
-                byte[] var20 = var1.method897(WorldMapCacheFeature.COMPOSITETEXTURE.name, var2);
+            if (var1.validate(WorldMapCacheFeature.COMPOSITETEXTURE.name, var2)) {
+                byte[] var20 = var1.unpack(WorldMapCacheFeature.COMPOSITETEXTURE.name, var2);
                 this.aSprite272 = WorldMapRenderRules.method130(var20);
             }
 
@@ -275,12 +282,12 @@ public final class WorldMapController {
         }
     }
 
-    public List<WorldMapIcon> method138(int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10) {
+    public List<WorldMapIcon> getIcons(int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10) {
         java.util.LinkedList<WorldMapIcon> var11 = new java.util.LinkedList<>();
         if (!this.initialized) {
             return var11;
         }
-        Area var12 = this.method139(var1, var2, var3, var4);
+        WorldMapArea var12 = this.method139(var1, var2, var3, var4);
         float var13 = this.getTileScale(var7, var3 - var1);
         int var14 = (int) (var13 * 64.0F);
         int var15 = this.anInt261 * 4096 + var1;
@@ -298,7 +305,7 @@ public final class WorldMapController {
         return var11;
     }
 
-    public final void method136() {
+    public final void clearIcons() {
         this.icons = null;
     }
 
@@ -308,7 +315,7 @@ public final class WorldMapController {
         int var11 = JagGraphics.drawingAreaHeight;
         int[] var12 = new int[4];
         JagGraphics.method1366(var12);
-        Area var13 = this.method139(var1, var2, var3, var4);
+        WorldMapArea var13 = this.method139(var1, var2, var3, var4);
         float var14 = this.getTileScale(var7 - var5, var3 - var1);
         int var15 = (int) Math.ceil(var14);
         this.tileScale = var15;
@@ -344,7 +351,7 @@ public final class WorldMapController {
     }
 
     public final void method141(int var1, int var2, int var3, int var4, int var5, int var7, int var8, HashSet<Integer> var9, HashSet<Integer> var10, int var11, int var12, boolean var13) {
-        Area var14 = this.method139(var1, var2, var3, var4);
+        WorldMapArea var14 = this.method139(var1, var2, var3, var4);
         float var15 = this.getTileScale(var7 - var5, var3 - var1);
         int var16 = (int) (64.0F * var15);
         int var17 = this.anInt261 * 4096 + var1;

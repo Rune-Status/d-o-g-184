@@ -32,6 +32,7 @@ public class WorldMapPosition {
     public int getHash() {
         return floorLevel << 28 | x << 14 | y;
     }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;

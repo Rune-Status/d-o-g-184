@@ -17,9 +17,9 @@ public class DevelopmentBuild {
     public final String name;
     public final int index;
 
-    DevelopmentBuild(String var1, int var2) {
-        this.name = var1;
-        this.index = var2;
+    DevelopmentBuild(String name, int index) {
+        this.name = name;
+        this.index = index;
     }
 
     public static DevelopmentBuild valueOf(int index) {

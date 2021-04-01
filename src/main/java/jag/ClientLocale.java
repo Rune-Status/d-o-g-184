@@ -2,7 +2,6 @@ package jag;
 
 import jag.game.client;
 import jag.graphics.IndexedSprite;
-import jag.js5.Archive;
 import jag.js5.DiskFile;
 import jag.opcode.Buffer;
 import jag.opcode.RegionUpdateType;
@@ -22,7 +21,6 @@ public class ClientLocale implements EnumType {
     static final ClientLocale MX;
 
     public static IndexedSprite[] aDoublyNode_Sub24_Sub4Array1178;
-    public static Archive aArchive1188;
 
     static {
         GB = new ClientLocale("EN", "en", 0, "GB");
@@ -51,9 +49,9 @@ public class ClientLocale implements EnumType {
     final String aString1181;
 
     ClientLocale(String var1, String var2, int var5, String country) {
-        this.aString1181 = var1;
-        this.aString1189 = var2;
-        this.index = var5;
+        aString1181 = var1;
+        aString1189 = var2;
+        index = var5;
         if (country != null) {
             new Locale(var2.substring(0, 2), country);
         } else {
@@ -84,9 +82,9 @@ public class ClientLocale implements EnumType {
         DiskFile var0 = null;
 
         try {
-            var0 = RegionUpdateType.method863("", Statics55.anGameType_629.name, true);
-            Buffer var1 = client.preferences.method253();
-            var0.write(var1.payload, 0, var1.caret);
+            var0 = RegionUpdateType.method863("", Statics55.gameType.name, true);
+            Buffer var1 = client.preferences.createOutputBuffer();
+            var0.write(var1.payload, 0, var1.pos);
         } catch (Exception ignored) {
         }
 
@@ -100,14 +98,14 @@ public class ClientLocale implements EnumType {
     }
 
     String method856() {
-        return this.aString1189;
+        return aString1189;
     }
 
     public int getOrdinal() {
-        return this.index;
+        return index;
     }
 
     public String toString() {
-        return this.method856().toLowerCase(Locale.ENGLISH);
+        return method856().toLowerCase(Locale.ENGLISH);
     }
 }

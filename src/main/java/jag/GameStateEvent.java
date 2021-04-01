@@ -1,6 +1,6 @@
 package jag;
 
-import jag.game.GameEngine;
+import jag.commons.time.Clock;
 import jag.opcode.Buffer;
 
 public class GameStateEvent {
@@ -16,57 +16,47 @@ public class GameStateEvent {
     long gameStateChangeTime;
 
     public GameStateEvent() {
-        this.aLong1528 = -1L;
-        this.gameStateChangeTime = -1L;
-        this.aBoolean1525 = false;
-        this.aLong1524 = 0L;
-        this.aLong1523 = 0L;
-        this.alwaysZero2 = 0L;
-        this.gameState = 0;
-        this.alwaysZero = 0;
-        this.anInt1526 = 0;
-        this.anInt1527 = 0;
-    }
-
-    public static int nextPowerOfTwo(int src) {
-        --src;
-        src |= src >>> 1;
-        src |= src >>> 2;
-        src |= src >>> 4;
-        src |= src >>> 8;
-        src |= src >>> 16;
-        return src + 1;
+        aLong1528 = -1L;
+        gameStateChangeTime = -1L;
+        aBoolean1525 = false;
+        aLong1524 = 0L;
+        aLong1523 = 0L;
+        alwaysZero2 = 0L;
+        gameState = 0;
+        alwaysZero = 0;
+        anInt1526 = 0;
+        anInt1527 = 0;
     }
 
     public void method1119() {
-        if (this.gameStateChangeTime != -1L) {
-            this.aLong1524 = GameEngine.currentTime() - this.gameStateChangeTime;
-            this.gameStateChangeTime = -1L;
+        if (gameStateChangeTime != -1L) {
+            aLong1524 = Clock.now() - gameStateChangeTime;
+            gameStateChangeTime = -1L;
         }
 
-        ++this.anInt1526;
-        this.aBoolean1525 = true;
+        ++anInt1526;
+        aBoolean1525 = true;
     }
 
     public void dropConnection() {
-        if (this.aLong1528 != -1L) {
-            this.aLong1523 = GameEngine.currentTime() - this.aLong1528;
-            this.aLong1528 = -1L;
+        if (aLong1528 != -1L) {
+            aLong1523 = Clock.now() - aLong1528;
+            aLong1528 = -1L;
         }
 
     }
 
     public void updateGameState(int gameState) {
-        this.gameStateChangeTime = GameEngine.currentTime();
-        this.gameState = gameState;
+        gameStateChangeTime = Clock.now();
+        gameState = gameState;
     }
 
     public void updateTime() {
-        this.aLong1528 = GameEngine.currentTime();
+        aLong1528 = Clock.now();
     }
 
     public void writeTo(Buffer buffer) {
-        long var2 = this.aLong1523;
+        long var2 = aLong1523;
         var2 /= 10L;
         if (var2 < 0L) {
             var2 = 0L;
@@ -74,8 +64,8 @@ public class GameStateEvent {
             var2 = 65535L;
         }
 
-        buffer.writeShort((int) var2);
-        long var4 = this.aLong1524;
+        buffer.p2((int) var2);
+        long var4 = aLong1524;
         var4 /= 10L;
         if (var4 < 0L) {
             var4 = 0L;
@@ -83,8 +73,8 @@ public class GameStateEvent {
             var4 = 65535L;
         }
 
-        buffer.writeShort((int) var4);
-        long var6 = this.alwaysZero2;
+        buffer.p2((int) var4);
+        long var6 = alwaysZero2;
         var6 /= 10L;
         if (var6 < 0L) {
             var6 = 0L;
@@ -92,19 +82,19 @@ public class GameStateEvent {
             var6 = 65535L;
         }
 
-        buffer.writeShort((int) var6);
-        buffer.writeShort(this.gameState);
-        buffer.writeShort(this.alwaysZero);
-        buffer.writeShort(this.anInt1526);
-        buffer.writeShort(this.anInt1527);
+        buffer.p2((int) var6);
+        buffer.p2(gameState);
+        buffer.p2(alwaysZero);
+        buffer.p2(anInt1526);
+        buffer.p2(anInt1527);
     }
 
     public void method1118() {
-        this.aBoolean1525 = false;
-        this.alwaysZero = 0;
+        aBoolean1525 = false;
+        alwaysZero = 0;
     }
 
     public void method1116() {
-        this.method1119();
+        method1119();
     }
 }

@@ -1,7 +1,6 @@
 package jag.opcode;
 
 import jag.js5.ReferenceTable;
-import jag.opcode.OldConnectionTask;
 
 import java.io.DataInputStream;
 import java.net.InetAddress;
@@ -9,33 +8,33 @@ import java.net.Socket;
 import java.net.URL;
 
 public class OldConnectionTaskProcessor implements Runnable {
-    public static String aString855;
-    public static String aString856;
-    public static boolean aBoolean853;
+    public static String javaVendor;
+    public static String javaVerson;
+    public static boolean hasFocus;
     public static ReferenceTable aReferenceTable854;
-    final Thread aThread850;
+    final Thread thread;
     boolean aBoolean849;
     OldConnectionTask aOldConnectionTask_852;
     OldConnectionTask aOldConnectionTask_851;
 
     public OldConnectionTaskProcessor() {
-        this.aOldConnectionTask_852 = null;
-        this.aOldConnectionTask_851 = null;
-        this.aBoolean849 = false;
-        aString855 = "Unknown";
-        aString856 = "1.6";
+        aOldConnectionTask_852 = null;
+        aOldConnectionTask_851 = null;
+        aBoolean849 = false;
+        javaVendor = "Unknown";
+        javaVerson = "1.6";
 
         try {
-            aString855 = System.getProperty("java.vendor");
-            aString856 = System.getProperty("java.version");
+            javaVendor = System.getProperty("java.vendor");
+            javaVerson = System.getProperty("java.version");
         } catch (Exception ignored) {
         }
 
-        this.aBoolean849 = false;
-        this.aThread850 = new Thread(this);
-        this.aThread850.setPriority(10);
-        this.aThread850.setDaemon(true);
-        this.aThread850.start();
+        aBoolean849 = false;
+        thread = new Thread(this);
+        thread.setPriority(10);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public static double method700(double var0, double var2, double var4) {
@@ -50,37 +49,37 @@ public class OldConnectionTaskProcessor implements Runnable {
         var5.anInt884 = var2;
         var5.anObject888 = var4;
         synchronized (this) {
-            if (this.aOldConnectionTask_851 != null) {
-                this.aOldConnectionTask_851.aOldConnectionTask_887 = var5;
-                this.aOldConnectionTask_851 = var5;
+            if (aOldConnectionTask_851 != null) {
+                aOldConnectionTask_851.aOldConnectionTask_887 = var5;
+                aOldConnectionTask_851 = var5;
             } else {
-                this.aOldConnectionTask_851 = this.aOldConnectionTask_852 = var5;
+                aOldConnectionTask_851 = aOldConnectionTask_852 = var5;
             }
 
-            this.notify();
+            notify();
             return var5;
         }
     }
 
     public final OldConnectionTask method697(Runnable var1, int var2) {
-        return this.method701(2, var2, var1);
+        return method701(2, var2, var1);
     }
 
     public final void method699() {
         synchronized (this) {
-            this.aBoolean849 = true;
-            this.notifyAll();
+            aBoolean849 = true;
+            notifyAll();
         }
 
         try {
-            this.aThread850.join();
+            thread.join();
         } catch (InterruptedException ignored) {
         }
 
     }
 
-    public final OldConnectionTask method698(String var1, int var2) {
-        return this.method701(1, var2, var1);
+    public final OldConnectionTask create(String var1, int var2) {
+        return method701(1, var2, var1);
     }
 
     public final void run() {
@@ -88,21 +87,21 @@ public class OldConnectionTaskProcessor implements Runnable {
             OldConnectionTask var2;
             synchronized (this) {
                 while (true) {
-                    if (this.aBoolean849) {
+                    if (aBoolean849) {
                         return;
                     }
 
-                    if (this.aOldConnectionTask_852 != null) {
-                        var2 = this.aOldConnectionTask_852;
-                        this.aOldConnectionTask_852 = this.aOldConnectionTask_852.aOldConnectionTask_887;
-                        if (this.aOldConnectionTask_852 == null) {
-                            this.aOldConnectionTask_851 = null;
+                    if (aOldConnectionTask_852 != null) {
+                        var2 = aOldConnectionTask_852;
+                        aOldConnectionTask_852 = aOldConnectionTask_852.aOldConnectionTask_887;
+                        if (aOldConnectionTask_852 == null) {
+                            aOldConnectionTask_851 = null;
                         }
                         break;
                     }
 
                     try {
-                        this.wait();
+                        wait();
                     } catch (InterruptedException ignored) {
                     }
                 }
@@ -111,22 +110,22 @@ public class OldConnectionTaskProcessor implements Runnable {
             try {
                 int var5 = var2.anInt883;
                 if (var5 == 1) {
-                    var2.anObject886 = new Socket(InetAddress.getByName((String) var2.anObject888), var2.anInt884);
+                    var2.result = new Socket(InetAddress.getByName((String) var2.anObject888), var2.anInt884);
                 } else if (var5 == 2) {
                     Thread var3 = new Thread((Runnable) var2.anObject888);
                     var3.setDaemon(true);
                     var3.start();
                     var3.setPriority(var2.anInt884);
-                    var2.anObject886 = var3;
+                    var2.result = var3;
                 } else if (var5 == 4) {
-                    var2.anObject886 = new DataInputStream(((URL) var2.anObject888).openStream());
+                    var2.result = new DataInputStream(((URL) var2.anObject888).openStream());
                 }
 
-                var2.anInt885 = 1;
+                var2.state = 1;
             } catch (ThreadDeath var6) {
                 throw var6;
             } catch (Throwable var7) {
-                var2.anInt885 = 2;
+                var2.state = 2;
             }
         }
     }

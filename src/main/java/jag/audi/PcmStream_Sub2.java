@@ -1,7 +1,7 @@
 package jag.audi;
 
 import jag.URLRequest;
-import jag.audi.vorbis.Vorbis8;
+import jag.audi.vorbis.RawAudioOverride;
 
 public class PcmStream_Sub2 extends PcmStream {
     final int anInt379;
@@ -20,28 +20,28 @@ public class PcmStream_Sub2 extends PcmStream {
     int anInt366;
     int anInt696;
 
-    PcmStream_Sub2(Vorbis8 var1, int var2, int var3, int var4) {
-        this.aVorbisNode_667 = var1;
-        this.anInt379 = var1.anInt378;
-        this.anInt564 = var1.anInt377;
-        this.aBoolean763 = var1.aBoolean502;
-        this.anInt568 = var2;
-        this.anInt378 = var3;
-        this.anInt377 = var4;
-        this.anInt380 = 0;
-        this.method592();
+    PcmStream_Sub2(RawAudioOverride var1, int var2, int var3, int var4) {
+        aVorbisNode_667 = var1;
+        anInt379 = var1.start;
+        anInt564 = var1.end;
+        aBoolean763 = var1.aBoolean502;
+        anInt568 = var2;
+        anInt378 = var3;
+        anInt377 = var4;
+        anInt380 = 0;
+        method592();
     }
 
-    PcmStream_Sub2(Vorbis8 var1, int var2, int var3) {
-        this.aVorbisNode_667 = var1;
-        this.anInt379 = var1.anInt378;
-        this.anInt564 = var1.anInt377;
-        this.aBoolean763 = var1.aBoolean502;
-        this.anInt568 = var2;
-        this.anInt378 = var3;
-        this.anInt377 = 8192;
-        this.anInt380 = 0;
-        this.method592();
+    PcmStream_Sub2(RawAudioOverride var1, int var2, int var3) {
+        aVorbisNode_667 = var1;
+        anInt379 = var1.start;
+        anInt564 = var1.end;
+        aBoolean763 = var1.aBoolean502;
+        anInt568 = var2;
+        anInt378 = var3;
+        anInt377 = 8192;
+        anInt380 = 0;
+        method592();
     }
 
     static int method601(int var0, int var1) {
@@ -717,247 +717,247 @@ public class PcmStream_Sub2 extends PcmStream {
         return var4 >> 1;
     }
 
-    public static PcmStream_Sub2 method597(Vorbis8 var0, int var1, int var2, int var3) {
-        return var0.aByteArray503 != null && var0.aByteArray503.length != 0 ? new PcmStream_Sub2(var0, var1, var2, var3) : null;
+    public static PcmStream_Sub2 method597(RawAudioOverride var0, int var1, int var2, int var3) {
+        return var0.samples != null && var0.samples.length != 0 ? new PcmStream_Sub2(var0, var1, var2, var3) : null;
     }
 
-    public static PcmStream_Sub2 method598(Vorbis8 var0, int var1, int var2) {
-        return var0.aByteArray503 != null && var0.aByteArray503.length != 0 ? new PcmStream_Sub2(var0, (int) ((long) var0.anInt380 * 256L * (long) var1 / (long) (URLRequest.audioSampleRate * 100)), var2 << 6) : null;
+    public static PcmStream_Sub2 method598(RawAudioOverride var0, int var1, int var2) {
+        return var0.samples != null && var0.samples.length != 0 ? new PcmStream_Sub2(var0, (int) ((long) var0.sampleRate * 256L * (long) var1 / (long) (URLRequest.audioSampleRate * 100)), var2 << 6) : null;
     }
 
     public synchronized int method599() {
-        return this.anInt377 < 0 ? -1 : this.anInt377;
+        return anInt377 < 0 ? -1 : anInt377;
     }
 
     synchronized void method591() {
-        this.method575(0, this.method599());
+        method575(0, method599());
     }
 
     synchronized void method575(int var1, int var2) {
-        this.anInt378 = var1;
-        this.anInt377 = var2;
-        this.anInt367 = 0;
-        this.method592();
+        anInt378 = var1;
+        anInt377 = var2;
+        anInt367 = 0;
+        method592();
     }
 
     public synchronized void method576(int var1, int var2, int var3) {
         if (var1 == 0) {
-            this.method575(var2, var3);
+            method575(var2, var3);
         } else {
             int var4 = method601(var2, var3);
             int var5 = method590(var2, var3);
-            if (var4 == this.anInt112 && var5 == this.anInt375) {
-                this.anInt367 = 0;
+            if (var4 == anInt112 && var5 == anInt375) {
+                anInt367 = 0;
             } else {
-                int var6 = var2 - this.anInt574;
-                if (this.anInt574 - var2 > var6) {
-                    var6 = this.anInt574 - var2;
+                int var6 = var2 - anInt574;
+                if (anInt574 - var2 > var6) {
+                    var6 = anInt574 - var2;
                 }
 
-                if (var4 - this.anInt112 > var6) {
-                    var6 = var4 - this.anInt112;
+                if (var4 - anInt112 > var6) {
+                    var6 = var4 - anInt112;
                 }
 
-                if (this.anInt112 - var4 > var6) {
-                    var6 = this.anInt112 - var4;
+                if (anInt112 - var4 > var6) {
+                    var6 = anInt112 - var4;
                 }
 
-                if (var5 - this.anInt375 > var6) {
-                    var6 = var5 - this.anInt375;
+                if (var5 - anInt375 > var6) {
+                    var6 = var5 - anInt375;
                 }
 
-                if (this.anInt375 - var5 > var6) {
-                    var6 = this.anInt375 - var5;
+                if (anInt375 - var5 > var6) {
+                    var6 = anInt375 - var5;
                 }
 
                 if (var1 > var6) {
                     var1 = var6;
                 }
 
-                this.anInt367 = var1;
-                this.anInt378 = var2;
-                this.anInt377 = var3;
-                this.anInt386 = (var2 - this.anInt574) / var1;
-                this.anInt366 = (var4 - this.anInt112) / var1;
-                this.anInt696 = (var5 - this.anInt375) / var1;
+                anInt367 = var1;
+                anInt378 = var2;
+                anInt377 = var3;
+                anInt386 = (var2 - anInt574) / var1;
+                anInt366 = (var4 - anInt112) / var1;
+                anInt696 = (var5 - anInt375) / var1;
             }
         }
     }
 
     public synchronized void method311(int[] var1, int var2, int var3) {
-        if (this.anInt378 == 0 && this.anInt367 == 0) {
-            this.method303(var3);
+        if (anInt378 == 0 && anInt367 == 0) {
+            method303(var3);
         } else {
-            Vorbis8 var4 = (Vorbis8) this.aVorbisNode_667;
-            int var5 = this.anInt379 << 8;
-            int var6 = this.anInt564 << 8;
-            int var7 = var4.aByteArray503.length << 8;
+            RawAudioOverride var4 = (RawAudioOverride) aVorbisNode_667;
+            int var5 = anInt379 << 8;
+            int var6 = anInt564 << 8;
+            int var7 = var4.samples.length << 8;
             int var8 = var6 - var5;
             if (var8 <= 0) {
-                this.anInt372 = 0;
+                anInt372 = 0;
             }
 
             int var9 = var2;
             var3 += var2;
-            if (this.anInt380 < 0) {
-                if (this.anInt568 <= 0) {
-                    this.method580();
-                    this.unlink();
+            if (anInt380 < 0) {
+                if (anInt568 <= 0) {
+                    method580();
+                    unlink();
                     return;
                 }
 
-                this.anInt380 = 0;
+                anInt380 = 0;
             }
 
-            if (this.anInt380 >= var7) {
-                if (this.anInt568 >= 0) {
-                    this.method580();
-                    this.unlink();
+            if (anInt380 >= var7) {
+                if (anInt568 >= 0) {
+                    method580();
+                    unlink();
                     return;
                 }
 
-                this.anInt380 = var7 - 1;
+                anInt380 = var7 - 1;
             }
 
-            if (this.anInt372 < 0) {
-                if (this.aBoolean763) {
-                    if (this.anInt568 < 0) {
-                        var9 = this.method581(var1, var2, var5, var3, var4.aByteArray503[this.anInt379]);
-                        if (this.anInt380 >= var5) {
+            if (anInt372 < 0) {
+                if (aBoolean763) {
+                    if (anInt568 < 0) {
+                        var9 = method581(var1, var2, var5, var3, var4.samples[anInt379]);
+                        if (anInt380 >= var5) {
                             return;
                         }
 
-                        this.anInt380 = var5 + var5 - 1 - this.anInt380;
-                        this.anInt568 = -this.anInt568;
+                        anInt380 = var5 + var5 - 1 - anInt380;
+                        anInt568 = -anInt568;
                     }
 
                     while (true) {
-                        var9 = this.method596(var1, var9, var6, var3, var4.aByteArray503[this.anInt564 - 1]);
-                        if (this.anInt380 < var6) {
+                        var9 = method596(var1, var9, var6, var3, var4.samples[anInt564 - 1]);
+                        if (anInt380 < var6) {
                             return;
                         }
 
-                        this.anInt380 = var6 + var6 - 1 - this.anInt380;
-                        this.anInt568 = -this.anInt568;
-                        var9 = this.method581(var1, var9, var5, var3, var4.aByteArray503[this.anInt379]);
-                        if (this.anInt380 >= var5) {
+                        anInt380 = var6 + var6 - 1 - anInt380;
+                        anInt568 = -anInt568;
+                        var9 = method581(var1, var9, var5, var3, var4.samples[anInt379]);
+                        if (anInt380 >= var5) {
                             return;
                         }
 
-                        this.anInt380 = var5 + var5 - 1 - this.anInt380;
-                        this.anInt568 = -this.anInt568;
+                        anInt380 = var5 + var5 - 1 - anInt380;
+                        anInt568 = -anInt568;
                     }
                 }
-                if (this.anInt568 < 0) {
+                if (anInt568 < 0) {
                     while (true) {
-                        var9 = this.method581(var1, var9, var5, var3, var4.aByteArray503[this.anInt564 - 1]);
-                        if (this.anInt380 >= var5) {
+                        var9 = method581(var1, var9, var5, var3, var4.samples[anInt564 - 1]);
+                        if (anInt380 >= var5) {
                             return;
                         }
 
-                        this.anInt380 = var6 - 1 - (var6 - 1 - this.anInt380) % var8;
+                        anInt380 = var6 - 1 - (var6 - 1 - anInt380) % var8;
                     }
                 }
                 while (true) {
-                    var9 = this.method596(var1, var9, var6, var3, var4.aByteArray503[this.anInt379]);
-                    if (this.anInt380 < var6) {
+                    var9 = method596(var1, var9, var6, var3, var4.samples[anInt379]);
+                    if (anInt380 < var6) {
                         return;
                     }
 
-                    this.anInt380 = var5 + (this.anInt380 - var5) % var8;
+                    anInt380 = var5 + (anInt380 - var5) % var8;
                 }
             }
-            if (this.anInt372 > 0) {
-                if (this.aBoolean763) {
+            if (anInt372 > 0) {
+                if (aBoolean763) {
                     label129:
                     {
-                        if (this.anInt568 < 0) {
-                            var9 = this.method581(var1, var2, var5, var3, var4.aByteArray503[this.anInt379]);
-                            if (this.anInt380 >= var5) {
+                        if (anInt568 < 0) {
+                            var9 = method581(var1, var2, var5, var3, var4.samples[anInt379]);
+                            if (anInt380 >= var5) {
                                 return;
                             }
 
-                            this.anInt380 = var5 + var5 - 1 - this.anInt380;
-                            this.anInt568 = -this.anInt568;
-                            if (--this.anInt372 == 0) {
+                            anInt380 = var5 + var5 - 1 - anInt380;
+                            anInt568 = -anInt568;
+                            if (--anInt372 == 0) {
                                 break label129;
                             }
                         }
 
                         do {
-                            var9 = this.method596(var1, var9, var6, var3, var4.aByteArray503[this.anInt564 - 1]);
-                            if (this.anInt380 < var6) {
+                            var9 = method596(var1, var9, var6, var3, var4.samples[anInt564 - 1]);
+                            if (anInt380 < var6) {
                                 return;
                             }
 
-                            this.anInt380 = var6 + var6 - 1 - this.anInt380;
-                            this.anInt568 = -this.anInt568;
-                            if (--this.anInt372 == 0) {
+                            anInt380 = var6 + var6 - 1 - anInt380;
+                            anInt568 = -anInt568;
+                            if (--anInt372 == 0) {
                                 break;
                             }
 
-                            var9 = this.method581(var1, var9, var5, var3, var4.aByteArray503[this.anInt379]);
-                            if (this.anInt380 >= var5) {
+                            var9 = method581(var1, var9, var5, var3, var4.samples[anInt379]);
+                            if (anInt380 >= var5) {
                                 return;
                             }
 
-                            this.anInt380 = var5 + var5 - 1 - this.anInt380;
-                            this.anInt568 = -this.anInt568;
-                        } while (--this.anInt372 != 0);
+                            anInt380 = var5 + var5 - 1 - anInt380;
+                            anInt568 = -anInt568;
+                        } while (--anInt372 != 0);
                     }
                 } else {
                     int var10;
-                    if (this.anInt568 < 0) {
+                    if (anInt568 < 0) {
                         while (true) {
-                            var9 = this.method581(var1, var9, var5, var3, var4.aByteArray503[this.anInt564 - 1]);
-                            if (this.anInt380 >= var5) {
+                            var9 = method581(var1, var9, var5, var3, var4.samples[anInt564 - 1]);
+                            if (anInt380 >= var5) {
                                 return;
                             }
 
-                            var10 = (var6 - 1 - this.anInt380) / var8;
-                            if (var10 >= this.anInt372) {
-                                this.anInt380 += var8 * this.anInt372;
-                                this.anInt372 = 0;
+                            var10 = (var6 - 1 - anInt380) / var8;
+                            if (var10 >= anInt372) {
+                                anInt380 += var8 * anInt372;
+                                anInt372 = 0;
                                 break;
                             }
 
-                            this.anInt380 += var8 * var10;
-                            this.anInt372 -= var10;
+                            anInt380 += var8 * var10;
+                            anInt372 -= var10;
                         }
                     } else {
                         while (true) {
-                            var9 = this.method596(var1, var9, var6, var3, var4.aByteArray503[this.anInt379]);
-                            if (this.anInt380 < var6) {
+                            var9 = method596(var1, var9, var6, var3, var4.samples[anInt379]);
+                            if (anInt380 < var6) {
                                 return;
                             }
 
-                            var10 = (this.anInt380 - var5) / var8;
-                            if (var10 >= this.anInt372) {
-                                this.anInt380 -= var8 * this.anInt372;
-                                this.anInt372 = 0;
+                            var10 = (anInt380 - var5) / var8;
+                            if (var10 >= anInt372) {
+                                anInt380 -= var8 * anInt372;
+                                anInt372 = 0;
                                 break;
                             }
 
-                            this.anInt380 -= var8 * var10;
-                            this.anInt372 -= var10;
+                            anInt380 -= var8 * var10;
+                            anInt372 -= var10;
                         }
                     }
                 }
             }
 
-            if (this.anInt568 < 0) {
-                this.method581(var1, var9, 0, var3, 0);
-                if (this.anInt380 < 0) {
-                    this.anInt380 = -1;
-                    this.method580();
-                    this.unlink();
+            if (anInt568 < 0) {
+                method581(var1, var9, 0, var3, 0);
+                if (anInt380 < 0) {
+                    anInt380 = -1;
+                    method580();
+                    unlink();
                 }
             } else {
-                this.method596(var1, var9, var7, var3, 0);
-                if (this.anInt380 >= var7) {
-                    this.anInt380 = var7;
-                    this.method580();
-                    this.unlink();
+                method596(var1, var9, var7, var3, 0);
+                if (anInt380 >= var7) {
+                    anInt380 = var7;
+                    method580();
+                    unlink();
                 }
             }
 
@@ -965,187 +965,187 @@ public class PcmStream_Sub2 extends PcmStream {
     }
 
     public synchronized void method303(int var1) {
-        if (this.anInt367 > 0) {
-            if (var1 >= this.anInt367) {
-                if (this.anInt378 == Integer.MIN_VALUE) {
-                    this.anInt378 = 0;
-                    this.anInt375 = 0;
-                    this.anInt112 = 0;
-                    this.anInt574 = 0;
-                    this.unlink();
-                    var1 = this.anInt367;
+        if (anInt367 > 0) {
+            if (var1 >= anInt367) {
+                if (anInt378 == Integer.MIN_VALUE) {
+                    anInt378 = 0;
+                    anInt375 = 0;
+                    anInt112 = 0;
+                    anInt574 = 0;
+                    unlink();
+                    var1 = anInt367;
                 }
 
-                this.anInt367 = 0;
-                this.method592();
+                anInt367 = 0;
+                method592();
             } else {
-                this.anInt574 += this.anInt386 * var1;
-                this.anInt112 += this.anInt366 * var1;
-                this.anInt375 += this.anInt696 * var1;
-                this.anInt367 -= var1;
+                anInt574 += anInt386 * var1;
+                anInt112 += anInt366 * var1;
+                anInt375 += anInt696 * var1;
+                anInt367 -= var1;
             }
         }
 
-        Vorbis8 var2 = (Vorbis8) this.aVorbisNode_667;
-        int var3 = this.anInt379 << 8;
-        int var4 = this.anInt564 << 8;
-        int var5 = var2.aByteArray503.length << 8;
+        RawAudioOverride var2 = (RawAudioOverride) aVorbisNode_667;
+        int var3 = anInt379 << 8;
+        int var4 = anInt564 << 8;
+        int var5 = var2.samples.length << 8;
         int var6 = var4 - var3;
         if (var6 <= 0) {
-            this.anInt372 = 0;
+            anInt372 = 0;
         }
 
-        if (this.anInt380 < 0) {
-            if (this.anInt568 <= 0) {
-                this.method580();
-                this.unlink();
+        if (anInt380 < 0) {
+            if (anInt568 <= 0) {
+                method580();
+                unlink();
                 return;
             }
 
-            this.anInt380 = 0;
+            anInt380 = 0;
         }
 
-        if (this.anInt380 >= var5) {
-            if (this.anInt568 >= 0) {
-                this.method580();
-                this.unlink();
+        if (anInt380 >= var5) {
+            if (anInt568 >= 0) {
+                method580();
+                unlink();
                 return;
             }
 
-            this.anInt380 = var5 - 1;
+            anInt380 = var5 - 1;
         }
 
-        this.anInt380 += this.anInt568 * var1;
-        if (this.anInt372 < 0) {
-            if (!this.aBoolean763) {
-                if (this.anInt568 < 0) {
-                    if (this.anInt380 >= var3) {
+        anInt380 += anInt568 * var1;
+        if (anInt372 < 0) {
+            if (!aBoolean763) {
+                if (anInt568 < 0) {
+                    if (anInt380 >= var3) {
                         return;
                     }
 
-                    this.anInt380 = var4 - 1 - (var4 - 1 - this.anInt380) % var6;
+                    anInt380 = var4 - 1 - (var4 - 1 - anInt380) % var6;
                 } else {
-                    if (this.anInt380 < var4) {
+                    if (anInt380 < var4) {
                         return;
                     }
 
-                    this.anInt380 = var3 + (this.anInt380 - var3) % var6;
+                    anInt380 = var3 + (anInt380 - var3) % var6;
                 }
 
             } else {
-                if (this.anInt568 < 0) {
-                    if (this.anInt380 >= var3) {
+                if (anInt568 < 0) {
+                    if (anInt380 >= var3) {
                         return;
                     }
 
-                    this.anInt380 = var3 + var3 - 1 - this.anInt380;
-                    this.anInt568 = -this.anInt568;
+                    anInt380 = var3 + var3 - 1 - anInt380;
+                    anInt568 = -anInt568;
                 }
 
-                while (this.anInt380 >= var4) {
-                    this.anInt380 = var4 + var4 - 1 - this.anInt380;
-                    this.anInt568 = -this.anInt568;
-                    if (this.anInt380 >= var3) {
+                while (anInt380 >= var4) {
+                    anInt380 = var4 + var4 - 1 - anInt380;
+                    anInt568 = -anInt568;
+                    if (anInt380 >= var3) {
                         return;
                     }
 
-                    this.anInt380 = var3 + var3 - 1 - this.anInt380;
-                    this.anInt568 = -this.anInt568;
+                    anInt380 = var3 + var3 - 1 - anInt380;
+                    anInt568 = -anInt568;
                 }
 
             }
         } else {
-            if (this.anInt372 > 0) {
-                if (this.aBoolean763) {
+            if (anInt372 > 0) {
+                if (aBoolean763) {
                     label126:
                     {
-                        if (this.anInt568 < 0) {
-                            if (this.anInt380 >= var3) {
+                        if (anInt568 < 0) {
+                            if (anInt380 >= var3) {
                                 return;
                             }
 
-                            this.anInt380 = var3 + var3 - 1 - this.anInt380;
-                            this.anInt568 = -this.anInt568;
-                            if (--this.anInt372 == 0) {
+                            anInt380 = var3 + var3 - 1 - anInt380;
+                            anInt568 = -anInt568;
+                            if (--anInt372 == 0) {
                                 break label126;
                             }
                         }
 
                         do {
-                            if (this.anInt380 < var4) {
+                            if (anInt380 < var4) {
                                 return;
                             }
 
-                            this.anInt380 = var4 + var4 - 1 - this.anInt380;
-                            this.anInt568 = -this.anInt568;
-                            if (--this.anInt372 == 0) {
+                            anInt380 = var4 + var4 - 1 - anInt380;
+                            anInt568 = -anInt568;
+                            if (--anInt372 == 0) {
                                 break;
                             }
 
-                            if (this.anInt380 >= var3) {
+                            if (anInt380 >= var3) {
                                 return;
                             }
 
-                            this.anInt380 = var3 + var3 - 1 - this.anInt380;
-                            this.anInt568 = -this.anInt568;
-                        } while (--this.anInt372 != 0);
+                            anInt380 = var3 + var3 - 1 - anInt380;
+                            anInt568 = -anInt568;
+                        } while (--anInt372 != 0);
                     }
                 } else {
                     int var7;
-                    if (this.anInt568 < 0) {
-                        if (this.anInt380 >= var3) {
+                    if (anInt568 < 0) {
+                        if (anInt380 >= var3) {
                             return;
                         }
 
-                        var7 = (var4 - 1 - this.anInt380) / var6;
-                        if (var7 < this.anInt372) {
-                            this.anInt380 += var6 * var7;
-                            this.anInt372 -= var7;
+                        var7 = (var4 - 1 - anInt380) / var6;
+                        if (var7 < anInt372) {
+                            anInt380 += var6 * var7;
+                            anInt372 -= var7;
                             return;
                         }
 
-                        this.anInt380 += var6 * this.anInt372;
+                        anInt380 += var6 * anInt372;
                     } else {
-                        if (this.anInt380 < var4) {
+                        if (anInt380 < var4) {
                             return;
                         }
 
-                        var7 = (this.anInt380 - var3) / var6;
-                        if (var7 < this.anInt372) {
-                            this.anInt380 -= var6 * var7;
-                            this.anInt372 -= var7;
+                        var7 = (anInt380 - var3) / var6;
+                        if (var7 < anInt372) {
+                            anInt380 -= var6 * var7;
+                            anInt372 -= var7;
                             return;
                         }
 
-                        this.anInt380 -= var6 * this.anInt372;
+                        anInt380 -= var6 * anInt372;
                     }
-                    this.anInt372 = 0;
+                    anInt372 = 0;
                 }
             }
 
-            if (this.anInt568 < 0) {
-                if (this.anInt380 < 0) {
-                    this.anInt380 = -1;
-                    this.method580();
-                    this.unlink();
+            if (anInt568 < 0) {
+                if (anInt380 < 0) {
+                    anInt380 = -1;
+                    method580();
+                    unlink();
                 }
-            } else if (this.anInt380 >= var5) {
-                this.anInt380 = var5;
-                this.method580();
-                this.unlink();
+            } else if (anInt380 >= var5) {
+                anInt380 = var5;
+                method580();
+                unlink();
             }
 
         }
     }
 
     void method592() {
-        this.anInt574 = this.anInt378;
-        this.anInt112 = method601(this.anInt378, this.anInt377);
-        this.anInt375 = method590(this.anInt378, this.anInt377);
+        anInt574 = anInt378;
+        anInt112 = method601(anInt378, anInt377);
+        anInt375 = method590(anInt378, anInt377);
     }
 
     public synchronized void method582(int var1) {
-        int var2 = ((Vorbis8) this.aVorbisNode_667).aByteArray503.length << 8;
+        int var2 = ((RawAudioOverride) aVorbisNode_667).samples.length << 8;
         if (var1 < -1) {
             var1 = -1;
         }
@@ -1154,7 +1154,7 @@ public class PcmStream_Sub2 extends PcmStream {
             var1 = var2;
         }
 
-        this.anInt380 = var1;
+        anInt380 = var1;
     }
 
     public PcmStream method308() {
@@ -1162,80 +1162,80 @@ public class PcmStream_Sub2 extends PcmStream {
     }
 
     public boolean method586() {
-        return this.anInt380 < 0 || this.anInt380 >= ((Vorbis8) this.aVorbisNode_667).aByteArray503.length << 8;
+        return anInt380 < 0 || anInt380 >= ((RawAudioOverride) aVorbisNode_667).samples.length << 8;
     }
 
     public synchronized void method588(int var1) {
-        if (this.anInt568 < 0) {
-            this.anInt568 = -var1;
+        if (anInt568 < 0) {
+            anInt568 = -var1;
         } else {
-            this.anInt568 = var1;
+            anInt568 = var1;
         }
 
     }
 
     public synchronized void method589(int var1) {
         if (var1 == 0) {
-            this.method591();
-            this.unlink();
-        } else if (this.anInt112 == 0 && this.anInt375 == 0) {
-            this.anInt367 = 0;
-            this.anInt378 = 0;
-            this.anInt574 = 0;
-            this.unlink();
+            method591();
+            unlink();
+        } else if (anInt112 == 0 && anInt375 == 0) {
+            anInt367 = 0;
+            anInt378 = 0;
+            anInt574 = 0;
+            unlink();
         } else {
-            int var2 = -this.anInt574;
-            if (this.anInt574 > var2) {
-                var2 = this.anInt574;
+            int var2 = -anInt574;
+            if (anInt574 > var2) {
+                var2 = anInt574;
             }
 
-            if (-this.anInt112 > var2) {
-                var2 = -this.anInt112;
+            if (-anInt112 > var2) {
+                var2 = -anInt112;
             }
 
-            if (this.anInt112 > var2) {
-                var2 = this.anInt112;
+            if (anInt112 > var2) {
+                var2 = anInt112;
             }
 
-            if (-this.anInt375 > var2) {
-                var2 = -this.anInt375;
+            if (-anInt375 > var2) {
+                var2 = -anInt375;
             }
 
-            if (this.anInt375 > var2) {
-                var2 = this.anInt375;
+            if (anInt375 > var2) {
+                var2 = anInt375;
             }
 
             if (var1 > var2) {
                 var1 = var2;
             }
 
-            this.anInt367 = var1;
-            this.anInt378 = Integer.MIN_VALUE;
-            this.anInt386 = -this.anInt574 / var1;
-            this.anInt366 = -this.anInt112 / var1;
-            this.anInt696 = -this.anInt375 / var1;
+            anInt367 = var1;
+            anInt378 = Integer.MIN_VALUE;
+            anInt386 = -anInt574 / var1;
+            anInt366 = -anInt112 / var1;
+            anInt696 = -anInt375 / var1;
         }
     }
 
     void method580() {
-        if (this.anInt367 != 0) {
-            if (this.anInt378 == Integer.MIN_VALUE) {
-                this.anInt378 = 0;
+        if (anInt367 != 0) {
+            if (anInt378 == Integer.MIN_VALUE) {
+                anInt378 = 0;
             }
 
-            this.anInt367 = 0;
-            this.method592();
+            anInt367 = 0;
+            method592();
         }
 
     }
 
     public boolean method577() {
-        return this.anInt367 != 0;
+        return anInt367 != 0;
     }
 
     public synchronized void method593() {
-        this.anInt568 = (this.anInt568 ^ this.anInt568 >> 31) + (this.anInt568 >>> 31);
-        this.anInt568 = -this.anInt568;
+        anInt568 = (anInt568 ^ anInt568 >> 31) + (anInt568 >>> 31);
+        anInt568 = -anInt568;
     }
 
     public PcmStream method307() {
@@ -1243,12 +1243,12 @@ public class PcmStream_Sub2 extends PcmStream {
     }
 
     public int method483() {
-        int var1 = this.anInt574 * 3 >> 6;
+        int var1 = anInt574 * 3 >> 6;
         var1 = (var1 ^ var1 >> 31) + (var1 >>> 31);
-        if (this.anInt372 == 0) {
-            var1 -= var1 * this.anInt380 / (((Vorbis8) this.aVorbisNode_667).aByteArray503.length << 8);
-        } else if (this.anInt372 >= 0) {
-            var1 -= var1 * this.anInt379 / ((Vorbis8) this.aVorbisNode_667).aByteArray503.length;
+        if (anInt372 == 0) {
+            var1 -= var1 * anInt380 / (((RawAudioOverride) aVorbisNode_667).samples.length << 8);
+        } else if (anInt372 >= 0) {
+            var1 -= var1 * anInt379 / ((RawAudioOverride) aVorbisNode_667).samples.length;
         }
 
         return Math.min(var1, 255);
@@ -1256,59 +1256,59 @@ public class PcmStream_Sub2 extends PcmStream {
 
     int method581(int[] var1, int var2, int var3, int var4, int var5) {
         while (true) {
-            if (this.anInt367 > 0) {
-                int var6 = var2 + this.anInt367;
+            if (anInt367 > 0) {
+                int var6 = var2 + anInt367;
                 if (var6 > var4) {
                     var6 = var4;
                 }
 
-                this.anInt367 += var2;
-                if (this.anInt568 == -256 && (this.anInt380 & 255) == 0) {
+                anInt367 += var2;
+                if (anInt568 == -256 && (anInt380 & 255) == 0) {
                     if (AudioSystem.useTwoChannels) {
-                        var2 = method574(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, this.anInt366, this.anInt696, var6, var3, this);
+                        var2 = method574(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, anInt366, anInt696, var6, var3, this);
                     } else {
-                        var2 = method571(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, this.anInt386, var6, var3, this);
+                        var2 = method571(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, anInt386, var6, var3, this);
                     }
                 } else if (AudioSystem.useTwoChannels) {
-                    var2 = method570(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, this.anInt366, this.anInt696, var6, var3, this, this.anInt568, var5);
+                    var2 = method570(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, anInt366, anInt696, var6, var3, this, anInt568, var5);
                 } else {
-                    var2 = method602(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, this.anInt386, var6, var3, this, this.anInt568, var5);
+                    var2 = method602(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, anInt386, var6, var3, this, anInt568, var5);
                 }
 
-                this.anInt367 -= var2;
-                if (this.anInt367 != 0) {
+                anInt367 -= var2;
+                if (anInt367 != 0) {
                     return var2;
                 }
 
-                if (!this.method584()) {
+                if (!method584()) {
                     continue;
                 }
 
                 return var4;
             }
 
-            if (this.anInt568 == -256 && (this.anInt380 & 255) == 0) {
+            if (anInt568 == -256 && (anInt380 & 255) == 0) {
                 if (AudioSystem.useTwoChannels) {
-                    return method594(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, var4, var3, this);
+                    return method594(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, var4, var3, this);
                 }
 
-                return method579(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, var4, var3, this);
+                return method579(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, var4, var3, this);
             }
 
             if (AudioSystem.useTwoChannels) {
-                return method569(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, var4, var3, this, this.anInt568, var5);
+                return method569(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, var4, var3, this, anInt568, var5);
             }
 
-            return method565(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, var4, var3, this, this.anInt568, var5);
+            return method565(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, var4, var3, this, anInt568, var5);
         }
     }
 
     public synchronized int method583() {
-        return this.anInt568 < 0 ? -this.anInt568 : this.anInt568;
+        return anInt568 < 0 ? -anInt568 : anInt568;
     }
 
     boolean method584() {
-        int var1 = this.anInt378;
+        int var1 = anInt378;
         int var2;
         int var3;
         if (var1 == Integer.MIN_VALUE) {
@@ -1316,58 +1316,58 @@ public class PcmStream_Sub2 extends PcmStream {
             var3 = 0;
             var1 = 0;
         } else {
-            var3 = method601(var1, this.anInt377);
-            var2 = method590(var1, this.anInt377);
+            var3 = method601(var1, anInt377);
+            var2 = method590(var1, anInt377);
         }
 
-        if (var1 == this.anInt574 && var3 == this.anInt112 && var2 == this.anInt375) {
-            if (this.anInt378 == Integer.MIN_VALUE) {
-                this.anInt378 = 0;
-                this.anInt375 = 0;
-                this.anInt112 = 0;
-                this.anInt574 = 0;
-                this.unlink();
+        if (var1 == anInt574 && var3 == anInt112 && var2 == anInt375) {
+            if (anInt378 == Integer.MIN_VALUE) {
+                anInt378 = 0;
+                anInt375 = 0;
+                anInt112 = 0;
+                anInt574 = 0;
+                unlink();
                 return true;
             }
-            this.method592();
+            method592();
             return false;
         }
-        if (this.anInt574 < var1) {
-            this.anInt386 = 1;
-            this.anInt367 = var1 - this.anInt574;
-        } else if (this.anInt574 > var1) {
-            this.anInt386 = -1;
-            this.anInt367 = this.anInt574 - var1;
+        if (anInt574 < var1) {
+            anInt386 = 1;
+            anInt367 = var1 - anInt574;
+        } else if (anInt574 > var1) {
+            anInt386 = -1;
+            anInt367 = anInt574 - var1;
         } else {
-            this.anInt386 = 0;
+            anInt386 = 0;
         }
 
-        if (this.anInt112 < var3) {
-            this.anInt366 = 1;
-            if (this.anInt367 == 0 || this.anInt367 > var3 - this.anInt112) {
-                this.anInt367 = var3 - this.anInt112;
+        if (anInt112 < var3) {
+            anInt366 = 1;
+            if (anInt367 == 0 || anInt367 > var3 - anInt112) {
+                anInt367 = var3 - anInt112;
             }
-        } else if (this.anInt112 > var3) {
-            this.anInt366 = -1;
-            if (this.anInt367 == 0 || this.anInt367 > this.anInt112 - var3) {
-                this.anInt367 = this.anInt112 - var3;
+        } else if (anInt112 > var3) {
+            anInt366 = -1;
+            if (anInt367 == 0 || anInt367 > anInt112 - var3) {
+                anInt367 = anInt112 - var3;
             }
         } else {
-            this.anInt366 = 0;
+            anInt366 = 0;
         }
 
-        if (this.anInt375 < var2) {
-            this.anInt696 = 1;
-            if (this.anInt367 == 0 || this.anInt367 > var2 - this.anInt375) {
-                this.anInt367 = var2 - this.anInt375;
+        if (anInt375 < var2) {
+            anInt696 = 1;
+            if (anInt367 == 0 || anInt367 > var2 - anInt375) {
+                anInt367 = var2 - anInt375;
             }
-        } else if (this.anInt375 > var2) {
-            this.anInt696 = -1;
-            if (this.anInt367 == 0 || this.anInt367 > this.anInt375 - var2) {
-                this.anInt367 = this.anInt375 - var2;
+        } else if (anInt375 > var2) {
+            anInt696 = -1;
+            if (anInt367 == 0 || anInt367 > anInt375 - var2) {
+                anInt367 = anInt375 - var2;
             }
         } else {
-            this.anInt696 = 0;
+            anInt696 = 0;
         }
 
         return false;
@@ -1375,70 +1375,70 @@ public class PcmStream_Sub2 extends PcmStream {
 
     int method596(int[] var1, int var2, int var3, int var4, int var5) {
         while (true) {
-            if (this.anInt367 > 0) {
-                int var6 = var2 + this.anInt367;
+            if (anInt367 > 0) {
+                int var6 = var2 + anInt367;
                 if (var6 > var4) {
                     var6 = var4;
                 }
 
-                this.anInt367 += var2;
-                if (this.anInt568 == 256 && (this.anInt380 & 255) == 0) {
+                anInt367 += var2;
+                if (anInt568 == 256 && (anInt380 & 255) == 0) {
                     if (AudioSystem.useTwoChannels) {
-                        var2 = method567(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, this.anInt366, this.anInt696, var6, var3, this);
+                        var2 = method567(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, anInt366, anInt696, var6, var3, this);
                     } else {
-                        var2 = method572(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, this.anInt386, var6, var3, this);
+                        var2 = method572(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, anInt386, var6, var3, this);
                     }
                 } else if (AudioSystem.useTwoChannels) {
-                    var2 = method568(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, this.anInt366, this.anInt696, var6, var3, this, this.anInt568, var5);
+                    var2 = method568(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, anInt366, anInt696, var6, var3, this, anInt568, var5);
                 } else {
-                    var2 = method564(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, this.anInt386, var6, var3, this, this.anInt568, var5);
+                    var2 = method564(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, anInt386, var6, var3, this, anInt568, var5);
                 }
 
-                this.anInt367 -= var2;
-                if (this.anInt367 != 0) {
+                anInt367 -= var2;
+                if (anInt367 != 0) {
                     return var2;
                 }
 
-                if (!this.method584()) {
+                if (!method584()) {
                     continue;
                 }
 
                 return var4;
             }
 
-            if (this.anInt568 == 256 && (this.anInt380 & 255) == 0) {
+            if (anInt568 == 256 && (anInt380 & 255) == 0) {
                 if (AudioSystem.useTwoChannels) {
-                    return method595(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, var4, var3, this);
+                    return method595(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, var4, var3, this);
                 }
 
-                return method600(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, var4, var3, this);
+                return method600(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, var4, var3, this);
             }
 
             if (AudioSystem.useTwoChannels) {
-                return method566(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt112, this.anInt375, var4, var3, this, this.anInt568, var5);
+                return method566(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt112, anInt375, var4, var3, this, anInt568, var5);
             }
 
-            return method573(((Vorbis8) this.aVorbisNode_667).aByteArray503, var1, this.anInt380, var2, this.anInt574, var4, var3, this, this.anInt568, var5);
+            return method573(((RawAudioOverride) aVorbisNode_667).samples, var1, anInt380, var2, anInt574, var4, var3, this, anInt568, var5);
         }
     }
 
     public synchronized int method578() {
-        return this.anInt378 == Integer.MIN_VALUE ? 0 : this.anInt378;
+        return anInt378 == Integer.MIN_VALUE ? 0 : anInt378;
     }
 
     public synchronized void method585(int var1) {
-        this.anInt372 = var1;
+        anInt372 = var1;
     }
 
     public int method305() {
-        return this.anInt378 == 0 && this.anInt367 == 0 ? 0 : 1;
+        return anInt378 == 0 && anInt367 == 0 ? 0 : 1;
     }
 
     public synchronized void method587(int var1, int var2) {
-        this.method576(var1, var2, this.method599());
+        method576(var1, var2, method599());
     }
 
     public synchronized void method302(int var1) {
-        this.method575(var1 << 6, this.method599());
+        method575(var1 << 6, method599());
     }
 }

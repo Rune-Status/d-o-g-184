@@ -1,13 +1,13 @@
 package jag.game.relationship;
 
-import jag.Fonts;
-import jag.game.World;
+import jag.FontCache;
+import jag.game.Server;
 import jag.graphics.IndexedSprite;
 
 public class AssociateComparator_Sub2 extends AssociateComparator {
 
-    public static IndexedSprite[] aDoublyNode_Sub24_Sub4Array765;
-    public static Fonts aFonts_766;
+    public static IndexedSprite[] titleMuteSprites;
+    public static FontCache aFontCache_766;
     public final boolean aBoolean764;
 
     public AssociateComparator_Sub2(boolean var1) {
@@ -18,7 +18,7 @@ public class AssociateComparator_Sub2 extends AssociateComparator {
         return var0 >= 'A' && var0 <= 'Z' || var0 >= 'a' && var0 <= 'z';
     }
 
-    public static int method606(World var0, World var1, int var2, boolean var3) {
+    public static int method606(Server var0, Server var1, int var2, boolean var3) {
         if (var2 == 1) {
             int var4 = var0.population;
             int var5 = var1.population;
@@ -61,7 +61,7 @@ public class AssociateComparator_Sub2 extends AssociateComparator {
         if (var2 == 7) {
             return var0.isMembers() ? (var1.isMembers() ? 0 : 1) : (var1.isMembers() ? -1 : 0);
         }
-        return var0.anInt1875 - var1.anInt1875;
+        return var0.id - var1.id;
     }
 
     int method604(Associate var1, Associate var2) {

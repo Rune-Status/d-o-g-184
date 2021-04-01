@@ -1,6 +1,5 @@
 package jag.statics;
 
-import jag.EntityUID;
 import jag.game.scene.CollisionMap;
 import jag.game.scene.SceneGraph;
 import jag.game.stockmarket.StockMarketOfferLifetimeComparator;
@@ -20,17 +19,17 @@ public class Statics54 {
     }
 
     public static synchronized void method445(byte[] var0) {
-        if (var0.length == 100 && Statics56.anInt1641 < 1000) {
-            Statics56.aByteArrayArray1639[++Statics56.anInt1641 - 1] = var0;
-        } else if (var0.length == 5000 && Statics56.anInt1643 < 250) {
-            Statics56.aByteArrayArray1638[++Statics56.anInt1643 - 1] = var0;
-        } else if (var0.length == 30000 && Statics56.anInt1640 < 50) {
-            Statics56.aByteArrayArray1636[++Statics56.anInt1640 - 1] = var0;
+        if (var0.length == 100 && Buffer.smallCount < 1000) {
+            Buffer.SMALL[++Buffer.smallCount - 1] = var0;
+        } else if (var0.length == 5000 && Buffer.mediumCount < 250) {
+            Buffer.MEDIUM[++Buffer.mediumCount - 1] = var0;
+        } else if (var0.length == 30000 && Buffer.largeCount < 50) {
+            Buffer.LARGE[++Buffer.largeCount - 1] = var0;
         } else {
-            if (EntityUID.aByteArrayArrayArray547 != null) {
-                for (int var1 = 0; var1 < Statics56.anIntArray1637.length; ++var1) {
-                    if (var0.length == Statics56.anIntArray1637[var1] && Statics56.anIntArray1642[var1] < EntityUID.aByteArrayArrayArray547[var1].length) {
-                        EntityUID.aByteArrayArrayArray547[var1][Statics56.anIntArray1642[var1]++] = var0;
+            if (Buffer.variadic != null) {
+                for (int var1 = 0; var1 < Buffer.variadicSizes.length; ++var1) {
+                    if (var0.length == Buffer.variadicSizes[var1] && Buffer.variadicIndices[var1] < Buffer.variadic[var1].length) {
+                        Buffer.variadic[var1][Buffer.variadicIndices[var1]++] = var0;
                         return;
                     }
                 }
@@ -44,7 +43,7 @@ public class Statics54 {
         int var11 = -1;
 
         while (true) {
-            int var12 = var10.readSmarts();
+            int var12 = var10.gsmartsseq();
             if (var12 == 0) {
                 return;
             }
@@ -53,7 +52,7 @@ public class Statics54 {
             int var13 = 0;
 
             while (true) {
-                int var14 = var10.readSmart();
+                int var14 = var10.gsmarts();
                 if (var14 == 0) {
                     break;
                 }
@@ -62,7 +61,7 @@ public class Statics54 {
                 int var15 = var13 & 63;
                 int var16 = var13 >> 6 & 63;
                 int var17 = var13 >> 12;
-                int var18 = var10.readUByte();
+                int var18 = var10.g1();
                 int var19 = var18 >> 2;
                 int var20 = var18 & 3;
                 if (var17 == var4 && var16 >= var5 && var16 < var5 + 8 && var15 >= var6 && var15 < var6 + 8) {

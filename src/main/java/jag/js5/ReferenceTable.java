@@ -1,63 +1,60 @@
 package jag.js5;
 
-import jag.game.relationship.NamePair;
-import jag.game.stockmarket.StockMarketMediator;
+import jag.ByteBufferProvider;
 import jag.game.stockmarket.StockMarketOfferPriceComparator;
+import jag.graphics.BaseFont;
 import jag.opcode.Buffer;
+import jag.statics.Statics45;
 import jag.worldmap.WorldMapTileDecor_Sub2;
 
 import java.util.Arrays;
 
 public abstract class ReferenceTable {
 
-    static final GzipDecompressor aGzipDecompressor_1238;
+    static final GzipDecompressor gzipdecompressor;
     static final int maximumContainerSize;
 
     static {
-        aGzipDecompressor_1238 = new GzipDecompressor();
+        gzipdecompressor = new GzipDecompressor();
         maximumContainerSize = 0;
     }
 
-    public int anInt1240;
+    public int hash;
     int[] entryIndices;
-    Object[] anObjectArray1239;
+    Object[] groups;
     Object[][] childrenSizes;
     int[][] childrenIndices;
-    boolean aBoolean1250;
+    boolean soft;
     IdentityTable[] children;
     IdentityTable entry;
-    int[] anIntArray1246;
+    int[] groupVersions;
     int[] childrenCounts;
-    boolean aBoolean1247;
-    int[] anIntArray1245;
+    boolean shallow;
+    int[] groupCrcs;
     int entryCount;
-    int[] anIntArray1248;
+    int[] groupNames;
     int[][] childrenNames;
 
-    ReferenceTable(boolean var1, boolean var2) {
-        this.aBoolean1250 = var1;
-        this.aBoolean1247 = var2;
-    }
-
-    public static boolean method898(char var0) {
-        return var0 >= '0' && var0 <= '9' || var0 >= 'A' && var0 <= 'Z' || var0 >= 'a' && var0 <= 'z';
+    ReferenceTable(boolean soft, boolean shallow) {
+        this.soft = soft;
+        this.shallow = shallow;
     }
 
     static byte[] decodeContainer(byte[] data) {
         Buffer buffer = new Buffer(data);
-        int type = buffer.readUByte();
-        int compressed = buffer.readInt();
+        int type = buffer.g1();
+        int compressed = buffer.g4();
         if (compressed < 0 || maximumContainerSize != 0 && compressed > maximumContainerSize) {
             throw new RuntimeException();
         }
 
         if (type == 0) { //uncompressed
             byte[] decoded = new byte[compressed];
-            buffer.readBytes(decoded, 0, compressed);
+            buffer.gdata(decoded, 0, compressed);
             return decoded;
         }
 
-        int length = buffer.readInt();
+        int length = buffer.g4();
         if (length < 0 || maximumContainerSize != 0 && length > maximumContainerSize) {
             throw new RuntimeException();
         }
@@ -66,40 +63,60 @@ public abstract class ReferenceTable {
         if (type == 1) {
             Bzip2Decompressor.decompress(decoded, length, data, 9);
         } else {
-            aGzipDecompressor_1238.method1326(buffer, decoded);
+            gzipdecompressor.decompress(buffer, decoded);
         }
         return decoded;
     }
 
-    public static Archive getReferenceTable(int var0, boolean var1, boolean var2) {
-        ResourceCache var5 = null;
+    public static Archive get(int var0, boolean var1, boolean var2) {
+        ResourceCache cache = null;
         if (BufferedFile.dataFile != null) {
-            var5 = new ResourceCache(var0, BufferedFile.dataFile, BufferedFile.indexes[var0], 1000000);
+            cache = new ResourceCache(var0, BufferedFile.dataFile, BufferedFile.indexes[var0], 1000000);
         }
 
-        return new Archive(var5, WorldMapTileDecor_Sub2.aResourceCache649, var0, var1, var2, true);
+        return new Archive(cache, WorldMapTileDecor_Sub2.aResourceCache649, var0, var1, var2, true);
+    }
+
+    public static boolean method534(ReferenceTable table, int var1, int var2) {
+        byte[] data = table.unpack(var1, var2);
+        if (data == null) {
+            return false;
+        }
+        Statics45.method267(data);
+        return true;
+    }
+
+    public static int djb2(CharSequence var0) {
+        int var1 = var0.length();
+        int var2 = 0;
+
+        for (int var3 = 0; var3 < var1; ++var3) {
+            var2 = (var2 << 5) - var2 + BaseFont.toCp1252Byte(var0.charAt(var3));
+        }
+
+        return var2;
     }
 
     public int[] getFileIds(int var1) {
-        return var1 >= 0 && var1 < this.childrenIndices.length ? this.childrenIndices[var1] : null;
+        return var1 >= 0 && var1 < childrenIndices.length ? childrenIndices[var1] : null;
     }
 
-    public byte[] unpack(int var1, int var2, int[] var3) {
-        if (var1 >= 0 && var1 < this.childrenSizes.length && this.childrenSizes[var1] != null && var2 >= 0 && var2 < this.childrenSizes[var1].length) {
-            if (this.childrenSizes[var1][var2] == null) {
-                boolean var5 = this.method905(var1, var3);
-                if (!var5) {
-                    this.method492(var1);
-                    var5 = this.method905(var1, var3);
-                    if (!var5) {
+    public byte[] unpack(int group, int file, int[] xtea) {
+        if (group >= 0 && group < childrenSizes.length && childrenSizes[group] != null && file >= 0 && file < childrenSizes[group].length) {
+            if (childrenSizes[group][file] == null) {
+                boolean init = init(group, xtea);
+                if (!init) {
+                    load(group);
+                    init = init(group, xtea);
+                    if (!init) {
                         return null;
                     }
                 }
             }
 
-            byte[] var6 = StockMarketOfferPriceComparator.method333(this.childrenSizes[var1][var2], false);
-            if (this.aBoolean1247) {
-                this.childrenSizes[var1][var2] = null;
+            byte[] var6 = StockMarketOfferPriceComparator.method333(childrenSizes[group][file], false);
+            if (shallow) {
+                childrenSizes[group][file] = null;
             }
 
             return var6;
@@ -107,147 +124,148 @@ public abstract class ReferenceTable {
         return null;
     }
 
-    public byte[] unpack(int var1, int var2) {
-        return this.unpack(var1, var2, null);
+    public byte[] unpack(int group, int file) {
+        return unpack(group, file, null);
     }
 
-    public int method916() {
-        return this.childrenSizes.length;
+    public int childrenCount() {
+        return childrenSizes.length;
     }
 
-    public byte[] method904(int var1) {
-        if (this.childrenSizes.length == 1) {
-            return this.unpack(0, var1);
+    public byte[] unpack(int file) {
+        if (childrenSizes.length == 1) {
+            return unpack(0, file);
         }
-        if (this.childrenSizes[var1].length == 1) {
-            return this.unpack(var1, 0);
+        if (childrenSizes[file].length == 1) {
+            return unpack(file, 0);
         }
         throw new RuntimeException();
     }
 
-    public byte[] method899(int var1, int var2) {
-        if (var1 >= 0 && var1 < this.childrenSizes.length && this.childrenSizes[var1] != null && var2 >= 0 && var2 < this.childrenSizes[var1].length) {
-            if (this.childrenSizes[var1][var2] == null) {
-                boolean var3 = this.method905(var1, null);
+    public byte[] getFile(int group, int file) {
+        if (group >= 0 && group < childrenSizes.length && childrenSizes[group] != null && file >= 0 && file < childrenSizes[group].length) {
+            if (childrenSizes[group][file] == null) {
+                boolean var3 = init(group, null);
                 if (!var3) {
-                    this.method492(var1);
-                    var3 = this.method905(var1, null);
+                    load(group);
+                    var3 = init(group, null);
                     if (!var3) {
                         return null;
                     }
                 }
             }
 
-            return StockMarketOfferPriceComparator.method333(this.childrenSizes[var1][var2], false);
+            return StockMarketOfferPriceComparator.method333(childrenSizes[group][file], false);
         }
         return null;
     }
 
-    public boolean method913(int var1, int var2) {
-        if (var1 >= 0 && var1 < this.childrenSizes.length && this.childrenSizes[var1] != null && var2 >= 0 && var2 < this.childrenSizes[var1].length) {
-            if (this.childrenSizes[var1][var2] != null) {
+    public boolean load(int var1, int var2) {
+        if (var1 >= 0 && var1 < childrenSizes.length && childrenSizes[var1] != null && var2 >= 0 && var2 < childrenSizes[var1].length) {
+            if (childrenSizes[var1][var2] != null) {
                 return true;
             }
-            if (this.anObjectArray1239[var1] != null) {
+            if (groups[var1] != null) {
                 return true;
             }
-            this.method492(var1);
-            return this.anObjectArray1239[var1] != null;
+            load(var1);
+            return groups[var1] != null;
         }
         return false;
     }
 
-    void method492(int var1) {
+    void load(int var1) {
+
     }
 
     public byte[] method896(int var1) {
-        if (this.childrenSizes.length == 1) {
-            return this.method899(0, var1);
+        if (childrenSizes.length == 1) {
+            return getFile(0, var1);
         }
-        if (this.childrenSizes[var1].length == 1) {
-            return this.method899(var1, 0);
+        if (childrenSizes[var1].length == 1) {
+            return getFile(var1, 0);
         }
         throw new RuntimeException();
     }
 
     public boolean method911(int var1) {
-        if (this.anObjectArray1239[var1] != null) {
+        if (groups[var1] != null) {
             return true;
         }
-        this.method492(var1);
-        return this.anObjectArray1239[var1] != null;
+        load(var1);
+        return groups[var1] != null;
     }
 
-    public int method901(int var1) {
-        return this.childrenSizes[var1].length;
+    public int getFileCount(int var1) {
+        return childrenSizes[var1].length;
     }
 
-    int method497(int var1) {
-        return this.anObjectArray1239[var1] != null ? 100 : 0;
+    int getLoadingPercent(int var1) {
+        return groups[var1] != null ? 100 : 0;
     }
 
     void decode(byte[] var1) {
-        this.anInt1240 = NamePair.crc32(var1, var1.length);
+        hash = Buffer.crc32(var1, var1.length);
         Buffer buffer = new Buffer(decodeContainer(var1));
-        int var3 = buffer.readUByte();
+        int var3 = buffer.g1();
         if (var3 >= 5 && var3 <= 7) {
             if (var3 >= 6) {
-                buffer.readInt();
+                buffer.g4();
             }
 
-            int var4 = buffer.readUByte();
+            int var4 = buffer.g1();
             if (var3 >= 7) {
-                this.entryCount = buffer.method1035();
+                entryCount = buffer.g2else4();
             } else {
-                this.entryCount = buffer.readUShort();
+                entryCount = buffer.g2();
             }
 
             int var5 = 0;
             int var6 = -1;
-            this.entryIndices = new int[this.entryCount];
+            entryIndices = new int[entryCount];
             int var7;
             if (var3 >= 7) {
-                for (var7 = 0; var7 < this.entryCount; ++var7) {
-                    this.entryIndices[var7] = var5 += buffer.method1035();
-                    if (this.entryIndices[var7] > var6) {
-                        var6 = this.entryIndices[var7];
+                for (var7 = 0; var7 < entryCount; ++var7) {
+                    entryIndices[var7] = var5 += buffer.g2else4();
+                    if (entryIndices[var7] > var6) {
+                        var6 = entryIndices[var7];
                     }
                 }
             } else {
-                for (var7 = 0; var7 < this.entryCount; ++var7) {
-                    this.entryIndices[var7] = var5 += buffer.readUShort();
-                    if (this.entryIndices[var7] > var6) {
-                        var6 = this.entryIndices[var7];
+                for (var7 = 0; var7 < entryCount; ++var7) {
+                    entryIndices[var7] = var5 += buffer.g2();
+                    if (entryIndices[var7] > var6) {
+                        var6 = entryIndices[var7];
                     }
                 }
             }
 
-            this.anIntArray1245 = new int[var6 + 1];
-            this.anIntArray1246 = new int[var6 + 1];
-            this.childrenCounts = new int[var6 + 1];
-            this.childrenIndices = new int[var6 + 1][];
-            this.anObjectArray1239 = new Object[var6 + 1];
-            this.childrenSizes = new Object[var6 + 1][];
+            groupCrcs = new int[var6 + 1];
+            groupVersions = new int[var6 + 1];
+            childrenCounts = new int[var6 + 1];
+            childrenIndices = new int[var6 + 1][];
+            groups = new Object[var6 + 1];
+            childrenSizes = new Object[var6 + 1][];
             if (var4 != 0) {
-                this.anIntArray1248 = new int[var6 + 1];
+                groupNames = new int[var6 + 1];
 
-                for (var7 = 0; var7 < this.entryCount; ++var7) {
-                    this.anIntArray1248[this.entryIndices[var7]] = buffer.readInt();
+                for (var7 = 0; var7 < entryCount; ++var7) {
+                    groupNames[entryIndices[var7]] = buffer.g4();
                 }
 
-                this.entry = new IdentityTable(this.anIntArray1248);
+                entry = new IdentityTable(groupNames);
             }
 
-            for (var7 = 0; var7 < this.entryCount; ++var7) {
-                this.anIntArray1245[this.entryIndices[var7]] = buffer.readInt();
+            for (var7 = 0; var7 < entryCount; ++var7) {
+                groupCrcs[entryIndices[var7]] = buffer.g4();
             }
 
-            for (var7 = 0; var7 < this.entryCount; ++var7) {
-                this.anIntArray1246[this.entryIndices[var7]] = buffer.readInt();
+            for (var7 = 0; var7 < entryCount; ++var7) {
+                groupVersions[entryIndices[var7]] = buffer.g4();
             }
 
-            for (var7 = 0; var7 < this.entryCount; ++var7) {
-                this.childrenCounts[this.entryIndices[var7]] = buffer.readUShort();
+            for (var7 = 0; var7 < entryCount; ++var7) {
+                childrenCounts[entryIndices[var7]] = buffer.g2();
             }
 
             int var8;
@@ -256,55 +274,55 @@ public abstract class ReferenceTable {
             int var11;
             int var12;
             if (var3 >= 7) {
-                for (var7 = 0; var7 < this.entryCount; ++var7) {
-                    var8 = this.entryIndices[var7];
-                    var9 = this.childrenCounts[var8];
+                for (var7 = 0; var7 < entryCount; ++var7) {
+                    var8 = entryIndices[var7];
+                    var9 = childrenCounts[var8];
                     var5 = 0;
                     var10 = -1;
-                    this.childrenIndices[var8] = new int[var9];
+                    childrenIndices[var8] = new int[var9];
 
                     for (var11 = 0; var11 < var9; ++var11) {
-                        var12 = this.childrenIndices[var8][var11] = var5 += buffer.method1035();
+                        var12 = childrenIndices[var8][var11] = var5 += buffer.g2else4();
                         if (var12 > var10) {
                             var10 = var12;
                         }
                     }
 
-                    this.childrenSizes[var8] = new Object[var10 + 1];
+                    childrenSizes[var8] = new Object[var10 + 1];
                 }
             } else {
-                for (var7 = 0; var7 < this.entryCount; ++var7) {
-                    var8 = this.entryIndices[var7];
-                    var9 = this.childrenCounts[var8];
+                for (var7 = 0; var7 < entryCount; ++var7) {
+                    var8 = entryIndices[var7];
+                    var9 = childrenCounts[var8];
                     var5 = 0;
                     var10 = -1;
-                    this.childrenIndices[var8] = new int[var9];
+                    childrenIndices[var8] = new int[var9];
 
                     for (var11 = 0; var11 < var9; ++var11) {
-                        var12 = this.childrenIndices[var8][var11] = var5 += buffer.readUShort();
+                        var12 = childrenIndices[var8][var11] = var5 += buffer.g2();
                         if (var12 > var10) {
                             var10 = var12;
                         }
                     }
 
-                    this.childrenSizes[var8] = new Object[var10 + 1];
+                    childrenSizes[var8] = new Object[var10 + 1];
                 }
             }
 
             if (var4 != 0) {
-                this.childrenNames = new int[var6 + 1][];
-                this.children = new IdentityTable[var6 + 1];
+                childrenNames = new int[var6 + 1][];
+                children = new IdentityTable[var6 + 1];
 
-                for (var7 = 0; var7 < this.entryCount; ++var7) {
-                    var8 = this.entryIndices[var7];
-                    var9 = this.childrenCounts[var8];
-                    this.childrenNames[var8] = new int[this.childrenSizes[var8].length];
+                for (var7 = 0; var7 < entryCount; ++var7) {
+                    var8 = entryIndices[var7];
+                    var9 = childrenCounts[var8];
+                    childrenNames[var8] = new int[childrenSizes[var8].length];
 
                     for (var10 = 0; var10 < var9; ++var10) {
-                        this.childrenNames[var8][this.childrenIndices[var8][var10]] = buffer.readInt();
+                        childrenNames[var8][childrenIndices[var8][var10]] = buffer.g4();
                     }
 
-                    this.children[var8] = new IdentityTable(this.childrenNames[var8]);
+                    children[var8] = new IdentityTable(childrenNames[var8]);
                 }
             }
 
@@ -313,155 +331,157 @@ public abstract class ReferenceTable {
         }
     }
 
-    public boolean method893(String var1, String var2) {
-        var1 = var1.toLowerCase();
-        var2 = var2.toLowerCase();
-        int var3 = this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
-        int var4 = this.children[var3].get(WorldMapTileDecor_Sub2.method473(var2));
-        return this.method913(var3, var4);
+    public boolean load(String groupName, String fileName) {
+        groupName = groupName.toLowerCase();
+        fileName = fileName.toLowerCase();
+        int group = entry.get(djb2(groupName));
+        int file = children[group].get(djb2(fileName));
+        return load(group, file);
     }
 
     void method490(int var1) {
+
     }
 
-    public boolean method906(String var1, String var2) {
-        var1 = var1.toLowerCase();
-        var2 = var2.toLowerCase();
-        int var3 = this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
-        if (var3 < 0) {
+    public boolean validate(String groupName, String fileName) {
+        groupName = groupName.toLowerCase();
+        fileName = fileName.toLowerCase();
+        int group = entry.get(djb2(groupName));
+        if (group < 0) {
             return false;
         }
-        int var4 = this.children[var3].get(WorldMapTileDecor_Sub2.method473(var2));
-        return var4 >= 0;
+        int file = children[group].get(djb2(fileName));
+        return file >= 0;
     }
 
-    public int get(String var1) {
-        var1 = var1.toLowerCase();
-        return this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
+    public int getGroup(String name) {
+        name = name.toLowerCase();
+        return entry.get(djb2(name));
     }
 
-    public int method907(int var1, String var2) {
-        var2 = var2.toLowerCase();
-        return this.children[var1].get(WorldMapTileDecor_Sub2.method473(var2));
+    public int getFile(int index, String name) {
+        name = name.toLowerCase();
+        return children[index].get(djb2(name));
     }
 
-    public boolean method910(int var1) {
-        if (this.childrenSizes.length == 1) {
-            return this.method913(0, var1);
+    public boolean loadDynamic(int var1) {
+        if (childrenSizes.length == 1) {
+            return load(0, var1);
         }
-        if (this.childrenSizes[var1].length == 1) {
-            return this.method913(var1, 0);
+        if (childrenSizes[var1].length == 1) {
+            return load(var1, 0);
         }
         throw new RuntimeException();
     }
 
-    boolean method905(int var1, int[] var2) {
-        if (this.anObjectArray1239[var1] == null) {
+    boolean init(int group, int[] xtea) {
+        if (groups[group] == null) {
             return false;
         }
-        int var3 = this.childrenCounts[var1];
-        int[] var4 = this.childrenIndices[var1];
-        Object[] var5 = this.childrenSizes[var1];
-        boolean var6 = true;
 
-        for (int var7 = 0; var7 < var3; ++var7) {
-            if (var5[var4[var7]] == null) {
-                var6 = false;
+        int childrenCount = childrenCounts[group];
+        int[] childrenIndex = childrenIndices[group];
+        Object[] childrenSize = childrenSizes[group];
+        boolean present = true;
+        for (int i = 0; i < childrenCount; ++i) {
+            if (childrenSize[childrenIndex[i]] == null) {
+                present = false;
                 break;
             }
         }
 
-        if (var6) {
+        if (present) {
             return true;
         }
-        byte[] var8;
-        if (var2 != null && (var2[0] != 0 || var2[1] != 0 || var2[2] != 0 || var2[3] != 0)) {
-            var8 = StockMarketOfferPriceComparator.method333(this.anObjectArray1239[var1], true);
-            Buffer var9 = new Buffer(var8);
-            var9.method1069(var2, 5, var9.payload.length);
+
+        byte[] data;
+        if (xtea != null && (xtea[0] != 0 || xtea[1] != 0 || xtea[2] != 0 || xtea[3] != 0)) {
+            data = StockMarketOfferPriceComparator.method333(groups[group], true);
+            Buffer buffer = new Buffer(data);
+            buffer.tinyenc(xtea, 5, buffer.payload.length);
         } else {
-            var8 = StockMarketOfferPriceComparator.method333(this.anObjectArray1239[var1], false);
+            data = StockMarketOfferPriceComparator.method333(groups[group], false);
         }
 
-        byte[] var20 = decodeContainer(var8);
-        if (this.aBoolean1250) {
-            this.anObjectArray1239[var1] = null;
+        byte[] var20 = decodeContainer(data);
+        if (soft) {
+            groups[group] = null;
         }
 
-        if (var3 > 1) {
+        if (childrenCount > 1) {
             int var10 = var20.length;
             --var10;
             int var11 = var20[var10] & 255;
-            var10 -= var11 * var3 * 4;
+            var10 -= var11 * childrenCount * 4;
             Buffer var12 = new Buffer(var20);
-            int[] var13 = new int[var3];
-            var12.caret = var10;
+            int[] var13 = new int[childrenCount];
+            var12.pos = var10;
 
             int var15;
             int var16;
             for (int var14 = 0; var14 < var11; ++var14) {
                 var15 = 0;
 
-                for (var16 = 0; var16 < var3; ++var16) {
-                    var15 += var12.readInt();
+                for (var16 = 0; var16 < childrenCount; ++var16) {
+                    var15 += var12.g4();
                     var13[var16] += var15;
                 }
             }
 
-            byte[][] var17 = new byte[var3][];
+            byte[][] var17 = new byte[childrenCount][];
 
-            for (var15 = 0; var15 < var3; ++var15) {
+            for (var15 = 0; var15 < childrenCount; ++var15) {
                 var17[var15] = new byte[var13[var15]];
                 var13[var15] = 0;
             }
 
-            var12.caret = var10;
+            var12.pos = var10;
             var15 = 0;
 
             for (var16 = 0; var16 < var11; ++var16) {
                 int var18 = 0;
 
-                for (int var19 = 0; var19 < var3; ++var19) {
-                    var18 += var12.readInt();
+                for (int var19 = 0; var19 < childrenCount; ++var19) {
+                    var18 += var12.g4();
                     System.arraycopy(var20, var15, var17[var19], var13[var19], var18);
                     var13[var19] += var18;
                     var15 += var18;
                 }
             }
 
-            for (var16 = 0; var16 < var3; ++var16) {
-                if (!this.aBoolean1247) {
-                    var5[var4[var16]] = StockMarketMediator.method422(var17[var16]);
+            for (var16 = 0; var16 < childrenCount; ++var16) {
+                if (!shallow) {
+                    childrenSize[childrenIndex[var16]] = ByteBufferProvider.allocateDirect(var17[var16]);
                 } else {
-                    var5[var4[var16]] = var17[var16];
+                    childrenSize[childrenIndex[var16]] = var17[var16];
                 }
             }
-        } else if (!this.aBoolean1247) {
-            var5[var4[0]] = StockMarketMediator.method422(var20);
+        } else if (!shallow) {
+            childrenSize[childrenIndex[0]] = ByteBufferProvider.allocateDirect(var20);
         } else {
-            var5[var4[0]] = var20;
+            childrenSize[childrenIndex[0]] = var20;
         }
 
         return true;
     }
 
-    public byte[] method897(String var1, String var2) {
-        var1 = var1.toLowerCase();
-        var2 = var2.toLowerCase();
-        int var3 = this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
-        int var4 = this.children[var3].get(WorldMapTileDecor_Sub2.method473(var2));
-        return this.unpack(var3, var4);
+    public byte[] unpack(String groupName, String fileName) {
+        groupName = groupName.toLowerCase();
+        fileName = fileName.toLowerCase();
+        int group = entry.get(djb2(groupName));
+        int file = children[group].get(djb2(fileName));
+        return unpack(group, file);
     }
 
     public void method903() {
-        Arrays.fill(this.anObjectArray1239, null);
+        Arrays.fill(groups, null);
 
     }
 
     public void clear() {
-        for (int var1 = 0; var1 < this.childrenSizes.length; ++var1) {
-            if (this.childrenSizes[var1] != null) {
-                Arrays.fill(this.childrenSizes[var1], null);
+        for (Object[] childrenSize : childrenSizes) {
+            if (childrenSize != null) {
+                Arrays.fill(childrenSize, null);
             }
         }
 
@@ -470,10 +490,10 @@ public abstract class ReferenceTable {
     public boolean method908() {
         boolean var1 = true;
 
-        for (int var3 : this.entryIndices) {
-            if (this.anObjectArray1239[var3] == null) {
-                this.method492(var3);
-                if (this.anObjectArray1239[var3] == null) {
+        for (int var3 : entryIndices) {
+            if (groups[var3] == null) {
+                load(var3);
+                if (groups[var3] == null) {
                     var1 = false;
                 }
             }
@@ -484,26 +504,26 @@ public abstract class ReferenceTable {
 
     public boolean method909(String var1) {
         var1 = var1.toLowerCase();
-        int var2 = this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
-        return this.method911(var2);
+        int var2 = entry.get(djb2(var1));
+        return method911(var2);
     }
 
     public int method895(String var1) {
         var1 = var1.toLowerCase();
-        int var2 = this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
-        return this.method497(var2);
+        int var2 = entry.get(djb2(var1));
+        return getLoadingPercent(var2);
     }
 
     public void method914(int var1) {
-        Arrays.fill(this.childrenSizes[var1], null);
+        Arrays.fill(childrenSizes[var1], null);
 
     }
 
     public void method912(String var1) {
         var1 = var1.toLowerCase();
-        int var2 = this.entry.get(WorldMapTileDecor_Sub2.method473(var1));
+        int var2 = entry.get(djb2(var1));
         if (var2 >= 0) {
-            this.method490(var2);
+            method490(var2);
         }
     }
 }

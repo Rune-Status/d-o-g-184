@@ -1,61 +1,57 @@
 package jag.game.type;
 
-import jag.Varcs;
 import jag.audi.ObjectSound;
 import jag.commons.collection.DoublyLinkedNode;
 import jag.commons.collection.IterableNodeTable;
+import jag.commons.collection.Node;
 import jag.commons.collection.ReferenceCache;
-import jag.game.HealthBar;
 import jag.game.Vars;
 import jag.game.client;
-import jag.game.relationship.IgnoreListContext;
+import jag.game.scene.SceneGraph;
 import jag.game.scene.entity.Model;
 import jag.game.scene.entity.PlayerEntity;
 import jag.game.scene.entity.UnlitModel;
-import jag.game.stockmarket.StockMarketOfferWorldComparator;
 import jag.graphics.JagGraphics3D;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
 import jag.statics.Statics35;
 import jag.statics.Statics52;
-import jag.worldmap.WorldMapIcon_Sub1;
-import jag.worldmap.RectangularWorldMapAreaChunk;
 
 public class NpcDefinition extends DoublyLinkedNode {
 
-    public static final ReferenceCache cache;
-    public static final ReferenceCache modelCache;
+    public static final ReferenceCache<NpcDefinition> cache;
+    public static final ReferenceCache<Model> models;
     public static ReferenceTable table;
-    public static ReferenceTable aReferenceTable697;
+    public static ReferenceTable modelTable;
 
     static {
-        cache = new ReferenceCache(64);
-        modelCache = new ReferenceCache(50);
+        cache = new ReferenceCache<>(64);
+        models = new ReferenceCache<>(50);
     }
 
     public int[] transformIds;
     public String name;
     public int id;
     public int size;
-    public int idleAnimation;
-    public int walkAnimation;
-    public int anInt368;
-    public int anInt367;
+    public int idleStance;
+    public int walkStance;
+    public int turnLeftStance;
+    public int turnRightStance;
     public String[] actions;
     public boolean renderedOnMinimap;
-    public int anInt366;
-    public int anInt696;
+    public int turnAroundStance;
+    public int walkLeftStance;
     public int combatLevel;
     public boolean renderingPrioritized;
-    public int anInt702;
+    public int walkRightStance;
     public int prayerIcon;
-    public int anInt694;
-    public boolean aBoolean703;
-    public boolean aBoolean699;
-    public boolean aBoolean698;
-    public IterableNodeTable properties;
+    public int rotation;
+    public boolean interactable;
+    public boolean clickable;
+    public boolean follower;
+    public IterableNodeTable<? super Node> properties;
     public int varpbitIndex;
-    public int[] anIntArray691;
+    public int[] transformedModelIds;
     public int varpIndex;
     public int[] modelIds;
     public int scaleXY;
@@ -64,34 +60,34 @@ public class NpcDefinition extends DoublyLinkedNode {
     public short[] colors;
     public short[] newTextures;
     public short[] newColors;
-    public int anInt695;
-    public int anInt704;
+    public int ambience;
+    public int contrast;
 
     public NpcDefinition() {
-        this.name = "null";
-        this.size = 1;
-        this.idleAnimation = -1;
-        this.anInt368 = -1;
-        this.anInt367 = -1;
-        this.walkAnimation = -1;
-        this.anInt366 = -1;
-        this.anInt696 = -1;
-        this.anInt702 = -1;
-        this.actions = new String[5];
-        this.renderedOnMinimap = true;
-        this.combatLevel = -1;
-        this.scaleXY = 128;
-        this.scaleZ = 128;
-        this.renderingPrioritized = false;
-        this.anInt695 = 0;
-        this.anInt704 = 0;
-        this.prayerIcon = -1;
-        this.anInt694 = 32;
-        this.varpbitIndex = -1;
-        this.varpIndex = -1;
-        this.aBoolean703 = true;
-        this.aBoolean699 = true;
-        this.aBoolean698 = false;
+        name = "null";
+        size = 1;
+        idleStance = -1;
+        turnLeftStance = -1;
+        turnRightStance = -1;
+        walkStance = -1;
+        turnAroundStance = -1;
+        walkLeftStance = -1;
+        walkRightStance = -1;
+        actions = new String[5];
+        renderedOnMinimap = true;
+        combatLevel = -1;
+        scaleXY = 128;
+        scaleZ = 128;
+        renderingPrioritized = false;
+        ambience = 0;
+        contrast = 0;
+        prayerIcon = -1;
+        rotation = 32;
+        varpbitIndex = -1;
+        varpIndex = -1;
+        interactable = true;
+        clickable = true;
+        follower = false;
     }
 
     public static void method505(int var0, int var1, int var2, int var3, int var4, int var5, int var6) {
@@ -128,22 +124,22 @@ public class NpcDefinition extends DoublyLinkedNode {
             var10 = var15;
         }
 
-        StockMarketOfferWorldComparator.cameraX = var0 - var10;
-        Varcs.cameraZ = var1 - var11;
-        WorldMapIcon_Sub1.cameraY = var2 - var12;
-        IgnoreListContext.cameraPitch = var3;
-        RectangularWorldMapAreaChunk.cameraYaw = var4;
-        if (client.anInt988 == 1 && client.rights >= 2 && client.engineCycle % 50 == 0 && (ObjectSound.anInt371 >> 7 != PlayerEntity.local.fineX >> 7 || Statics52.anInt498 >> 7 != PlayerEntity.local.fineY >> 7)) {
-            var13 = PlayerEntity.local.anInt1473;
-            var14 = client.baseX + (ObjectSound.anInt371 >> 7);
-            var15 = client.baseY + (Statics52.anInt498 >> 7);
-            Statics35.method1171(var14, var15, var13, true);
+        SceneGraph.cameraX = var0 - var10;
+        SceneGraph.cameraZ = var1 - var11;
+        SceneGraph.cameraY = var2 - var12;
+        SceneGraph.cameraPitch = var3;
+        SceneGraph.cameraYaw = var4;
+        if (client.oculusOrbState == 1 && client.rights >= 2 && client.engineCycle % 50 == 0 && (ObjectSound.oculusOrbAbsoluteX >> 7 != PlayerEntity.local.absoluteX >> 7 || Statics52.oculusOrbAbsoluteY >> 7 != PlayerEntity.local.absoluteY >> 7)) {
+            var13 = PlayerEntity.local.floorLevel;
+            var14 = client.baseX + (ObjectSound.oculusOrbAbsoluteX >> 7);
+            var15 = client.baseY + (Statics52.oculusOrbAbsoluteY >> 7);
+            Statics35.teleport(var14, var15, var13, true);
         }
 
     }
 
     public static NpcDefinition get(int id) {
-        NpcDefinition var2 = (NpcDefinition) cache.get(id);
+        NpcDefinition var2 = cache.get(id);
         if (var2 != null) {
             return var2;
         }
@@ -154,160 +150,160 @@ public class NpcDefinition extends DoublyLinkedNode {
             var2.decode(new Buffer(var3));
         }
 
-        var2.method254();
+        var2.init();
         cache.put(var2, id);
         return var2;
     }
 
     public final NpcDefinition transform() {
         int var1 = -1;
-        if (this.varpbitIndex != -1) {
-            var1 = Varbit.get(this.varpbitIndex);
-        } else if (this.varpIndex != -1) {
-            var1 = Vars.values[this.varpIndex];
+        if (varpbitIndex != -1) {
+            var1 = Varbit.get(varpbitIndex);
+        } else if (varpIndex != -1) {
+            var1 = Vars.values[varpIndex];
         }
 
         int var2;
-        if (var1 >= 0 && var1 < this.transformIds.length - 1) {
-            var2 = this.transformIds[var1];
+        if (var1 >= 0 && var1 < transformIds.length - 1) {
+            var2 = transformIds[var1];
         } else {
-            var2 = this.transformIds[this.transformIds.length - 1];
+            var2 = transformIds[transformIds.length - 1];
         }
 
         return var2 != -1 ? get(var2) : null;
     }
 
-    public void decodeOpcode(Buffer buffer, int opcode) {
+    public void decode(Buffer buffer, int opcode) {
         int var3;
         int var4;
         if (opcode == 1) {
-            var3 = buffer.readUByte();
-            this.modelIds = new int[var3];
+            var3 = buffer.g1();
+            modelIds = new int[var3];
 
             for (var4 = 0; var4 < var3; ++var4) {
-                this.modelIds[var4] = buffer.readUShort();
+                modelIds[var4] = buffer.g2();
             }
         } else if (opcode == 2) {
-            this.name = buffer.readString();
+            name = buffer.gstr();
         } else if (opcode == 12) {
-            this.size = buffer.readUByte();
+            size = buffer.g1();
         } else if (opcode == 13) {
-            this.idleAnimation = buffer.readUShort();
+            idleStance = buffer.g2();
         } else if (opcode == 14) {
-            this.walkAnimation = buffer.readUShort();
+            walkStance = buffer.g2();
         } else if (opcode == 15) {
-            this.anInt368 = buffer.readUShort();
+            turnLeftStance = buffer.g2();
         } else if (opcode == 16) {
-            this.anInt367 = buffer.readUShort();
+            turnRightStance = buffer.g2();
         } else if (opcode == 17) {
-            this.walkAnimation = buffer.readUShort();
-            this.anInt366 = buffer.readUShort();
-            this.anInt696 = buffer.readUShort();
-            this.anInt702 = buffer.readUShort();
+            walkStance = buffer.g2();
+            turnAroundStance = buffer.g2();
+            walkLeftStance = buffer.g2();
+            walkRightStance = buffer.g2();
         } else if (opcode >= 30 && opcode < 35) {
-            this.actions[opcode - 30] = buffer.readString();
-            if (this.actions[opcode - 30].equalsIgnoreCase("Hidden")) {
-                this.actions[opcode - 30] = null;
+            actions[opcode - 30] = buffer.gstr();
+            if (actions[opcode - 30].equalsIgnoreCase("Hidden")) {
+                actions[opcode - 30] = null;
             }
         } else if (opcode == 40) {
-            var3 = buffer.readUByte();
-            this.textures = new short[var3];
-            this.newTextures = new short[var3];
+            var3 = buffer.g1();
+            textures = new short[var3];
+            newTextures = new short[var3];
 
             for (var4 = 0; var4 < var3; ++var4) {
-                this.textures[var4] = (short) buffer.readUShort();
-                this.newTextures[var4] = (short) buffer.readUShort();
+                textures[var4] = (short) buffer.g2();
+                newTextures[var4] = (short) buffer.g2();
             }
         } else if (opcode == 41) {
-            var3 = buffer.readUByte();
-            this.colors = new short[var3];
-            this.newColors = new short[var3];
+            var3 = buffer.g1();
+            colors = new short[var3];
+            newColors = new short[var3];
 
             for (var4 = 0; var4 < var3; ++var4) {
-                this.colors[var4] = (short) buffer.readUShort();
-                this.newColors[var4] = (short) buffer.readUShort();
+                colors[var4] = (short) buffer.g2();
+                newColors[var4] = (short) buffer.g2();
             }
         } else if (opcode == 60) {
-            var3 = buffer.readUByte();
-            this.anIntArray691 = new int[var3];
+            var3 = buffer.g1();
+            transformedModelIds = new int[var3];
 
             for (var4 = 0; var4 < var3; ++var4) {
-                this.anIntArray691[var4] = buffer.readUShort();
+                transformedModelIds[var4] = buffer.g2();
             }
         } else if (opcode == 93) {
-            this.renderedOnMinimap = false;
+            renderedOnMinimap = false;
         } else if (opcode == 95) {
-            this.combatLevel = buffer.readUShort();
+            combatLevel = buffer.g2();
         } else if (opcode == 97) {
-            this.scaleXY = buffer.readUShort();
+            scaleXY = buffer.g2();
         } else if (opcode == 98) {
-            this.scaleZ = buffer.readUShort();
+            scaleZ = buffer.g2();
         } else if (opcode == 99) {
-            this.renderingPrioritized = true;
+            renderingPrioritized = true;
         } else if (opcode == 100) {
-            this.anInt695 = buffer.readByte();
+            ambience = buffer.g1b();
         } else if (opcode == 101) {
-            this.anInt704 = buffer.readByte();
+            contrast = buffer.g1b();
         } else if (opcode == 102) {
-            this.prayerIcon = buffer.readUShort();
+            prayerIcon = buffer.g2();
         } else if (opcode == 103) {
-            this.anInt694 = buffer.readUShort();
+            rotation = buffer.g2();
         } else if (opcode != 106 && opcode != 118) {
             if (opcode == 107) {
-                this.aBoolean703 = false;
+                interactable = false;
             } else if (opcode == 109) {
-                this.aBoolean699 = false;
+                clickable = false;
             } else if (opcode == 111) {
-                this.aBoolean698 = true;
+                follower = true;
             } else if (opcode == 249) {
-                this.properties = IterableNodeTable.read(buffer, this.properties);
+                properties = IterableNodeTable.decode(buffer, properties);
             }
         } else {
-            this.varpbitIndex = buffer.readUShort();
-            if (this.varpbitIndex == 65535) {
-                this.varpbitIndex = -1;
+            varpbitIndex = buffer.g2();
+            if (varpbitIndex == 65535) {
+                varpbitIndex = -1;
             }
 
-            this.varpIndex = buffer.readUShort();
-            if (this.varpIndex == 65535) {
-                this.varpIndex = -1;
+            varpIndex = buffer.g2();
+            if (varpIndex == 65535) {
+                varpIndex = -1;
             }
 
             var3 = -1;
             if (opcode == 118) {
-                var3 = buffer.readUShort();
+                var3 = buffer.g2();
                 if (var3 == 65535) {
                     var3 = -1;
                 }
             }
 
-            var4 = buffer.readUByte();
-            this.transformIds = new int[var4 + 2];
+            var4 = buffer.g1();
+            transformIds = new int[var4 + 2];
 
             for (int var5 = 0; var5 <= var4; ++var5) {
-                this.transformIds[var5] = buffer.readUShort();
-                if (this.transformIds[var5] == 65535) {
-                    this.transformIds[var5] = -1;
+                transformIds[var5] = buffer.g2();
+                if (transformIds[var5] == 65535) {
+                    transformIds[var5] = -1;
                 }
             }
 
-            this.transformIds[var4 + 1] = var3;
+            transformIds[var4 + 1] = var3;
         }
 
     }
 
-    public final UnlitModel method507() {
-        if (this.transformIds != null) {
-            NpcDefinition var1 = this.transform();
-            return var1 == null ? null : var1.method507();
+    public final UnlitModel getBaseModel() {
+        if (transformIds != null) {
+            NpcDefinition var1 = transform();
+            return var1 == null ? null : var1.getBaseModel();
         }
-        if (this.anIntArray691 == null) {
+        if (transformedModelIds == null) {
             return null;
         }
         boolean var2 = false;
 
-        for (int anAnIntArray691 : this.anIntArray691) {
-            if (!aReferenceTable697.method913(anAnIntArray691, 0)) {
+        for (int id : transformedModelIds) {
+            if (!modelTable.load(id, 0)) {
                 var2 = true;
             }
         }
@@ -315,10 +311,10 @@ public class NpcDefinition extends DoublyLinkedNode {
         if (var2) {
             return null;
         }
-        UnlitModel[] var4 = new UnlitModel[this.anIntArray691.length];
+        UnlitModel[] var4 = new UnlitModel[transformedModelIds.length];
 
-        for (int var5 = 0; var5 < this.anIntArray691.length; ++var5) {
-            var4[var5] = UnlitModel.method982(aReferenceTable697, this.anIntArray691[var5], 0);
+        for (int var5 = 0; var5 < transformedModelIds.length; ++var5) {
+            var4[var5] = UnlitModel.method982(modelTable, transformedModelIds[var5], 0);
         }
 
         UnlitModel var6;
@@ -329,15 +325,15 @@ public class NpcDefinition extends DoublyLinkedNode {
         }
 
         int var7;
-        if (this.textures != null) {
-            for (var7 = 0; var7 < this.textures.length; ++var7) {
-                var6.texturize(this.textures[var7], this.newTextures[var7]);
+        if (textures != null) {
+            for (var7 = 0; var7 < textures.length; ++var7) {
+                var6.texturize(textures[var7], newTextures[var7]);
             }
         }
 
-        if (this.colors != null) {
-            for (var7 = 0; var7 < this.colors.length; ++var7) {
-                var6.colorize(this.colors[var7], this.newColors[var7]);
+        if (colors != null) {
+            for (var7 = 0; var7 < colors.length; ++var7) {
+                var6.colorize(colors[var7], newColors[var7]);
             }
         }
 
@@ -345,17 +341,17 @@ public class NpcDefinition extends DoublyLinkedNode {
     }
 
     public final Model getModel(AnimationSequence anim, int animFrame, AnimationSequence stance, int stanceFrame) {
-        if (this.transformIds != null) {
-            NpcDefinition trans = this.transform();
+        if (transformIds != null) {
+            NpcDefinition trans = transform();
             return trans == null ? null : trans.getModel(anim, animFrame, stance, stanceFrame);
         }
 
-        Model staticModel = (Model) modelCache.get(this.id);
+        Model staticModel = models.get(id);
         if (staticModel == null) {
             boolean var6 = false;
 
-            for (int modelId : this.modelIds) {
-                if (!aReferenceTable697.method913(modelId, 0)) {
+            for (int modelId : modelIds) {
+                if (!modelTable.load(modelId, 0)) {
                     var6 = true;
                 }
             }
@@ -364,10 +360,10 @@ public class NpcDefinition extends DoublyLinkedNode {
                 return null;
             }
 
-            UnlitModel[] unlit = new UnlitModel[this.modelIds.length];
+            UnlitModel[] unlit = new UnlitModel[modelIds.length];
 
-            for (int i = 0; i < this.modelIds.length; ++i) {
-                unlit[i] = UnlitModel.method982(aReferenceTable697, this.modelIds[i], 0);
+            for (int i = 0; i < modelIds.length; ++i) {
+                unlit[i] = UnlitModel.method982(modelTable, modelIds[i], 0);
             }
 
             UnlitModel base;
@@ -377,20 +373,20 @@ public class NpcDefinition extends DoublyLinkedNode {
                 base = new UnlitModel(unlit, unlit.length);
             }
 
-            if (this.textures != null) {
-                for (int i = 0; i < this.textures.length; ++i) {
-                    base.texturize(this.textures[i], this.newTextures[i]);
+            if (textures != null) {
+                for (int i = 0; i < textures.length; ++i) {
+                    base.texturize(textures[i], newTextures[i]);
                 }
             }
 
-            if (this.colors != null) {
-                for (int i = 0; i < this.colors.length; ++i) {
-                    base.colorize(this.colors[i], this.newColors[i]);
+            if (colors != null) {
+                for (int i = 0; i < colors.length; ++i) {
+                    base.colorize(colors[i], newColors[i]);
                 }
             }
 
-            staticModel = base.light(this.anInt695 + 64, this.anInt704 * 5 + 850, -30, -50, -30);
-            modelCache.put(staticModel, this.id);
+            staticModel = base.light(ambience + 64, contrast * 5 + 850, -30, -50, -30);
+            models.put(staticModel, id);
         }
 
         Model model;
@@ -404,49 +400,49 @@ public class NpcDefinition extends DoublyLinkedNode {
             model = staticModel.method1291(true);
         }
 
-        if (this.scaleXY != 128 || this.scaleZ != 128) {
-            model.scale(this.scaleXY, this.scaleZ, this.scaleXY);
+        if (scaleXY != 128 || scaleZ != 128) {
+            model.scale(scaleXY, scaleZ, scaleXY);
         }
 
         return model;
     }
 
-    public void method254() {
+    public void init() {
     }
 
-    public void decode(Buffer var1) {
+    public void decode(Buffer buffer) {
         while (true) {
-            int var2 = var1.readUByte();
-            if (var2 == 0) {
+            int opcode = buffer.g1();
+            if (opcode == 0) {
                 return;
             }
 
-            this.decodeOpcode(var1, var2);
+            decode(buffer, opcode);
         }
     }
 
     public boolean validate() {
-        if (this.transformIds == null) {
+        if (transformIds == null) {
             return true;
         }
         int var1 = -1;
-        if (this.varpbitIndex != -1) {
-            var1 = Varbit.get(this.varpbitIndex);
-        } else if (this.varpIndex != -1) {
-            var1 = Vars.values[this.varpIndex];
+        if (varpbitIndex != -1) {
+            var1 = Varbit.get(varpbitIndex);
+        } else if (varpIndex != -1) {
+            var1 = Vars.values[varpIndex];
         }
 
-        if (var1 >= 0 && var1 < this.transformIds.length) {
-            return this.transformIds[var1] != -1;
+        if (var1 >= 0 && var1 < transformIds.length) {
+            return transformIds[var1] != -1;
         }
-        return this.transformIds[this.transformIds.length - 1] != -1;
+        return transformIds[transformIds.length - 1] != -1;
     }
 
     public int method511(int var1, int var2) {
-        return HealthBar.method696(this.properties, var1, var2);
+        return IterableNodeTable.getIntParameter(properties, var1, var2);
     }
 
     public String method504(int var1, String var2) {
-        return IterableNodeTable.getStringParameter(this.properties, var1, var2);
+        return IterableNodeTable.getStringParameter(properties, var1, var2);
     }
 }

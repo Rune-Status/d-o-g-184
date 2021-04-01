@@ -9,12 +9,12 @@ import java.awt.*;
 
 public class TileOverlay extends DoublyLinkedNode {
 
-    public static final ReferenceCache aReferenceCache385;
-    public static ReferenceTable aReferenceTable383;
+    public static final ReferenceCache<TileOverlay> cache;
+    public static ReferenceTable table;
     public static FontMetrics aFontMetrics1467;
 
     static {
-        aReferenceCache385 = new ReferenceCache(64);
+        cache = new ReferenceCache<>(64);
     }
 
     public int anInt112;
@@ -29,10 +29,10 @@ public class TileOverlay extends DoublyLinkedNode {
     public int anInt367;
 
     public TileOverlay() {
-        this.anInt378 = 0;
-        this.anInt377 = -1;
-        this.aBoolean502 = true;
-        this.anInt112 = -1;
+        anInt378 = 0;
+        anInt377 = -1;
+        aBoolean502 = true;
+        anInt112 = -1;
     }
 
     public static String method1009(CharSequence[] var0, int var1, int var2) {
@@ -71,16 +71,16 @@ public class TileOverlay extends DoublyLinkedNode {
 
     void decode(Buffer var1, int var2) {
         if (var2 == 1) {
-            this.anInt378 = var1.readMediumInt();
+            anInt378 = var1.g3();
         } else if (var2 == 2) {
-            this.anInt377 = var1.readUByte();
+            anInt377 = var1.g1();
         } else if (var2 == 5) {
-            this.aBoolean502 = false;
+            aBoolean502 = false;
         } else if (var2 == 7) {
-            this.anInt112 = var1.readMediumInt();
+            anInt112 = var1.g3();
         } else if (var2 == 8) {
-        }
 
+        }
     }
 
     void method1007(int var1) {
@@ -127,42 +127,41 @@ public class TileOverlay extends DoublyLinkedNode {
         }
 
         var12 /= 6.0D;
-        this.anInt375 = (int) (256.0D * var12);
-        this.anInt372 = (int) (256.0D * var14);
-        this.anInt379 = (int) (var16 * 256.0D);
-        if (this.anInt372 < 0) {
-            this.anInt372 = 0;
-        } else if (this.anInt372 > 255) {
-            this.anInt372 = 255;
+        anInt375 = (int) (256.0D * var12);
+        anInt372 = (int) (256.0D * var14);
+        anInt379 = (int) (var16 * 256.0D);
+        if (anInt372 < 0) {
+            anInt372 = 0;
+        } else if (anInt372 > 255) {
+            anInt372 = 255;
         }
 
-        if (this.anInt379 < 0) {
-            this.anInt379 = 0;
-        } else if (this.anInt379 > 255) {
-            this.anInt379 = 255;
+        if (anInt379 < 0) {
+            anInt379 = 0;
+        } else if (anInt379 > 255) {
+            anInt379 = 255;
         }
 
     }
 
     public void method499() {
-        if (this.anInt112 != -1) {
-            this.method1007(this.anInt112);
-            this.anInt564 = this.anInt375;
-            this.anInt368 = this.anInt372;
-            this.anInt367 = this.anInt379;
+        if (anInt112 != -1) {
+            method1007(anInt112);
+            anInt564 = anInt375;
+            anInt368 = anInt372;
+            anInt367 = anInt379;
         }
 
-        this.method1007(this.anInt378);
+        method1007(anInt378);
     }
 
-    public void decode(Buffer var1) {
+    public void decode(Buffer buffer) {
         while (true) {
-            int var3 = var1.readUByte();
-            if (var3 == 0) {
+            int opcode = buffer.g1();
+            if (opcode == 0) {
                 return;
             }
-
-            this.decode(var1, var3);
+            decode(buffer, opcode);
         }
     }
 }

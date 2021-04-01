@@ -24,15 +24,15 @@ public class CacheRequest extends Node {
             CacheRequestWorker.requests.add(request);
         }
 
-        synchronized (CacheRequestWorker.anObject1463) {
-            if (CacheRequestWorker.anInt1464 == 0) {
+        synchronized (CacheRequestWorker.mutex) {
+            if (CacheRequestWorker.state == 0) {
                 CacheRequestWorker.thread = new Thread(new CacheRequestWorker());
                 CacheRequestWorker.thread.setDaemon(true);
                 CacheRequestWorker.thread.start();
                 CacheRequestWorker.thread.setPriority(5);
             }
 
-            CacheRequestWorker.anInt1464 = 600;
+            CacheRequestWorker.state = 600;
         }
     }
 }

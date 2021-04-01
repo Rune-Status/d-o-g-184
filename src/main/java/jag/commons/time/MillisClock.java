@@ -1,7 +1,5 @@
 package jag.commons.time;
 
-import jag.game.GameEngine;
-
 public class MillisClock extends Clock {
     final long[] aLongArray820;
     int anInt821;
@@ -15,7 +13,7 @@ public class MillisClock extends Clock {
         this.anInt821 = 256;
         this.anInt819 = 1;
         this.anInt817 = 0;
-        this.aLong818 = GameEngine.currentTime();
+        this.aLong818 = Clock.now();
 
         for (int var1 = 0; var1 < 10; ++var1) {
             this.aLongArray820[var1] = this.aLong818;
@@ -23,17 +21,17 @@ public class MillisClock extends Clock {
 
     }
 
-    public int sleep(int var1, int var2) {
+    public int sleep(int time, int var2) {
         int var3 = this.anInt821;
         int var4 = this.anInt819;
         this.anInt821 = 300;
         this.anInt819 = 1;
-        this.aLong818 = GameEngine.currentTime();
+        this.aLong818 = Clock.now();
         if (0L == this.aLongArray820[this.anInt816]) {
             this.anInt821 = var3;
             this.anInt819 = var4;
         } else if (this.aLong818 > this.aLongArray820[this.anInt816]) {
-            this.anInt821 = (int) ((long) (var1 * 2560) / (this.aLong818 - this.aLongArray820[this.anInt816]));
+            this.anInt821 = (int) ((long) (time * 2560) / (this.aLong818 - this.aLongArray820[this.anInt816]));
         }
 
         if (this.anInt821 < 25) {
@@ -42,11 +40,11 @@ public class MillisClock extends Clock {
 
         if (this.anInt821 > 256) {
             this.anInt821 = 256;
-            this.anInt819 = (int) ((long) var1 - (this.aLong818 - this.aLongArray820[this.anInt816]) / 10L);
+            this.anInt819 = (int) ((long) time - (this.aLong818 - this.aLongArray820[this.anInt816]) / 10L);
         }
 
-        if (this.anInt819 > var1) {
-            this.anInt819 = var1;
+        if (this.anInt819 > time) {
+            this.anInt819 = time;
         }
 
         this.aLongArray820[this.anInt816] = this.aLong818;

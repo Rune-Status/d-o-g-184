@@ -15,10 +15,10 @@ public class PacketBuffer extends Buffer {
     }
 
     public void bitAccess() {
-        this.bitCaret = super.caret * 8;
+        this.bitCaret = super.pos * 8;
     }
 
-    public int method1398(int var1) {
+    public int g(int var1) {
         int var2 = this.bitCaret >> 3;
         int var3 = 8 - (this.bitCaret & 7);
         int var4 = 0;
@@ -38,15 +38,15 @@ public class PacketBuffer extends Buffer {
     }
 
     public boolean method258() {
-        int var1 = super.payload[super.caret] - this.cipher.peek() & 255;
+        int var1 = super.payload[super.pos] - this.cipher.peek() & 255;
         return var1 >= 128;
     }
 
     public void byteAccess() {
-        super.caret = (this.bitCaret + 7) / 8;
+        super.pos = (this.bitCaret + 7) / 8;
     }
 
-    public int method1394(int var1) {
+    public int rem(int var1) {
         return var1 * 8 - this.bitCaret;
     }
 
@@ -55,26 +55,26 @@ public class PacketBuffer extends Buffer {
     }
 
     public void writeHeader(int var1) {
-        super.payload[++super.caret - 1] = (byte) (var1 + this.cipher.pop());
+        super.payload[++super.pos - 1] = (byte) (var1 + this.cipher.pop());
     }
 
     public void method1397(byte[] var1, int var2, int var3) {
         for (int var4 = 0; var4 < var3; ++var4) {
-            var1[var4 + var2] = (byte) (super.payload[++super.caret - 1] - this.cipher.pop());
+            var1[var4 + var2] = (byte) (super.payload[++super.pos - 1] - this.cipher.pop());
         }
 
     }
 
     public int readHeader() {
-        return super.payload[++super.caret - 1] - this.cipher.pop() & 255;
+        return super.payload[++super.pos - 1] - this.cipher.pop() & 255;
     }
 
     public int method1396() {
-        int var1 = super.payload[++super.caret - 1] - this.cipher.pop() & 255;
-        return var1 < 128 ? var1 : (var1 - 128 << 8) + (super.payload[++super.caret - 1] - this.cipher.pop() & 255);
+        int var1 = super.payload[++super.pos - 1] - this.cipher.pop() & 255;
+        return var1 < 128 ? var1 : (var1 - 128 << 8) + (super.payload[++super.pos - 1] - this.cipher.pop() & 255);
     }
 
-    public void method1399(int[] var1) {
+    public void setCipher(int[] var1) {
         this.cipher = new IsaacCipher(var1);
     }
 }

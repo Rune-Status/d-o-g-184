@@ -3,10 +3,6 @@ package jag.game.relationship;
 import jag.game.client;
 import jag.opcode.OutgoingPacket;
 import jag.opcode.OutgoingPacketMeta;
-import jag.statics.Statics4;
-
-import java.io.File;
-import java.io.RandomAccessFile;
 
 public class AssociateComparatorByMyWorld extends AssociateComparator {
 
@@ -27,11 +23,11 @@ public class AssociateComparatorByMyWorld extends AssociateComparator {
         }
 
         if (client.gameState >= 25) {
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.GAME_BOUNDS, client.connectionContext.encryptor);
-            packet.buffer.writeByte(client.isResizable());
-            packet.buffer.writeShort(client.canvasWidth);
-            packet.buffer.writeShort(client.canvasHeight);
-            client.connectionContext.writeLater(packet);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.GAME_BOUNDS, client.netWriter.encryptor);
+            packet.buffer.p1(client.isResizable());
+            packet.buffer.p2(client.canvasWidth);
+            packet.buffer.p2(client.canvasHeight);
+            client.netWriter.writeLater(packet);
         }
 
     }

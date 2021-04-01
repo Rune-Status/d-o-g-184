@@ -22,8 +22,8 @@ public final class PendingSpawn extends Node {
     public int anInt112;
 
     public PendingSpawn() {
-        this.delay = 0;
-        this.hitpoints = -1;
+        delay = 0;
+        hitpoints = -1;
     }
 
     public static void pushLater(int var0, int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8) {

@@ -20,38 +20,39 @@ public final class TileModel {
         anIntArrayArray1536 = new int[][]{{0, 1, 2, 3, 0, 0, 1, 3}, {1, 1, 2, 3, 1, 0, 1, 3}, {0, 1, 2, 3, 1, 0, 1, 3}, {0, 0, 1, 2, 0, 0, 2, 4, 1, 0, 4, 3}, {0, 0, 1, 4, 0, 0, 4, 3, 1, 1, 2, 4}, {0, 0, 4, 3, 1, 0, 1, 2, 1, 0, 2, 4}, {0, 1, 2, 4, 1, 0, 1, 4, 1, 0, 4, 3}, {0, 4, 1, 2, 0, 4, 2, 5, 1, 0, 4, 5, 1, 0, 5, 3}, {0, 4, 1, 2, 0, 4, 2, 3, 0, 4, 3, 5, 1, 0, 4, 5}, {0, 0, 4, 5, 1, 4, 1, 2, 1, 4, 2, 3, 1, 4, 3, 5}, {0, 0, 1, 5, 0, 1, 4, 5, 0, 1, 2, 4, 1, 0, 5, 3, 1, 5, 4, 3, 1, 4, 2, 3}, {1, 0, 1, 5, 1, 1, 4, 5, 1, 1, 2, 4, 0, 0, 5, 3, 0, 5, 4, 3, 0, 4, 2, 3}, {1, 0, 5, 4, 1, 0, 1, 5, 0, 0, 4, 3, 0, 4, 5, 3, 0, 5, 2, 3, 0, 1, 2, 5}};
     }
 
-    public int[] anIntArray1552;
+    public int[] xVertices;
     public boolean flatShade;
     public int[] anIntArray1543;
     public int shape;
-    public int[] anIntArray1541;
+    public int[] yVertices;
     public int rotation;
     public int[] anIntArray1540;
     public int underlay;
     public int[] anIntArray1551;
-    public int[] anIntArray1548;
+    public int[] zVertices;
     public int overlay;
-    public int[] anIntArray1539;
+    public int[] triangleTexture;
     public int[] anIntArray1547;
     public int[] anIntArray1544;
     public int[] anIntArray1542;
 
-    public TileModel(int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10, int var11, int var12, int var13, int var14, int var15, int var16, int var17, int var18, int var19) {
-        this.flatShade = var7 == var6 && var8 == var6 && var9 == var6;
+    public TileModel(int shape, int rotation, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10, int var11, int var12, int var13, int var14, int var15, int var16, int var17, int underlay, int overlay) {
+        flatShade = var7 == var6 && var8 == var6 && var9 == var6;
 
-        this.shape = var1;
-        this.rotation = var2;
-        this.underlay = var18;
-        this.overlay = var19;
+        this.shape = shape;
+        this.rotation = rotation;
+        this.underlay = underlay;
+        this.overlay = overlay;
+
         short var20 = 128;
         int var21 = var20 / 2;
         int var22 = var20 / 4;
         int var23 = var20 * 3 / 4;
-        int[] var24 = anIntArrayArray1545[var1];
+        int[] var24 = anIntArrayArray1545[shape];
         int var25 = var24.length;
-        this.anIntArray1552 = new int[var25];
-        this.anIntArray1541 = new int[var25];
-        this.anIntArray1548 = new int[var25];
+        xVertices = new int[var25];
+        yVertices = new int[var25];
+        zVertices = new int[var25];
         int[] var26 = new int[var25];
         int[] var27 = new int[var25];
         int var28 = var20 * var4;
@@ -66,15 +67,15 @@ public final class TileModel {
         for (int var30 = 0; var30 < var25; ++var30) {
             var31 = var24[var30];
             if ((var31 & 1) == 0 && var31 <= 8) {
-                var31 = (var31 - var2 - var2 - 1 & 7) + 1;
+                var31 = (var31 - rotation - rotation - 1 & 7) + 1;
             }
 
             if (var31 > 8 && var31 <= 12) {
-                var31 = (var31 - 9 - var2 & 3) + 9;
+                var31 = (var31 - 9 - rotation & 3) + 9;
             }
 
             if (var31 > 12 && var31 <= 16) {
-                var31 = (var31 - 13 - var2 & 3) + 13;
+                var31 = (var31 - 13 - rotation & 3) + 13;
             }
 
             if (var31 == 1) {
@@ -175,23 +176,23 @@ public final class TileModel {
                 var36 = var17;
             }
 
-            this.anIntArray1552[var30] = var32;
-            this.anIntArray1541[var30] = var34;
-            this.anIntArray1548[var30] = var33;
+            xVertices[var30] = var32;
+            yVertices[var30] = var34;
+            zVertices[var30] = var33;
             var26[var30] = var35;
             var27[var30] = var36;
         }
 
-        int[] var37 = anIntArrayArray1536[var1];
+        int[] var37 = anIntArrayArray1536[shape];
         var31 = var37.length / 4;
-        this.anIntArray1543 = new int[var31];
-        this.anIntArray1540 = new int[var31];
-        this.anIntArray1551 = new int[var31];
-        this.anIntArray1547 = new int[var31];
-        this.anIntArray1544 = new int[var31];
-        this.anIntArray1542 = new int[var31];
+        anIntArray1543 = new int[var31];
+        anIntArray1540 = new int[var31];
+        anIntArray1551 = new int[var31];
+        anIntArray1547 = new int[var31];
+        anIntArray1544 = new int[var31];
+        anIntArray1542 = new int[var31];
         if (var3 != -1) {
-            this.anIntArray1539 = new int[var31];
+            triangleTexture = new int[var31];
         }
 
         var32 = 0;
@@ -203,33 +204,33 @@ public final class TileModel {
             int var38 = var37[var32 + 3];
             var32 += 4;
             if (var35 < 4) {
-                var35 = var35 - var2 & 3;
+                var35 = var35 - rotation & 3;
             }
 
             if (var36 < 4) {
-                var36 = var36 - var2 & 3;
+                var36 = var36 - rotation & 3;
             }
 
             if (var38 < 4) {
-                var38 = var38 - var2 & 3;
+                var38 = var38 - rotation & 3;
             }
 
-            this.anIntArray1543[var33] = var35;
-            this.anIntArray1540[var33] = var36;
-            this.anIntArray1551[var33] = var38;
+            anIntArray1543[var33] = var35;
+            anIntArray1540[var33] = var36;
+            anIntArray1551[var33] = var38;
             if (var34 == 0) {
-                this.anIntArray1547[var33] = var26[var35];
-                this.anIntArray1544[var33] = var26[var36];
-                this.anIntArray1542[var33] = var26[var38];
-                if (this.anIntArray1539 != null) {
-                    this.anIntArray1539[var33] = -1;
+                anIntArray1547[var33] = var26[var35];
+                anIntArray1544[var33] = var26[var36];
+                anIntArray1542[var33] = var26[var38];
+                if (triangleTexture != null) {
+                    triangleTexture[var33] = -1;
                 }
             } else {
-                this.anIntArray1547[var33] = var27[var35];
-                this.anIntArray1544[var33] = var27[var36];
-                this.anIntArray1542[var33] = var27[var38];
-                if (this.anIntArray1539 != null) {
-                    this.anIntArray1539[var33] = var3;
+                anIntArray1547[var33] = var27[var35];
+                anIntArray1544[var33] = var27[var36];
+                anIntArray1542[var33] = var27[var38];
+                if (triangleTexture != null) {
+                    triangleTexture[var33] = var3;
                 }
             }
         }

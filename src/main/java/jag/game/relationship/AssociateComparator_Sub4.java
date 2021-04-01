@@ -15,17 +15,17 @@ public class AssociateComparator_Sub4 extends AssociateComparator {
     }
 
     public static EnumDefinition method664(int var0) {
-        EnumDefinition var1 = (EnumDefinition) EnumDefinition.aReferenceCache385.get(var0);
+        EnumDefinition var1 = EnumDefinition.cache.get(var0);
         if (var1 != null) {
             return var1;
         }
-        byte[] var2 = EnumDefinition.aReferenceTable383.unpack(8, var0);
+        byte[] var2 = EnumDefinition.table.unpack(8, var0);
         var1 = new EnumDefinition();
         if (var2 != null) {
-            var1.method990(new Buffer(var2));
+            var1.decode(new Buffer(var2));
         }
 
-        EnumDefinition.aReferenceCache385.put(var1, var0);
+        EnumDefinition.cache.put(var1, var0);
         return var1;
     }
 

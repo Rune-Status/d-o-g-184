@@ -30,16 +30,20 @@ public class ChatHistory {
         }
 
         ChatLine line = history.insert(type, channel, source, message);
-        Statics53.A_ITERABLE_NODE_TABLE_523.method237(line, line.index);
-        Statics53.A_ITERABLE_DOUBLY_LINKED_NODE___522.method1134(line);
+        Statics53.CHAT_LINE_TABLE.put(line, line.index);
+        Statics53.CHAT_LINE_QUEUE.insert(line);
         client.anInt1066 = client.anInt1075;
     }
 
     public static void clear() {
         client.chatHistory.clear();
-        Statics53.A_ITERABLE_NODE_TABLE_523.method236();
-        Statics53.A_ITERABLE_DOUBLY_LINKED_NODE___522.method1133();
-        Statics53.anInt521 = 0;
+        Statics53.CHAT_LINE_TABLE.clear();
+        Statics53.CHAT_LINE_QUEUE.clear();
+        Statics53.chatLineCount = 0;
+    }
+
+    public static void messageReceived(int var0, String var1, String var2) {
+        messageReceived(var0, var1, var2, null);
     }
 
     public ChatLine insert(int type, String channel, String source, String message) {

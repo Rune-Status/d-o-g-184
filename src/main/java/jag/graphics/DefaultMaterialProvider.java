@@ -1,124 +1,74 @@
 package jag.graphics;
 
-import jag.audi.DefaultAudioSystemProvider;
 import jag.commons.collection.NodeDeque;
 import jag.js5.ReferenceTable;
 import jag.opcode.Buffer;
-import jag.statics.Statics35;
-import jag.statics.Statics45;
-import jag.game.stockmarket.Class46;
 
 public class DefaultMaterialProvider implements MaterialProvider {
 
     final Material[] materials;
     final int capacity;
-    final ReferenceTable table;
+    final ReferenceTable sprites;
     int size;
     double brightness;
-    NodeDeque deque;
+    NodeDeque<Material> deque;
     int remaining;
 
-    public DefaultMaterialProvider(ReferenceTable var1, ReferenceTable var2, int var3, double var4, int var6) {
-        this.deque = new NodeDeque();
-        this.remaining = 0;
+    public DefaultMaterialProvider(ReferenceTable textures, ReferenceTable sprites, int capacity, double brightness, int size) {
         this.brightness = 1.0D;
         this.size = 128;
-        this.table = var2;
-        this.capacity = var3;
-        this.remaining = this.capacity;
-        this.brightness = var4;
-        this.size = var6;
-        int[] var7 = var1.getFileIds(0);
-        int var8 = var7.length;
-        this.materials = new Material[var1.method901(0)];
+        this.sprites = sprites;
+        this.capacity = capacity;
+        this.remaining = capacity;
+        this.brightness = brightness;
+        this.size = size;
 
-        for (int aVar7 : var7) {
-            Buffer var10 = new Buffer(var1.unpack(0, aVar7));
-            this.materials[aVar7] = new Material(var10);
-        }
+        deque = new NodeDeque<>();
+        materials = new Material[textures.getFileCount(0)];
 
-    }
-
-    public static void method1517() {
-        Statics45.anInt405 = 99;
-        Statics45.aByteArrayArrayArray404 = new byte[4][104][104];
-        Statics45.aByteArrayArrayArray401 = new byte[4][104][104];
-        DefaultAudioSystemProvider.aByteArrayArrayArray141 = new byte[4][104][104];
-        Statics35.aByteArrayArrayArray1615 = new byte[4][104][104];
-        Statics45.anIntArrayArrayArray393 = new int[4][105][105];
-        Statics45.aByteArrayArrayArray400 = new byte[4][105][105];
-        DefaultAudioSystemProvider.anIntArrayArray146 = new int[105][105];
-        Statics45.anIntArray396 = new int[104];
-        Class46.anIntArray426 = new int[104];
-        Statics45.anIntArray390 = new int[104];
-        NamedFont.anIntArray1626 = new int[104];
-        Statics45.anIntArray389 = new int[104];
-    }
-
-    public static Class method1515(String var0) throws ClassNotFoundException {
-        if (var0.equals("B")) {
-            return Byte.TYPE;
+        int[] ids = textures.getFileIds(0);
+        for (int id : ids) {
+            Buffer buffer = new Buffer(textures.unpack(0, id));
+            materials[id] = new Material(buffer);
         }
-        if (var0.equals("I")) {
-            return Integer.TYPE;
-        }
-        if (var0.equals("S")) {
-            return Short.TYPE;
-        }
-        if (var0.equals("J")) {
-            return Long.TYPE;
-        }
-        if (var0.equals("Z")) {
-            return Boolean.TYPE;
-        }
-        if (var0.equals("F")) {
-            return Float.TYPE;
-        }
-        if (var0.equals("D")) {
-            return Double.TYPE;
-        }
-        if (var0.equals("C")) {
-            return Character.TYPE;
-        }
-        return var0.equals("void") ? Void.TYPE : Class.forName(var0);
     }
 
     public void clear() {
-        for (Material anAMaterialArray2034 : this.materials) {
-            if (anAMaterialArray2034 != null) {
-                anAMaterialArray2034.method254();
+        for (Material material : materials) {
+            if (material != null) {
+                material.method254();
             }
         }
 
-        this.deque = new NodeDeque();
-        this.remaining = this.capacity;
+        deque = new NodeDeque<>();
+        remaining = capacity;
     }
 
-    public int rgb(int var1) {
-        return this.materials[var1] != null ? this.materials[var1].rgb : 0;
+    public int rgb(int id) {
+        return materials[id] != null ? materials[id].rgb : 0;
     }
 
-    public int[] pixels(int var1) {
-        Material var2 = this.materials[var1];
-        if (var2 != null) {
-            if (var2.anIntArray374 != null) {
-                this.deque.insert(var2);
-                var2.loaded = true;
-                return var2.anIntArray374;
+    public int[] pixels(int id) {
+        Material material = materials[id];
+        if (material != null) {
+            if (material.pixels != null) {
+                deque.insert(material);
+                material.loaded = true;
+                return material.pixels;
             }
 
-            boolean var3 = var2.method503(this.brightness, this.size, this.table);
+            boolean var3 = material.index(brightness, size, sprites);
             if (var3) {
-                if (this.remaining == 0) {
-                    Material var4 = (Material) this.deque.popLast();
+                if (remaining == 0) {
+                    Material var4 = deque.popLast();
                     var4.method254();
                 } else {
-                    --this.remaining;
+                    --remaining;
                 }
 
-                this.deque.insert(var2);
-                var2.loaded = true;
-                return var2.anIntArray374;
+                deque.insert(material);
+                material.loaded = true;
+                return material.pixels;
             }
         }
 
@@ -126,46 +76,46 @@ public class DefaultMaterialProvider implements MaterialProvider {
     }
 
     public boolean isLowDetail() {
-        return this.size == 64;
+        return size == 64;
     }
 
-    public boolean method1423(int var1) {
-        return this.materials[var1].aBoolean571;
+    public boolean method1423(int id) {
+        return materials[id].aBoolean571;
     }
 
-    public int method1516() {
-        int var1 = 0;
-        int var2 = 0;
+    public int loadPercent() {
+        int total = 0;
+        int loaded = 0;
 
-        for (Material var5 : this.materials) {
-            if (var5 != null && var5.anIntArray687 != null) {
-                var1 += var5.anIntArray687.length;
-                int[] var6 = var5.anIntArray687;
+        for (Material material : materials) {
+            if (material != null && material.files != null) {
+                total += material.files.length;
+                int[] files = material.files;
 
-                for (int var8 : var6) {
-                    if (this.table.method910(var8)) {
-                        ++var2;
+                for (int file : files) {
+                    if (sprites.loadDynamic(file)) {
+                        ++loaded;
                     }
                 }
             }
         }
 
-        if (var1 == 0) {
+        if (total == 0) {
             return 0;
         }
-        return var2 * 100 / var1;
+        return loaded * 100 / total;
     }
 
-    public void method1519(double var1) {
-        this.brightness = var1;
-        this.clear();
+    public void setBrightness(double brightness) {
+        this.brightness = brightness;
+        clear();
     }
 
-    public void method1518(int var1) {
-        for (Material var3 : this.materials) {
-            if (var3 != null && var3.anInt368 != 0 && var3.loaded) {
-                var3.method502(var1);
-                var3.loaded = false;
+    public void rotate(int dir) {
+        for (Material material : materials) {
+            if (material != null && material.direction != 0 && material.loaded) {
+                material.rotate(dir);
+                material.loaded = false;
             }
         }
 

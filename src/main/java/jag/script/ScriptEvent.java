@@ -2,29 +2,25 @@ package jag.script;
 
 import jag.*;
 import jag.audi.AudioOverrideEffect;
-import jag.audi.AudioRunnable;
 import jag.audi.DefaultAudioSystemProvider;
-import jag.js5.NetWorker;
-import jag.worldmap.WorldMapFunction;
 import jag.commons.collection.IntegerNode;
 import jag.commons.collection.IterableNodeTable;
 import jag.commons.collection.Node;
-import jag.commons.input.Mouse;
 import jag.commons.time.Clock;
 import jag.game.*;
-import jag.game.option.ClientPreferences;
+import jag.game.menu.ContextMenu;
 import jag.game.relationship.*;
-import jag.game.scene.CameraCapture;
 import jag.game.scene.SceneGraph;
-import jag.game.scene.Tile;
 import jag.game.scene.entity.*;
 import jag.game.stockmarket.*;
 import jag.game.type.*;
 import jag.graphics.*;
+import jag.js5.Archive;
 import jag.js5.CacheRequestWorker;
+import jag.js5.Js5Worker;
 import jag.js5.ResourceCache;
-import jag.js5.ReferenceTable;
 import jag.opcode.*;
+import jag.opcode.login.LoginPacketMeta;
 import jag.statics.*;
 import jag.worldmap.*;
 
@@ -34,24 +30,26 @@ public class ScriptEvent extends Node {
     public static int anInt1806;
     public static int[] intStack;
     public static String[] stringStack;
-    public int anInt367;
+    public static int anInt748;
+
+    public int type;
     public Object[] args;
-    public InterfaceComponent source;
+    public InterfaceComponent component;
     public int actionIndex;
     public String opbase;
-    public boolean aBoolean786;
+    public boolean mouseInputDerived;
     public int mouseX;
     public int mouseY;
-    public InterfaceComponent target;
+    public InterfaceComponent dragTarget;
     public int anInt368;
     public int anInt372;
     public int anInt379;
 
     public ScriptEvent() {
-        this.anInt367 = 76;
+        this.type = 76;
     }
 
-    public static String format(CharSequence var0, ClientParameter var1) {
+    public static String format(CharSequence var0, ClientParameter nameLengthParameter) {
         if (var0 == null) {
             return null;
         }
@@ -66,7 +64,7 @@ public class ScriptEvent extends Node {
         }
 
         int var4 = var3 - var2;
-        if (var4 >= 1 && var4 <= AsyncOutputStream.method15(var1)) {
+        if (var4 >= 1 && var4 <= AsyncOutputStream.method15(nameLengthParameter)) {
             StringBuilder var5 = new StringBuilder(var4);
 
             for (int var6 = var2; var6 < var3; ++var6) {
@@ -74,7 +72,7 @@ public class ScriptEvent extends Node {
                 boolean var8;
                 if (Character.isISOControl(var7)) {
                     var8 = false;
-                } else if (ReferenceTable.method898(var7)) {
+                } else if (isAlphaNumeric(var7)) {
                     var8 = true;
                 } else {
                     char[] var10 = Statics42.aCharArray1910;
@@ -124,634 +122,6 @@ public class ScriptEvent extends Node {
         return null;
     }
 
-    public static void method1305() {
-        client.menuRowCount = 0;
-        client.menuOpen = false;
-    }
-
-    public static void renderComponents(InterfaceComponent[] var0, int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8) {
-        JagGraphics.setClip(var2, var3, var4, var5);
-        JagGraphics3D.method499();
-
-        for (InterfaceComponent var10 : var0) {
-            if (var10 != null && (var10.parentUid == var1 || var1 == -1412584499 && var10 == client.draggedComponent)) {
-                int var11;
-                if (var8 == -1) {
-                    client.interfacePositionsX[client.anInt1085] = var10.relativeX + var6;
-                    client.interfacePositionsY[client.anInt1085] = var7 + var10.relativeY;
-                    client.interfaceWidths[client.anInt1085] = var10.width;
-                    client.interfaceHeights[client.anInt1085] = var10.height;
-                    var11 = ++client.anInt1085 - 1;
-                } else {
-                    var11 = var8;
-                }
-
-                var10.boundsIndex = var11;
-                var10.renderCycle = client.engineCycle;
-                if (!var10.aBoolean562 || !InterfaceComponent.isExplicitlyHidden(var10)) {
-                    if (var10.contentType > 0) {
-                        InterfaceComponent.method475(var10);
-                    }
-
-                    int var12 = var10.relativeX + var6;
-                    int var13 = var7 + var10.relativeY;
-                    int var14 = var10.alpha;
-                    int var15;
-                    int var16;
-                    if (var10 == client.draggedComponent) {
-                        if (var1 != -1412584499 && !var10.aBoolean1388) {
-                            StockMarketOffer.draggingInterface = var0;
-                            Statics23.anInt1342 = var6;
-                            CameraCapture.anInt1913 = var7;
-                            continue;
-                        }
-
-                        if (client.aBoolean1062 && client.processingComponentDragTopLevel) {
-                            var15 = Mouse.x;
-                            var16 = Mouse.y;
-                            var15 -= client.currentComponentDragX;
-                            var16 -= client.currentComponentDragY;
-                            if (var15 < client.anInt1060) {
-                                var15 = client.anInt1060;
-                            }
-
-                            if (var15 + var10.width > client.anInt1060 + client.topLevelOfDraggedComponent.width) {
-                                var15 = client.anInt1060 + client.topLevelOfDraggedComponent.width - var10.width;
-                            }
-
-                            if (var16 < client.anInt1069) {
-                                var16 = client.anInt1069;
-                            }
-
-                            if (var16 + var10.height > client.anInt1069 + client.topLevelOfDraggedComponent.height) {
-                                var16 = client.anInt1069 + client.topLevelOfDraggedComponent.height - var10.height;
-                            }
-
-                            var12 = var15;
-                            var13 = var16;
-                        }
-
-                        if (!var10.aBoolean1388) {
-                            var14 = 128;
-                        }
-                    }
-
-                    int var17;
-                    int var18;
-                    int var19;
-                    int var20;
-                    int var21;
-                    int var22;
-                    if (var10.type == 2) {
-                        var15 = var2;
-                        var16 = var3;
-                        var17 = var4;
-                        var18 = var5;
-                    } else if (var10.type == 9) {
-                        var19 = var12;
-                        var20 = var13;
-                        var21 = var12 + var10.width;
-                        var22 = var13 + var10.height;
-                        if (var21 < var12) {
-                            var19 = var21;
-                            var21 = var12;
-                        }
-
-                        if (var22 < var13) {
-                            var20 = var22;
-                            var22 = var13;
-                        }
-
-                        ++var21;
-                        ++var22;
-                        var15 = Math.max(var19, var2);
-                        var16 = Math.max(var20, var3);
-                        var17 = Math.min(var21, var4);
-                        var18 = Math.min(var22, var5);
-                    } else {
-                        var19 = var12 + var10.width;
-                        var20 = var13 + var10.height;
-                        var15 = Math.max(var12, var2);
-                        var16 = Math.max(var13, var3);
-                        var17 = Math.min(var19, var4);
-                        var18 = Math.min(var20, var5);
-                    }
-
-                    if (!var10.aBoolean562 || var15 < var17 && var16 < var18) {
-                        if (var10.contentType != 0) {
-                            if (var10.contentType == 1336) {
-                                if (client.aBoolean944) {
-                                    var13 += 15;
-                                    BootSprites.font_p12full.method1151("Fps:" + client.anInt1292, var12 + var10.width, var13, 16776960, -1);
-                                    var13 += 15;
-                                    Runtime var39 = Runtime.getRuntime();
-                                    var20 = (int) ((var39.totalMemory() - var39.freeMemory()) / 1024L);
-                                    var21 = 16776960;
-                                    if (var20 > 327680 && !client.lowMemory) {
-                                        var21 = 16711680;
-                                    }
-
-                                    BootSprites.font_p12full.method1151("Mem:" + var20 + "k", var12 + var10.width, var13, var21, -1);
-                                }
-                                continue;
-                            }
-
-                            if (var10.contentType == 1337) {
-                                client.anInt1039 = var12;
-                                client.anInt1038 = var13;
-                                BefriendedPlayer.method553(var12, var13, var10.width, var10.height);
-                                client.renderedComponents[var10.boundsIndex] = true;
-                                JagGraphics.setClip(var2, var3, var4, var5);
-                                continue;
-                            }
-
-                            if (var10.contentType == 1338) {
-                                ClientPreferences.renderMinimap(var10, var12, var13, var11);
-                                JagGraphics.setClip(var2, var3, var4, var5);
-                                continue;
-                            }
-
-                            if (var10.contentType == 1339) {
-                                AudioRunnable.method985(var10, var12, var13);
-                                JagGraphics.setClip(var2, var3, var4, var5);
-                                continue;
-                            }
-
-                            if (var10.contentType == 1400) {
-                                client.worldMap.method1268(var12, var13, var10.width, var10.height, client.engineCycle);
-                            }
-
-                            if (var10.contentType == 1401) {
-                                client.worldMap.method1269(var12, var13, var10.width, var10.height);
-                            }
-
-                            if (var10.contentType == 1402) {
-                                AsyncOutputStream.loginScreenEffect.method283(var12, client.engineCycle);
-                            }
-                        }
-
-                        if (var10.type == 0) {
-                            if (!var10.aBoolean562 && InterfaceComponent.isExplicitlyHidden(var10) && var10 != OldConnection.anInterfaceComponent873) {
-                                continue;
-                            }
-
-                            if (!var10.aBoolean562) {
-                                if (var10.insetY > var10.viewportHeight - var10.height) {
-                                    var10.insetY = var10.viewportHeight - var10.height;
-                                }
-
-                                if (var10.insetY < 0) {
-                                    var10.insetY = 0;
-                                }
-                            }
-
-                            renderComponents(var0, var10.uid, var15, var16, var17, var18, var12 - var10.insetX, var13 - var10.insetY, var11);
-                            if (var10.components != null) {
-                                renderComponents(var10.components, var10.uid, var15, var16, var17, var18, var12 - var10.insetX, var13 - var10.insetY, var11);
-                            }
-
-                            SubInterface var24 = client.subInterfaces.lookup(var10.uid);
-                            if (var24 != null) {
-                                InterfaceComponent.renderInterface(var24.id, var15, var16, var17, var18, var12, var13, var11);
-                            }
-
-                            JagGraphics.setClip(var2, var3, var4, var5);
-                            JagGraphics3D.method499();
-                        }
-
-                        if (client.resizableMode || client.aBooleanArray1083[var11] || client.redrawMode > 1) {
-                            if (var10.type == 0 && !var10.aBoolean562 && var10.viewportHeight > var10.height) {
-                                GameEngine.drawScrollbar(var12 + var10.width, var13, var10.insetY, var10.height, var10.viewportHeight);
-                            }
-
-                            if (var10.type != 1) {
-                                int var23;
-                                int var25;
-                                int var26;
-                                int var27;
-                                if (var10.type == 2) {
-                                    var19 = 0;
-
-                                    for (var20 = 0; var20 < var10.anInt1105; ++var20) {
-                                        for (var21 = 0; var21 < var10.anInt694; ++var21) {
-                                            var22 = var12 + var21 * (var10.xPadding + 32);
-                                            var23 = var13 + var20 * (var10.yPadding + 32);
-                                            if (var19 < 20) {
-                                                var22 += var10.xSprites[var19];
-                                                var23 += var10.ySprites[var19];
-                                            }
-
-                                            if (var10.itemIds[var19] <= 0) {
-                                                if (var10.anIntArray1371 != null && var19 < 20) {
-                                                    Sprite var43 = var10.method961(var19);
-                                                    if (var43 != null) {
-                                                        var43.method809(var22, var23);
-                                                    } else if (InterfaceComponent.aBoolean1151) {
-                                                        InterfaceComponent.repaint(var10);
-                                                    }
-                                                }
-                                            } else {
-                                                boolean var40 = false;
-                                                boolean var41 = false;
-                                                var27 = var10.itemIds[var19] - 1;
-                                                if (var22 + 32 > var2 && var22 < var4 && var23 + 32 > var3 && var23 < var5 || var10 == AnimationFrameGroup.anInterfaceComponent800 && var19 == client.anInt1023) {
-                                                    Sprite var28;
-                                                    if (client.itemSelectionState == 1 && var19 == DefaultAudioSystemProvider.selectedItemId && var10.uid == SerializableLong.selectedItemComponentUid) {
-                                                        var28 = Class76.getItemSprite(var27, var10.itemStackSizes[var19], 2, 0, 2, false);
-                                                    } else {
-                                                        var28 = Class76.getItemSprite(var27, var10.itemStackSizes[var19], 1, 3153952, 2, false);
-                                                    }
-
-                                                    if (var28 != null) {
-                                                        if (var10 == AnimationFrameGroup.anInterfaceComponent800 && var19 == client.anInt1023) {
-                                                            var25 = Mouse.x - client.anInt1016;
-                                                            var26 = Mouse.y - client.anInt1022;
-                                                            if (var25 < 5 && var25 > -5) {
-                                                                var25 = 0;
-                                                            }
-
-                                                            if (var26 < 5 && var26 > -5) {
-                                                                var26 = 0;
-                                                            }
-
-                                                            if (client.anInt1027 < 5) {
-                                                                var25 = 0;
-                                                                var26 = 0;
-                                                            }
-
-                                                            var28.method832(var22 + var25, var23 + var26, 128);
-                                                            if (var1 != -1) {
-                                                                InterfaceComponent var29 = var0[var1 & 65535];
-                                                                int var30;
-                                                                if (var23 + var26 < JagGraphics.drawingAreaTop && var29.insetY > 0) {
-                                                                    var30 = (JagGraphics.drawingAreaTop - var23 - var26) * client.anInt972 / 3;
-                                                                    if (var30 > client.anInt972 * 10) {
-                                                                        var30 = client.anInt972 * 10;
-                                                                    }
-
-                                                                    if (var30 > var29.insetY) {
-                                                                        var30 = var29.insetY;
-                                                                    }
-
-                                                                    var29.insetY -= var30;
-                                                                    client.anInt1022 += var30;
-                                                                    InterfaceComponent.repaint(var29);
-                                                                }
-
-                                                                if (var23 + var26 + 32 > JagGraphics.drawingAreaRight && var29.insetY < var29.viewportHeight - var29.height) {
-                                                                    var30 = (var26 + var23 + 32 - JagGraphics.drawingAreaRight) * client.anInt972 / 3;
-                                                                    if (var30 > client.anInt972 * 10) {
-                                                                        var30 = client.anInt972 * 10;
-                                                                    }
-
-                                                                    if (var30 > var29.viewportHeight - var29.height - var29.insetY) {
-                                                                        var30 = var29.viewportHeight - var29.height - var29.insetY;
-                                                                    }
-
-                                                                    var29.insetY += var30;
-                                                                    client.anInt1022 -= var30;
-                                                                    InterfaceComponent.repaint(var29);
-                                                                }
-                                                            }
-                                                        } else if (var10 == StockMarketOfferWorldComparator.anInterfaceComponent351 && var19 == client.anInt1015) {
-                                                            var28.method832(var22, var23, 128);
-                                                        } else {
-                                                            var28.method809(var22, var23);
-                                                        }
-                                                    } else {
-                                                        InterfaceComponent.repaint(var10);
-                                                    }
-                                                }
-                                            }
-
-                                            ++var19;
-                                        }
-                                    }
-                                } else if (var10.type == 3) {
-                                    if (Projectile.method1192(var10)) {
-                                        var19 = var10.anInt1348;
-                                        if (var10 == OldConnection.anInterfaceComponent873 && var10.anInt1344 != 0) {
-                                            var19 = var10.anInt1344;
-                                        }
-                                    } else {
-                                        var19 = var10.textColor;
-                                        if (var10 == OldConnection.anInterfaceComponent873 && var10.anInt1345 != 0) {
-                                            var19 = var10.anInt1345;
-                                        }
-                                    }
-
-                                    if (var10.aBoolean1346) {
-                                        switch (var10.anComponentFillType_1349.anInt633) {
-                                            case 1:
-                                                JagGraphics.method1376(var12, var13, var10.width, var10.height, var10.textColor, var10.anInt1348);
-                                                break;
-                                            case 2:
-                                                JagGraphics.method1359(var12, var13, var10.width, var10.height, var10.textColor, var10.anInt1348, 255 - (var10.alpha & 255), 255 - (var10.anInt1343 & 255));
-                                                break;
-                                            default:
-                                                if (var14 == 0) {
-                                                    JagGraphics.fillRect(var12, var13, var10.width, var10.height, var19);
-                                                } else {
-                                                    JagGraphics.method1370(var12, var13, var10.width, var10.height, var19, 256 - (var14 & 255));
-                                                }
-                                        }
-                                    } else if (var14 == 0) {
-                                        JagGraphics.method1372(var12, var13, var10.width, var10.height, var19);
-                                    } else {
-                                        JagGraphics.drawRect(var12, var13, var10.width, var10.height, var19, 256 - (var14 & 255));
-                                    }
-                                } else {
-                                    Font var37;
-                                    if (var10.type == 4) {
-                                        var37 = var10.method957();
-                                        if (var37 == null) {
-                                            if (InterfaceComponent.aBoolean1151) {
-                                                InterfaceComponent.repaint(var10);
-                                            }
-                                        } else {
-                                            String var45 = var10.text;
-                                            if (Projectile.method1192(var10)) {
-                                                var20 = var10.anInt1348;
-                                                if (var10 == OldConnection.anInterfaceComponent873 && var10.anInt1344 != 0) {
-                                                    var20 = var10.anInt1344;
-                                                }
-
-                                                if (var10.aString1373.length() > 0) {
-                                                    var45 = var10.aString1373;
-                                                }
-                                            } else {
-                                                var20 = var10.textColor;
-                                                if (var10 == OldConnection.anInterfaceComponent873 && var10.anInt1345 != 0) {
-                                                    var20 = var10.anInt1345;
-                                                }
-                                            }
-
-                                            if (var10.aBoolean562 && var10.itemId != -1) {
-                                                ItemDefinition var46 = ItemDefinition.get(var10.itemId);
-                                                var45 = var46.name;
-                                                if (var45 == null) {
-                                                    var45 = "null";
-                                                }
-
-                                                if ((var46.stackable == 1 || var10.itemStackSize != 1) && var10.itemStackSize != -1) {
-                                                    var45 = World.getColorTags(16748608) + var45 + "</col>" + " " + 'x' + World.method149(var10.itemStackSize);
-                                                }
-                                            }
-
-                                            if (var10 == client.pleaseWaitComponent) {
-                                                var45 = "Please wait...";
-                                                var20 = var10.textColor;
-                                            }
-
-                                            if (!var10.aBoolean562) {
-                                                var45 = InterfaceComponent.method1005(var45, var10);
-                                            }
-
-                                            var37.method1149(var45, var12, var13, var10.width, var10.height, var20, var10.textShadowed ? 0 : -1, var10.horizontalMargin, var10.verticalMargin, var10.textSpacing);
-                                        }
-                                    } else if (var10.type == 5) {
-                                        Sprite var38;
-                                        if (!var10.aBoolean562) {
-                                            var38 = var10.method958(Projectile.method1192(var10));
-                                            if (var38 != null) {
-                                                var38.method809(var12, var13);
-                                            } else if (InterfaceComponent.aBoolean1151) {
-                                                InterfaceComponent.repaint(var10);
-                                            }
-                                        } else {
-                                            if (var10.itemId != -1) {
-                                                var38 = Class76.getItemSprite(var10.itemId, var10.itemStackSize, var10.borderThickness, var10.shadowColor, var10.anInt1356, false);
-                                            } else {
-                                                var38 = var10.method958(false);
-                                            }
-
-                                            if (var38 == null) {
-                                                if (InterfaceComponent.aBoolean1151) {
-                                                    InterfaceComponent.repaint(var10);
-                                                }
-                                            } else {
-                                                var20 = var38.anInt112;
-                                                var21 = var38.anInt375;
-                                                if (!var10.aBoolean1358) {
-                                                    var22 = var10.width * 4096 / var20;
-                                                    if (var10.spriteId != 0) {
-                                                        var38.method824(var10.width / 2 + var12, var10.height / 2 + var13, var10.spriteId, var22);
-                                                    } else if (var14 != 0) {
-                                                        var38.method818(var12, var13, var10.width, var10.height, 256 - (var14 & 255));
-                                                    } else if (var20 == var10.width && var21 == var10.height) {
-                                                        var38.method809(var12, var13);
-                                                    } else {
-                                                        var38.method807(var12, var13, var10.width, var10.height);
-                                                    }
-                                                } else {
-                                                    JagGraphics.method1364(var12, var13, var12 + var10.width, var13 + var10.height);
-                                                    var22 = (var20 - 1 + var10.width) / var20;
-                                                    var23 = (var21 - 1 + var10.height) / var21;
-
-                                                    for (var25 = 0; var25 < var22; ++var25) {
-                                                        for (var26 = 0; var26 < var23; ++var26) {
-                                                            if (var10.spriteId != 0) {
-                                                                var38.method824(var20 / 2 + var12 + var25 * var20, var21 / 2 + var13 + var26 * var21, var10.spriteId, 4096);
-                                                            } else if (var14 != 0) {
-                                                                var38.method832(var12 + var25 * var20, var13 + var26 * var21, 256 - (var14 & 255));
-                                                            } else {
-                                                                var38.method809(var12 + var25 * var20, var13 + var26 * var21);
-                                                            }
-                                                        }
-                                                    }
-
-                                                    JagGraphics.setClip(var2, var3, var4, var5);
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        ItemDefinition var34;
-                                        if (var10.type == 6) {
-                                            boolean var36 = Projectile.method1192(var10);
-                                            if (var36) {
-                                                var20 = var10.anInt1353;
-                                            } else {
-                                                var20 = var10.anInt1357;
-                                            }
-
-                                            Model var42 = null;
-                                            var22 = 0;
-                                            if (var10.itemId != -1) {
-                                                var34 = ItemDefinition.get(var10.itemId);
-                                                if (var34 != null) {
-                                                    var34 = var34.method519(var10.itemStackSize);
-                                                    var42 = var34.getModel(1);
-                                                    if (var42 != null) {
-                                                        var42.method827();
-                                                        var22 = var42.height / 2;
-                                                    } else {
-                                                        InterfaceComponent.repaint(var10);
-                                                    }
-                                                }
-                                            } else if (var10.modelType == 5) {
-                                                if (var10.modelId == 0) {
-                                                    var42 = client.renderedAppearance.getModel(null, -1, null, -1);
-                                                } else {
-                                                    var42 = PlayerEntity.local.getModel();
-                                                }
-                                            } else if (var20 == -1) {
-                                                var42 = var10.method956(null, -1, var36, PlayerEntity.local.appearance);
-                                                if (var42 == null && InterfaceComponent.aBoolean1151) {
-                                                    InterfaceComponent.repaint(var10);
-                                                }
-                                            } else {
-                                                AnimationSequence var47 = AnimationSequence.get(var20);
-                                                var42 = var10.method956(var47, var10.anInt1389, var36, PlayerEntity.local.appearance);
-                                                if (var42 == null && InterfaceComponent.aBoolean1151) {
-                                                    InterfaceComponent.repaint(var10);
-                                                }
-                                            }
-
-                                            JagGraphics3D.method637(var10.width / 2 + var12, var10.height / 2 + var13);
-                                            var23 = JagGraphics3D.SIN_TABLE[var10.xRotation] * var10.modelZoom >> 16;
-                                            var25 = JagGraphics3D.COS_TABLE[var10.xRotation] * var10.modelZoom >> 16;
-                                            if (var42 != null) {
-                                                if (!var10.aBoolean562) {
-                                                    var42.method1289(0, var10.zRotation, 0, var10.xRotation, 0, var23, var25);
-                                                } else {
-                                                    var42.method827();
-                                                    if (var10.aBoolean1352) {
-                                                        var42.method1287(0, var10.zRotation, var10.yRotation, var10.xRotation, var10.modelOffsetX, var22 + var23 + var10.modelOffsetY, var25 + var10.modelOffsetY, var10.modelZoom);
-                                                    } else {
-                                                        var42.method1289(0, var10.zRotation, var10.yRotation, var10.xRotation, var10.modelOffsetX, var23 + var22 + var10.modelOffsetY, var25 + var10.modelOffsetY);
-                                                    }
-                                                }
-                                            }
-
-                                            JagGraphics3D.method23();
-                                        } else {
-                                            if (var10.type == 7) {
-                                                var37 = var10.method957();
-                                                if (var37 == null) {
-                                                    if (InterfaceComponent.aBoolean1151) {
-                                                        InterfaceComponent.repaint(var10);
-                                                    }
-                                                    continue;
-                                                }
-
-                                                var20 = 0;
-
-                                                for (var21 = 0; var21 < var10.anInt1105; ++var21) {
-                                                    for (var22 = 0; var22 < var10.anInt694; ++var22) {
-                                                        if (var10.itemIds[var20] > 0) {
-                                                            var34 = ItemDefinition.get(var10.itemIds[var20] - 1);
-                                                            String var31;
-                                                            if (var34.stackable != 1 && var10.itemStackSizes[var20] == 1) {
-                                                                var31 = World.getColorTags(16748608) + var34.name + "</col>";
-                                                            } else {
-                                                                var31 = World.getColorTags(16748608) + var34.name + "</col>" + " " + 'x' + World.method149(var10.itemStackSizes[var20]);
-                                                            }
-
-                                                            var26 = var12 + var22 * (var10.xPadding + 115);
-                                                            var27 = var13 + (var10.yPadding + 12) * var21;
-                                                            if (var10.horizontalMargin == 0) {
-                                                                var37.drawString(var31, var26, var27, var10.textColor, var10.textShadowed ? 0 : -1);
-                                                            } else if (var10.horizontalMargin == 1) {
-                                                                var37.method1154(var31, var10.width / 2 + var26, var27, var10.textColor, var10.textShadowed ? 0 : -1);
-                                                            } else {
-                                                                var37.method1151(var31, var26 + var10.width - 1, var27, var10.textColor, var10.textShadowed ? 0 : -1);
-                                                            }
-                                                        }
-
-                                                        ++var20;
-                                                    }
-                                                }
-                                            }
-
-                                            if (var10.type == 8 && var10 == Statics24.anInterfaceComponent1417 && client.anInt1041 == client.anInt1036) {
-                                                var19 = 0;
-                                                var20 = 0;
-                                                Font var32 = BootSprites.font_p12full;
-                                                String var33 = var10.text;
-
-                                                String var44;
-                                                for (var33 = InterfaceComponent.method1005(var33, var10); var33.length() > 0; var20 = var20 + var32.anInt375 + 1) {
-                                                    var25 = var33.indexOf("<br>");
-                                                    if (var25 != -1) {
-                                                        var44 = var33.substring(0, var25);
-                                                        var33 = var33.substring(var25 + 4);
-                                                    } else {
-                                                        var44 = var33;
-                                                        var33 = "";
-                                                    }
-
-                                                    var26 = var32.method1145(var44);
-                                                    if (var26 > var19) {
-                                                        var19 = var26;
-                                                    }
-                                                }
-
-                                                var19 += 6;
-                                                var20 += 7;
-                                                var25 = var12 + var10.width - 5 - var19;
-                                                var26 = var13 + var10.height + 5;
-                                                if (var25 < var12 + 5) {
-                                                    var25 = var12 + 5;
-                                                }
-
-                                                if (var25 + var19 > var4) {
-                                                    var25 = var4 - var19;
-                                                }
-
-                                                if (var26 + var20 > var5) {
-                                                    var26 = var5 - var20;
-                                                }
-
-                                                JagGraphics.fillRect(var25, var26, var19, var20, 16777120);
-                                                JagGraphics.method1372(var25, var26, var19, var20, 0);
-                                                var33 = var10.text;
-                                                var27 = var26 + var32.anInt375 + 2;
-
-                                                for (var33 = InterfaceComponent.method1005(var33, var10); var33.length() > 0; var27 = var27 + var32.anInt375 + 1) {
-                                                    int var35 = var33.indexOf("<br>");
-                                                    if (var35 != -1) {
-                                                        var44 = var33.substring(0, var35);
-                                                        var33 = var33.substring(var35 + 4);
-                                                    } else {
-                                                        var44 = var33;
-                                                        var33 = "";
-                                                    }
-
-                                                    var32.drawString(var44, var25 + 3, var27, 0, -1);
-                                                }
-                                            }
-
-                                            if (var10.type == 9) {
-                                                if (var10.aBoolean1360) {
-                                                    var19 = var12;
-                                                    var20 = var13 + var10.height;
-                                                    var21 = var12 + var10.width;
-                                                    var22 = var13;
-                                                } else {
-                                                    var19 = var12;
-                                                    var20 = var13;
-                                                    var21 = var12 + var10.width;
-                                                    var22 = var13 + var10.height;
-                                                }
-
-                                                if (var10.anInt1347 == 1) {
-                                                    JagGraphics.drawDiagonalLine(var19, var20, var21, var22, var10.textColor);
-                                                } else {
-                                                    DefaultAudioSystemProvider.method98(var19, var20, var21, var22, var10.textColor, var10.anInt1347);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
     public static void method1306(boolean var0) {
         client.aBoolean1037 = var0;
     }
@@ -763,7 +133,7 @@ public class ScriptEvent extends Node {
             } else if (client.relationshipSystem.state == 1) {
                 intStack[++Statics46.anInt442 - 1] = -1;
             } else {
-                intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.friendListContext.getCount();
+                intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.friendListContext.getMemberCount();
             }
 
             return 1;
@@ -771,8 +141,8 @@ public class ScriptEvent extends Node {
         int var3;
         if (var0 == 3601) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.friendListContext.getCount()) {
-                BefriendedPlayer var8 = (BefriendedPlayer) client.relationshipSystem.friendListContext.getChatter(var3);
+            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.friendListContext.getMemberCount()) {
+                BefriendedPlayer var8 = client.relationshipSystem.friendListContext.getChatter(var3);
                 stringStack[++Statics46.anInt441 - 1] = var8.getRawDisplayName();
                 stringStack[++Statics46.anInt441 - 1] = var8.getRawPreviousName();
             } else {
@@ -784,8 +154,8 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3602) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.friendListContext.getCount()) {
-                intStack[++Statics46.anInt442 - 1] = ((Associate) client.relationshipSystem.friendListContext.getChatter(var3)).world;
+            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.friendListContext.getMemberCount()) {
+                intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.friendListContext.getChatter(var3).world;
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
             }
@@ -794,8 +164,8 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3603) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.friendListContext.getCount()) {
-                intStack[++Statics46.anInt442 - 1] = ((Associate) client.relationshipSystem.friendListContext.getChatter(var3)).rank;
+            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.friendListContext.getMemberCount()) {
+                intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.friendListContext.getChatter(var3).rank;
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
             }
@@ -831,8 +201,8 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3609) {
             var5 = stringStack[--Statics46.anInt441];
-            var5 = PlayerAccountType.method442(var5);
-            intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.isBefriended(new NamePair(var5, PreciseWorldMapAreaChunk.aClientParameter_343)) ? 1 : 0;
+            var5 = PlayerAccountType.getNameExcludingTags(var5);
+            intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.isBefriended(new NamePair(var5, PreciseWorldMapAreaChunk.nameLengthParameter)) ? 1 : 0;
             return 1;
         }
         if (var0 == 3611) {
@@ -846,7 +216,7 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3612) {
             if (client.clanSystem != null) {
-                intStack[++Statics46.anInt442 - 1] = client.clanSystem.getCount();
+                intStack[++Statics46.anInt442 - 1] = client.clanSystem.getMemberCount();
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
             }
@@ -855,7 +225,7 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3613) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.clanSystem != null && var3 < client.clanSystem.getCount()) {
+            if (client.clanSystem != null && var3 < client.clanSystem.getMemberCount()) {
                 stringStack[++Statics46.anInt441 - 1] = client.clanSystem.getChatter(var3).getDisplayName().getRaw();
             } else {
                 stringStack[++Statics46.anInt441 - 1] = "";
@@ -865,8 +235,8 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3614) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.clanSystem != null && var3 < client.clanSystem.getCount()) {
-                intStack[++Statics46.anInt442 - 1] = ((Associate) client.clanSystem.getChatter(var3)).getWorld();
+            if (client.clanSystem != null && var3 < client.clanSystem.getMemberCount()) {
+                intStack[++Statics46.anInt442 - 1] = client.clanSystem.getChatter(var3).getWorld();
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
             }
@@ -875,8 +245,8 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3615) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.clanSystem != null && var3 < client.clanSystem.getCount()) {
-                intStack[++Statics46.anInt442 - 1] = ((Associate) client.clanSystem.getChatter(var3)).rank;
+            if (client.clanSystem != null && var3 < client.clanSystem.getMemberCount()) {
+                intStack[++Statics46.anInt442 - 1] = client.clanSystem.getChatter(var3).rank;
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
             }
@@ -889,7 +259,7 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3617) {
             var5 = stringStack[--Statics46.anInt441];
-            NetWorker.method1093(var5);
+            Js5Worker.method1093(var5);
             return 1;
         }
         if (var0 == 3618) {
@@ -898,7 +268,7 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3619) {
             var5 = stringStack[--Statics46.anInt441];
-            World.method1343(var5);
+            Server.method1343(var5);
             return 1;
         }
         if (var0 == 3620) {
@@ -909,15 +279,15 @@ public class ScriptEvent extends Node {
             if (!client.relationshipSystem.isReady()) {
                 intStack[++Statics46.anInt442 - 1] = -1;
             } else {
-                intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.ignoreListContext.getCount();
+                intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.ignoreListContext.getMemberCount();
             }
 
             return 1;
         }
         if (var0 == 3622) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.ignoreListContext.getCount()) {
-                IgnoredPlayer var4 = (IgnoredPlayer) client.relationshipSystem.ignoreListContext.getChatter(var3);
+            if (client.relationshipSystem.isReady() && var3 >= 0 && var3 < client.relationshipSystem.ignoreListContext.getMemberCount()) {
+                IgnoredPlayer var4 = client.relationshipSystem.ignoreListContext.getChatter(var3);
                 stringStack[++Statics46.anInt441 - 1] = var4.getRawDisplayName();
                 stringStack[++Statics46.anInt441 - 1] = var4.getRawPreviousName();
             } else {
@@ -929,13 +299,13 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3623) {
             var5 = stringStack[--Statics46.anInt441];
-            var5 = PlayerAccountType.method442(var5);
-            intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.isIgnoring(new NamePair(var5, PreciseWorldMapAreaChunk.aClientParameter_343)) ? 1 : 0;
+            var5 = PlayerAccountType.getNameExcludingTags(var5);
+            intStack[++Statics46.anInt442 - 1] = client.relationshipSystem.isIgnoring(new NamePair(var5, PreciseWorldMapAreaChunk.nameLengthParameter)) ? 1 : 0;
             return 1;
         }
         if (var0 == 3624) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.clanSystem != null && var3 < client.clanSystem.getCount() && client.clanSystem.getChatter(var3).getDisplayName().equals(PlayerEntity.local.namePair)) {
+            if (client.clanSystem != null && var3 < client.clanSystem.getMemberCount() && client.clanSystem.getChatter(var3).getDisplayName().equals(PlayerEntity.local.namePair)) {
                 intStack[++Statics46.anInt442 - 1] = 1;
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
@@ -954,7 +324,7 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3626) {
             var3 = intStack[--Statics46.anInt442];
-            if (client.clanSystem != null && var3 < client.clanSystem.getCount() && ((ClanMember) client.clanSystem.getChatter(var3)).method711()) {
+            if (client.clanSystem != null && var3 < client.clanSystem.getMemberCount() && client.clanSystem.getChatter(var3).method711()) {
                 intStack[++Statics46.anInt442 - 1] = 1;
             } else {
                 intStack[++Statics46.anInt442 - 1] = 0;
@@ -1150,7 +520,7 @@ public class ScriptEvent extends Node {
             return 2;
         }
         var3 = intStack[--Statics46.anInt442];
-        if (client.clanSystem != null && var3 < client.clanSystem.getCount() && ((ClanMember) client.clanSystem.getChatter(var3)).method706()) {
+        if (client.clanSystem != null && var3 < client.clanSystem.getMemberCount() && client.clanSystem.getChatter(var3).method706()) {
             intStack[++Statics46.anInt442 - 1] = 1;
         } else {
             intStack[++Statics46.anInt442 - 1] = 0;
@@ -1161,12 +531,12 @@ public class ScriptEvent extends Node {
 
     public static void process(ScriptEvent event, int size) {
         Object[] args = event.args;
-        RuneScript script;
+        ClientScript script;
         int id;
-        if (Statics24.method966(event.anInt367)) {
+        if (Statics24.method966(event.type)) {
             EnumDefinition.aWorldMapScriptEvent_1443 = (WorldMapScriptEvent) args[0];
             WorldMapFunction var3 = WorldMapFunction.get(EnumDefinition.aWorldMapScriptEvent_1443.anInt306);
-            script = WorldMapAreaChunk_Sub2.method151(event.anInt367, var3.anInt574, var3.anInt1473);
+            script = WorldMapAreaChunk_Sub2.method151(event.type, var3.objectId, var3.category);
         } else {
             id = (Integer) args[0];
             script = LoginPacketMeta.method1499(id);
@@ -1204,7 +574,7 @@ public class ScriptEvent extends Node {
                             }
 
                             if (var12 == -2147483645) {
-                                var12 = event.source != null ? event.source.uid : -1;
+                                var12 = event.component != null ? event.component.uid : -1;
                             }
 
                             if (var12 == -2147483644) {
@@ -1212,15 +582,15 @@ public class ScriptEvent extends Node {
                             }
 
                             if (var12 == -2147483643) {
-                                var12 = event.source != null ? event.source.componentIndex : -1;
+                                var12 = event.component != null ? event.component.subComponentIndex : -1;
                             }
 
                             if (var12 == -2147483642) {
-                                var12 = event.target != null ? event.target.uid : -1;
+                                var12 = event.dragTarget != null ? event.dragTarget.uid : -1;
                             }
 
                             if (var12 == -2147483641) {
-                                var12 = event.target != null ? event.target.componentIndex : -1;
+                                var12 = event.dragTarget != null ? event.dragTarget.subComponentIndex : -1;
                             }
 
                             if (var12 == -2147483640) {
@@ -1305,7 +675,7 @@ public class ScriptEvent extends Node {
                                 return;
                             }
 
-                            RuneScriptFrame var33 = Statics46.A_RUNE_SCRIPT_FRAME_ARRAY_435[--Statics46.anInt436];
+                            ClientScriptFrame var33 = Statics46.A_RUNE_SCRIPT_FRAME_ARRAY_435[--Statics46.anInt436];
                             script = var33.target;
                             var6 = script.anIntArray1574;
                             var7 = script.anIntArray749;
@@ -1387,14 +757,14 @@ public class ScriptEvent extends Node {
 
                                     Statics46.anIntArrayArray443[var12][var19] = intStack[Statics46.anInt442 + 1];
                                 } else if (var29 == 47) {
-                                    var13 = client.varcs.method429(var7[id]);
+                                    var13 = client.varcs.getRawString(var7[id]);
                                     if (var13 == null) {
                                         var13 = "null";
                                     }
 
                                     stringStack[++Statics46.anInt441 - 1] = var13;
                                 } else if (var29 == 48) {
-                                    client.varcs.method431(var7[id], stringStack[--Statics46.anInt441]);
+                                    client.varcs.putRawString(var7[id], stringStack[--Statics46.anInt441]);
                                 } else if (var29 == 49) {
                                     var13 = client.varcs.getString(var7[id]);
                                     stringStack[++Statics46.anInt441 - 1] = var13;
@@ -1405,7 +775,7 @@ public class ScriptEvent extends Node {
                                         throw new IllegalStateException();
                                     }
 
-                                    IterableNodeTable var32 = script.aIterableNodeTableArray1646[var7[id]];
+                                    IterableNodeTable<? super Node> var32 = script.tables[var7[id]];
                                     IntegerNode var30 = (IntegerNode) var32.lookup(intStack[--Statics46.anInt442]);
                                     if (var30 != null) {
                                         id += var30.value;
@@ -1413,7 +783,7 @@ public class ScriptEvent extends Node {
                                 }
                             } else {
                                 var12 = var7[id];
-                                RuneScript var14 = LoginPacketMeta.method1499(var12);
+                                ClientScript var14 = LoginPacketMeta.method1499(var12);
                                 int[] var15 = new int[var14.anInt574];
                                 String[] var16 = new String[var14.anInt112];
 
@@ -1427,7 +797,7 @@ public class ScriptEvent extends Node {
 
                                 Statics46.anInt442 -= var14.anInt375;
                                 Statics46.anInt441 -= var14.anInt372;
-                                RuneScriptFrame var18 = new RuneScriptFrame();
+                                ClientScriptFrame var18 = new ClientScriptFrame();
                                 var18.target = script;
                                 var18.targetId = id;
                                 var18.intStack = Statics46.anIntArray447;
@@ -1477,27 +847,27 @@ public class ScriptEvent extends Node {
                 throw new RuntimeException();
             }
             InterfaceComponent var8 = InterfaceComponent.lookup(var3);
-            if (var8.components == null) {
-                var8.components = new InterfaceComponent[var5 + 1];
+            if (var8.subcomponents == null) {
+                var8.subcomponents = new InterfaceComponent[var5 + 1];
             }
 
-            if (var8.components.length <= var5) {
+            if (var8.subcomponents.length <= var5) {
                 InterfaceComponent[] var9 = new InterfaceComponent[var5 + 1];
 
-                System.arraycopy(var8.components, 0, var9, 0, var8.components.length);
+                System.arraycopy(var8.subcomponents, 0, var9, 0, var8.subcomponents.length);
 
-                var8.components = var9;
+                var8.subcomponents = var9;
             }
 
-            if (var5 > 0 && var8.components[var5 - 1] == null) {
+            if (var5 > 0 && var8.subcomponents[var5 - 1] == null) {
                 throw new RuntimeException("" + (var5 - 1));
             }
             InterfaceComponent var12 = new InterfaceComponent();
             var12.type = var4;
             var12.parentUid = var12.uid = var8.uid;
-            var12.componentIndex = var5;
-            var12.aBoolean562 = true;
-            var8.components[var5] = var12;
+            var12.subComponentIndex = var5;
+            var12.format = true;
+            var8.subcomponents[var5] = var12;
             if (var2) {
                 StockMarketOfferLifetimeComparator.anInterfaceComponent585 = var12;
             } else {
@@ -1511,13 +881,13 @@ public class ScriptEvent extends Node {
         if (var0 == 101) {
             var6 = var2 ? StockMarketOfferLifetimeComparator.anInterfaceComponent585 : IdentikitDefinition.anInterfaceComponent1518;
             InterfaceComponent var7 = InterfaceComponent.lookup(var6.uid);
-            var7.components[var6.componentIndex] = null;
+            var7.subcomponents[var6.subComponentIndex] = null;
             InterfaceComponent.repaint(var7);
             return 1;
         }
         if (var0 == 102) {
             var6 = InterfaceComponent.lookup(intStack[--Statics46.anInt442]);
-            var6.components = null;
+            var6.subcomponents = null;
             InterfaceComponent.repaint(var6);
             return 1;
         }
@@ -1559,14 +929,14 @@ public class ScriptEvent extends Node {
 
     static int method889(int var0) {
         if (var0 == 6500) {
-            intStack[++Statics46.anInt442 - 1] = AsyncConnection.loadWorlds() ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = AsyncConnection.loadServers() ? 1 : 0;
             return 1;
         }
-        World var3;
+        Server var3;
         if (var0 == 6501) {
-            var3 = Statics3.method652();
+            var3 = Server.first();
             if (var3 != null) {
-                intStack[++Statics46.anInt442 - 1] = var3.anInt1875;
+                intStack[++Statics46.anInt442 - 1] = var3.id;
                 intStack[++Statics46.anInt442 - 1] = var3.mask;
                 stringStack[++Statics46.anInt441 - 1] = var3.activity;
                 intStack[++Statics46.anInt442 - 1] = var3.location;
@@ -1584,9 +954,9 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 6502) {
-            var3 = ByteBufferProvider.method866();
+            var3 = Server.next();
             if (var3 != null) {
-                intStack[++Statics46.anInt442 - 1] = var3.anInt1875;
+                intStack[++Statics46.anInt442 - 1] = var3.id;
                 intStack[++Statics46.anInt442 - 1] = var3.mask;
                 stringStack[++Statics46.anInt441 - 1] = var3.activity;
                 intStack[++Statics46.anInt442 - 1] = var3.location;
@@ -1604,21 +974,21 @@ public class ScriptEvent extends Node {
             return 1;
         }
         int var4;
-        World var5;
+        Server var5;
         int var6;
         if (var0 == 6506) {
             var4 = intStack[--Statics46.anInt442];
             var5 = null;
 
-            for (var6 = 0; var6 < World.anInt1871; ++var6) {
-                if (var4 == World.worlds[var6].anInt1875) {
-                    var5 = World.worlds[var6];
+            for (var6 = 0; var6 < Server.count; ++var6) {
+                if (var4 == Server.servers[var6].id) {
+                    var5 = Server.servers[var6];
                     break;
                 }
             }
 
             if (var5 != null) {
-                intStack[++Statics46.anInt442 - 1] = var5.anInt1875;
+                intStack[++Statics46.anInt442 - 1] = var5.id;
                 intStack[++Statics46.anInt442 - 1] = var5.mask;
                 stringStack[++Statics46.anInt441 - 1] = var5.activity;
                 intStack[++Statics46.anInt442 - 1] = var5.location;
@@ -1696,15 +1066,15 @@ public class ScriptEvent extends Node {
                 var7 = intStack[Statics46.anInt442 + 1];
                 var9 = DefinitionProperty.get(var7);
                 if (var9.method258()) {
-                    stringStack[++Statics46.anInt441 - 1] = Statics5.method689(var4).method1096(var7, var9.defaultString);
+                    stringStack[++Statics46.anInt441 - 1] = ParameterDefinition.get(var4).method1096(var7, var9.defaultString);
                 } else {
-                    intStack[++Statics46.anInt442 - 1] = Statics5.method689(var4).method1097(var7, var9.defaultInteger);
+                    intStack[++Statics46.anInt442 - 1] = ParameterDefinition.get(var4).method1097(var7, var9.defaultInteger);
                 }
 
                 return 1;
             }
             if (var0 == 6518) {
-                intStack[++Statics46.anInt442 - 1] = client.aBoolean927 ? 1 : 0;
+                intStack[++Statics46.anInt442 - 1] = client.mobile ? 1 : 0;
                 return 1;
             }
             if (var0 == 6519) {
@@ -1742,9 +1112,9 @@ public class ScriptEvent extends Node {
             return 2;
         }
         var4 = intStack[--Statics46.anInt442];
-        if (var4 >= 0 && var4 < World.anInt1871) {
-            var5 = World.worlds[var4];
-            intStack[++Statics46.anInt442 - 1] = var5.anInt1875;
+        if (var4 >= 0 && var4 < Server.count) {
+            var5 = Server.servers[var4];
+            intStack[++Statics46.anInt442 - 1] = var5.id;
             intStack[++Statics46.anInt442 - 1] = var5.mask;
             stringStack[++Statics46.anInt441 - 1] = var5.activity;
             intStack[++Statics46.anInt442 - 1] = var5.location;
@@ -1765,12 +1135,12 @@ public class ScriptEvent extends Node {
     static int method7(int var0) {
         if (var0 == 6200) {
             Statics46.anInt442 -= 2;
-            client.aShort922 = (short) PlayerAppearance.method1426(intStack[Statics46.anInt442]);
+            client.aShort922 = (short) PlayerModel.method1426(intStack[Statics46.anInt442]);
             if (client.aShort922 <= 0) {
                 client.aShort922 = 256;
             }
 
-            client.aShort912 = (short) PlayerAppearance.method1426(intStack[Statics46.anInt442 + 1]);
+            client.aShort912 = (short) PlayerModel.method1426(intStack[Statics46.anInt442 + 1]);
             if (client.aShort912 <= 0) {
                 client.aShort912 = 256;
             }
@@ -1875,18 +1245,18 @@ public class ScriptEvent extends Node {
             var3 = intStack[Statics46.anInt442];
             int var4 = intStack[Statics46.anInt442 + 1];
             if (!client.cameraLocked) {
-                client.anInt985 = var3;
-                client.mapRotation = var4;
+                client.cameraX = var3;
+                client.cameraY = var4;
             }
 
             return 1;
         }
         if (var0 == 5505) {
-            intStack[++Statics46.anInt442 - 1] = client.anInt985;
+            intStack[++Statics46.anInt442 - 1] = client.cameraX;
             return 1;
         }
         if (var0 == 5506) {
-            intStack[++Statics46.anInt442 - 1] = client.mapRotation;
+            intStack[++Statics46.anInt442 - 1] = client.cameraY;
             return 1;
         }
         if (var0 == 5530) {
@@ -1895,11 +1265,11 @@ public class ScriptEvent extends Node {
                 var3 = 0;
             }
 
-            client.anInt982 = var3;
+            client.cameraFollowHeight = var3;
             return 1;
         }
         if (var0 == 5531) {
-            intStack[++Statics46.anInt442 - 1] = client.anInt982;
+            intStack[++Statics46.anInt442 - 1] = client.cameraFollowHeight;
             return 1;
         }
         return 2;
@@ -1953,11 +1323,11 @@ public class ScriptEvent extends Node {
             }
 
             client.tradeChatMode = intStack[Statics46.anInt442 + 2];
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_CHAT_MODE, client.connectionContext.encryptor);
-            packet.buffer.writeByte(client.publicChatMode);
-            packet.buffer.writeByte(client.publicChatPrivacyMode.index);
-            packet.buffer.writeByte(client.tradeChatMode);
-            client.connectionContext.writeLater(packet);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_CHAT_MODE, client.netWriter.encryptor);
+            packet.buffer.p1(client.publicChatMode);
+            packet.buffer.p1(client.publicChatPrivacyMode.index);
+            packet.buffer.p1(client.tradeChatMode);
+            client.netWriter.writeLater(packet);
             return 1;
         }
         String var3;
@@ -1967,12 +1337,12 @@ public class ScriptEvent extends Node {
             Statics46.anInt442 -= 2;
             var4 = intStack[Statics46.anInt442];
             int var5 = intStack[Statics46.anInt442 + 1];
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.WRITE_SOME_STRING_5002, client.connectionContext.encryptor);
-            packet.buffer.writeByte(Buffer.stringLengthPlusOne(var3) + 2);
-            packet.buffer.writeCString(var3);
-            packet.buffer.writeByte(var4 - 1);
-            packet.buffer.writeByte(var5);
-            client.connectionContext.writeLater(packet);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.REPORT_ABUSE, client.netWriter.encryptor);
+            packet.buffer.p1(Buffer.stringLengthPlusOne(var3) + 2);
+            packet.buffer.pcstr(var3);
+            packet.buffer.p1(var4 - 1);
+            packet.buffer.p1(var5);
+            client.netWriter.writeLater(packet);
             return 1;
         }
         int var7;
@@ -2146,28 +1516,28 @@ public class ScriptEvent extends Node {
                 }
             }
 
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.anOutgoingPacketMeta2, client.connectionContext.encryptor);
-            packet.buffer.writeByte(0);
-            int var13 = packet.buffer.caret;
-            packet.buffer.writeByte(var4);
-            packet.buffer.writeByte(var17);
-            packet.buffer.writeByte(var11);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.SEND_PUBLIC_CHAT, client.netWriter.encryptor);
+            packet.buffer.p1(0);
+            int var13 = packet.buffer.pos;
+            packet.buffer.p1(var4);
+            packet.buffer.p1(var17);
+            packet.buffer.p1(var11);
             ResourceCache.method1491(packet.buffer, var3);
-            packet.buffer.method1050(packet.buffer.caret - var13);
-            client.connectionContext.writeLater(packet);
+            packet.buffer.psize1(packet.buffer.pos - var13);
+            client.netWriter.writeLater(packet);
             return 1;
         }
         if (var0 == 5009) {
             Statics46.anInt441 -= 2;
             var3 = stringStack[Statics46.anInt441];
             String var9 = stringStack[Statics46.anInt441 + 1];
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.WRITE_SOME_STRING_5009, client.connectionContext.encryptor);
-            packet.buffer.writeShort(0);
-            int var10 = packet.buffer.caret;
-            packet.buffer.writeCString(var3);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.SEND_PRIVATE_CHAT, client.netWriter.encryptor);
+            packet.buffer.p2(0);
+            int var10 = packet.buffer.pos;
+            packet.buffer.pcstr(var3);
             ResourceCache.method1491(packet.buffer, var9);
-            packet.buffer.method1041(packet.buffer.caret - var10);
-            client.connectionContext.writeLater(packet);
+            packet.buffer.psize2(packet.buffer.pos - var10);
+            client.netWriter.writeLater(packet);
             return 1;
         }
         if (var0 != 5015) {
@@ -2324,13 +1694,13 @@ public class ScriptEvent extends Node {
         }
         if (var0 != 4211) {
             if (var0 == 4212) {
-                ClassStructure.anInt748 = 0;
+                anInt748 = 0;
                 return 1;
             }
             return 2;
         }
-        if (WorldMapIcon_Sub2.grandExchangeSearchResults != null && ClassStructure.anInt748 < DefaultAudioSystemProvider.anInt142) {
-            intStack[++Statics46.anInt442 - 1] = WorldMapIcon_Sub2.grandExchangeSearchResults[++ClassStructure.anInt748 - 1] & '\uffff';
+        if (WorldMapLabelIcon.grandExchangeSearchResults != null && anInt748 < DefaultAudioSystemProvider.anInt142) {
+            intStack[++Statics46.anInt442 - 1] = WorldMapLabelIcon.grandExchangeSearchResults[++anInt748 - 1] & '\uffff';
         } else {
             intStack[++Statics46.anInt442 - 1] = -1;
         }
@@ -2358,7 +1728,7 @@ public class ScriptEvent extends Node {
         if (var0 == 4102) {
             var3 = stringStack[--Statics46.anInt441];
             var4 = intStack[--Statics46.anInt442];
-            stringStack[++Statics46.anInt441 - 1] = var3 + HealthBar.method692(var4, true);
+            stringStack[++Statics46.anInt441 - 1] = var3 + HealthBar.toString(var4, true);
             return 1;
         }
         if (var0 == 4103) {
@@ -2397,7 +1767,7 @@ public class ScriptEvent extends Node {
                 Statics46.anInt442 -= 2;
                 var4 = intStack[Statics46.anInt442];
                 var12 = intStack[Statics46.anInt442 + 1];
-                var13 = Tile.aArchive1152.unpack(var12, 0);
+                var13 = Archive.fonts.unpack(var12, 0);
                 var14 = new Font(var13);
                 intStack[++Statics46.anInt442 - 1] = var14.method1150(var3, var4);
                 return 1;
@@ -2407,7 +1777,7 @@ public class ScriptEvent extends Node {
                 Statics46.anInt442 -= 2;
                 var4 = intStack[Statics46.anInt442];
                 var12 = intStack[Statics46.anInt442 + 1];
-                var13 = Tile.aArchive1152.unpack(var12, 0);
+                var13 = Archive.fonts.unpack(var12, 0);
                 var14 = new Font(var13);
                 intStack[++Statics46.anInt442 - 1] = var14.method1144(var3, var4);
                 return 1;
@@ -2442,7 +1812,7 @@ public class ScriptEvent extends Node {
             }
             if (var0 == 4114) {
                 var6 = intStack[--Statics46.anInt442];
-                intStack[++Statics46.anInt442 - 1] = ReferenceTable.method898((char) var6) ? 1 : 0;
+                intStack[++Statics46.anInt442 - 1] = isAlphaNumeric((char) var6) ? 1 : 0;
                 return 1;
             }
             if (var0 == 4115) {
@@ -2516,7 +1886,7 @@ public class ScriptEvent extends Node {
         Statics46.anInt441 -= 2;
         var3 = stringStack[Statics46.anInt441];
         var5 = stringStack[Statics46.anInt441 + 1];
-        if (PlayerEntity.local.appearance != null && PlayerEntity.local.appearance.female) {
+        if (PlayerEntity.local.model != null && PlayerEntity.local.model.female) {
             stringStack[++Statics46.anInt441 - 1] = var5;
         } else {
             stringStack[++Statics46.anInt441 - 1] = var3;
@@ -2545,21 +1915,21 @@ public class ScriptEvent extends Node {
             InterfaceComponent.repaint(var4);
             client.instance.method742(var4);
             if (var3 != -1 && var4.type == 0) {
-                GameEngine.method925(client.interfaces[var3 >> 16], var4, false);
+                GameShell.method925(client.interfaces[var3 >> 16], var4, false);
             }
 
             return 1;
         }
         if (var0 == 1001) {
             Statics46.anInt442 -= 4;
-            var4.anInt694 = intStack[Statics46.anInt442];
-            var4.anInt1105 = intStack[Statics46.anInt442 + 1];
-            var4.anInt1369 = intStack[Statics46.anInt442 + 2];
-            var4.anInt695 = intStack[Statics46.anInt442 + 3];
+            var4.baseWidth = intStack[Statics46.anInt442];
+            var4.baseHeight = intStack[Statics46.anInt442 + 1];
+            var4.xAlignment = intStack[Statics46.anInt442 + 2];
+            var4.yAlignment = intStack[Statics46.anInt442 + 3];
             InterfaceComponent.repaint(var4);
             client.instance.method742(var4);
             if (var3 != -1 && var4.type == 0) {
-                GameEngine.method925(client.interfaces[var3 >> 16], var4, false);
+                GameShell.method925(client.interfaces[var3 >> 16], var4, false);
             }
 
             return 1;
@@ -2574,11 +1944,11 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1005) {
-            var4.aBoolean1412 = intStack[--Statics46.anInt442] == 1;
+            var4.noClickThrough = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         if (var0 == 1006) {
-            var4.aBoolean1410 = intStack[--Statics46.anInt442] == 1;
+            var4.noScrollThrough = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         return 2;
@@ -2798,7 +2168,7 @@ public class ScriptEvent extends Node {
         if (var0 == 3914) {
             var13 = intStack[--Statics46.anInt442] == 1;
             if (Pickable.aStockMarketMediator_890 != null) {
-                Pickable.aStockMarketMediator_890.method421(StockMarketMediator.aComparator607, var13);
+                Pickable.aStockMarketMediator_890.sort(StockMarketMediator.aComparator607, var13);
             }
 
             return 1;
@@ -2806,7 +2176,7 @@ public class ScriptEvent extends Node {
         if (var0 == 3915) {
             var13 = intStack[--Statics46.anInt442] == 1;
             if (Pickable.aStockMarketMediator_890 != null) {
-                Pickable.aStockMarketMediator_890.method421(StockMarketMediator.aComparator608, var13);
+                Pickable.aStockMarketMediator_890.sort(StockMarketMediator.aComparator608, var13);
             }
 
             return 1;
@@ -2817,7 +2187,7 @@ public class ScriptEvent extends Node {
             boolean var4 = intStack[Statics46.anInt442 + 1] == 1;
             if (Pickable.aStockMarketMediator_890 != null) {
                 client.stockMarketComparator.aBoolean349 = var4;
-                Pickable.aStockMarketMediator_890.method421(client.stockMarketComparator, var13);
+                Pickable.aStockMarketMediator_890.sort(client.stockMarketComparator, var13);
             }
 
             return 1;
@@ -2825,7 +2195,7 @@ public class ScriptEvent extends Node {
         if (var0 == 3917) {
             var13 = intStack[--Statics46.anInt442] == 1;
             if (Pickable.aStockMarketMediator_890 != null) {
-                Pickable.aStockMarketMediator_890.method421(StockMarketMediator.aComparator610, var13);
+                Pickable.aStockMarketMediator_890.sort(StockMarketMediator.aComparator610, var13);
             }
 
             return 1;
@@ -2833,38 +2203,38 @@ public class ScriptEvent extends Node {
         if (var0 == 3918) {
             var13 = intStack[--Statics46.anInt442] == 1;
             if (Pickable.aStockMarketMediator_890 != null) {
-                Pickable.aStockMarketMediator_890.method421(StockMarketMediator.aComparator606, var13);
+                Pickable.aStockMarketMediator_890.sort(StockMarketMediator.aComparator606, var13);
             }
 
             return 1;
         }
         if (var0 == 3919) {
-            intStack[++Statics46.anInt442 - 1] = Pickable.aStockMarketMediator_890 == null ? 0 : Pickable.aStockMarketMediator_890.aList609.size();
+            intStack[++Statics46.anInt442 - 1] = Pickable.aStockMarketMediator_890 == null ? 0 : Pickable.aStockMarketMediator_890.events.size();
             return 1;
         }
         StockMarketEvent var5;
         if (var0 == 3920) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
-            intStack[++Statics46.anInt442 - 1] = var5.anInt552;
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
+            intStack[++Statics46.anInt442 - 1] = var5.world;
             return 1;
         }
         if (var0 == 3921) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
             stringStack[++Statics46.anInt441 - 1] = var5.method390();
             return 1;
         }
         if (var0 == 3922) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
             stringStack[++Statics46.anInt441 - 1] = var5.method392();
             return 1;
         }
         if (var0 == 3923) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
-            long var6 = GameEngine.currentTime() - EntityUID.aLong548 - var5.aLong553;
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
+            long var6 = Clock.now() - EntityUID.aLong548 - var5.aLong553;
             int var8 = (int) (var6 / 3600000L);
             int var9 = (int) ((var6 - (long) (var8 * 3600000)) / 60000L);
             int var10 = (int) ((var6 - (long) (var8 * 3600000) - (long) (var9 * 60000)) / 1000L);
@@ -2874,19 +2244,19 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3924) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
             intStack[++Statics46.anInt442 - 1] = var5.aStockMarketOffer551.itemQuantity;
             return 1;
         }
         if (var0 == 3925) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
             intStack[++Statics46.anInt442 - 1] = var5.aStockMarketOffer551.itemPrice;
             return 1;
         }
         if (var0 == 3926) {
             var3 = intStack[--Statics46.anInt442];
-            var5 = (StockMarketEvent) Pickable.aStockMarketMediator_890.aList609.get(var3);
+            var5 = Pickable.aStockMarketMediator_890.events.get(var3);
             intStack[++Statics46.anInt442 - 1] = var5.aStockMarketOffer551.itemId;
             return 1;
         }
@@ -3018,8 +2388,8 @@ public class ScriptEvent extends Node {
         int var5;
         if (var0 == 3308) {
             var3 = SceneGraph.floorLevel;
-            var4 = client.baseX + (PlayerEntity.local.fineX >> 7);
-            var5 = client.baseY + (PlayerEntity.local.fineY >> 7);
+            var4 = client.baseX + (PlayerEntity.local.absoluteX >> 7);
+            var5 = client.baseY + (PlayerEntity.local.absoluteY >> 7);
             intStack[++Statics46.anInt442 - 1] = (var4 << 14) + var5 + (var3 << 28);
             return 1;
         }
@@ -3073,7 +2443,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 3317) {
-            intStack[++Statics46.anInt442 - 1] = client.anInt934;
+            intStack[++Statics46.anInt442 - 1] = client.rebootTimer;
             return 1;
         }
         if (var0 == 3318) {
@@ -3138,7 +2508,7 @@ public class ScriptEvent extends Node {
         String var3;
         if (var0 == 3100) {
             var3 = stringStack[--Statics46.anInt441];
-            Statics19.messageReceived(0, "", var3);
+            ChatHistory.messageReceived(0, "", var3);
             return 1;
         }
         if (var0 == 3101) {
@@ -3161,28 +2531,28 @@ public class ScriptEvent extends Node {
                 var10 = BaseFont.method1501(var3);
             }
 
-            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_NUMERIC_INPUT, client.connectionContext.encryptor);
-            packet.buffer.writeInt(var10);
-            client.connectionContext.writeLater(packet);
+            OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_NUMERIC_INPUT, client.netWriter.encryptor);
+            packet.buffer.p4(var10);
+            client.netWriter.writeLater(packet);
             return 1;
         }
 
         OutgoingPacket packet;
         if (var0 == 3105) {
             var3 = stringStack[--Statics46.anInt441];
-            packet = OutgoingPacket.prepare(OutgoingPacketMeta.WRITE_SOME_STRING_3105, client.connectionContext.encryptor);
-            packet.buffer.writeByte(var3.length() + 1);
-            packet.buffer.writeCString(var3);
-            client.connectionContext.writeLater(packet);
+            packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_NAME_INPUT, client.netWriter.encryptor);
+            packet.buffer.p1(var3.length() + 1);
+            packet.buffer.pcstr(var3);
+            client.netWriter.writeLater(packet);
             return 1;
         }
 
         if (var0 == 3106) {
             var3 = stringStack[--Statics46.anInt441];
-            packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_ALPHABETICAL_INPUT, client.connectionContext.encryptor);
-            packet.buffer.writeByte(var3.length() + 1);
-            packet.buffer.writeCString(var3);
-            client.connectionContext.writeLater(packet);
+            packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_ALPHABETICAL_INPUT, client.netWriter.encryptor);
+            packet.buffer.p1(var3.length() + 1);
+            packet.buffer.pcstr(var3);
+            client.netWriter.writeLater(packet);
             return 1;
         }
         String var6;
@@ -3199,7 +2569,7 @@ public class ScriptEvent extends Node {
             var10 = intStack[Statics46.anInt442 + 1];
             int var8 = intStack[Statics46.anInt442 + 2];
             InterfaceComponent var15 = InterfaceComponent.lookup(var8);
-            Statics23.drag(var15, var14, var10);
+            InterfaceComponent.drag(var15, var14, var10);
             return 1;
         }
         if (var0 == 3109) {
@@ -3207,11 +2577,11 @@ public class ScriptEvent extends Node {
             var14 = intStack[Statics46.anInt442];
             var10 = intStack[Statics46.anInt442 + 1];
             InterfaceComponent var11 = var2 ? StockMarketOfferLifetimeComparator.anInterfaceComponent585 : IdentikitDefinition.anInterfaceComponent1518;
-            Statics23.drag(var11, var14, var10);
+            InterfaceComponent.drag(var11, var14, var10);
             return 1;
         }
         if (var0 == 3110) {
-            WorldMapIcon_Sub1.aBoolean492 = intStack[--Statics46.anInt442] == 1;
+            WorldMapObjectIcon.mouseCameraEnabled = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         if (var0 == 3111) {
@@ -3226,14 +2596,14 @@ public class ScriptEvent extends Node {
         if (var0 == 3113) {
             var3 = stringStack[--Statics46.anInt441];
             boolean var4 = intStack[--Statics46.anInt442] == 1;
-            CacheRequestWorker.method1006(var3, var4, false);
+            CacheRequestWorker.openURL(var3, var4, false);
             return 1;
         }
         if (var0 == 3115) {
             var14 = intStack[--Statics46.anInt442];
-            packet = OutgoingPacket.prepare(OutgoingPacketMeta.WRITE_SOME_SHORT_3115, client.connectionContext.encryptor);
-            packet.buffer.writeShort(var14);
-            client.connectionContext.writeLater(packet);
+            packet = OutgoingPacket.prepare(OutgoingPacketMeta.PROCESS_OBJ_INPUT, client.netWriter.encryptor);
+            packet.buffer.p2(var14);
+            client.netWriter.writeLater(packet);
             return 1;
         }
         if (var0 == 3116) {
@@ -3247,12 +2617,12 @@ public class ScriptEvent extends Node {
             if (var5.length() > 500) {
                 return 1;
             }
-            OutgoingPacket var9 = OutgoingPacket.prepare(OutgoingPacketMeta.WRITE_SOME_STRING_3116, client.connectionContext.encryptor);
-            var9.buffer.writeShort(1 + Buffer.stringLengthPlusOne(var6) + Buffer.stringLengthPlusOne(var5));
-            var9.buffer.writeCString(var6);
-            var9.buffer.writeCString(var5);
-            var9.buffer.writeNegatedByte(var14);
-            client.connectionContext.writeLater(var9);
+            OutgoingPacket var9 = OutgoingPacket.prepare(OutgoingPacketMeta.REPORT_BUG, client.netWriter.encryptor);
+            var9.buffer.p2(1 + Buffer.stringLengthPlusOne(var6) + Buffer.stringLengthPlusOne(var5));
+            var9.buffer.pcstr(var6);
+            var9.buffer.pcstr(var5);
+            var9.buffer.p1n(var14);
+            client.netWriter.writeLater(var9);
             return 1;
         }
         if (var0 == 3117) {
@@ -3264,55 +2634,55 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 3119) {
-            client.aBoolean1020 = intStack[--Statics46.anInt442] == 1;
+            client.displaySelf = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         if (var0 == 3120) {
             if (intStack[--Statics46.anInt442] == 1) {
-                client.anInt1031 |= 1;
+                client.displayPlayerNames |= 1;
             } else {
-                client.anInt1031 &= -2;
+                client.displayPlayerNames &= -2;
             }
 
             return 1;
         }
         if (var0 == 3121) {
             if (intStack[--Statics46.anInt442] == 1) {
-                client.anInt1031 |= 2;
+                client.displayPlayerNames |= 2;
             } else {
-                client.anInt1031 &= -3;
+                client.displayPlayerNames &= -3;
             }
 
             return 1;
         }
         if (var0 == 3122) {
             if (intStack[--Statics46.anInt442] == 1) {
-                client.anInt1031 |= 4;
+                client.displayPlayerNames |= 4;
             } else {
-                client.anInt1031 &= -5;
+                client.displayPlayerNames &= -5;
             }
 
             return 1;
         }
         if (var0 == 3123) {
             if (intStack[--Statics46.anInt442] == 1) {
-                client.anInt1031 |= 8;
+                client.displayPlayerNames |= 8;
             } else {
-                client.anInt1031 &= -9;
+                client.displayPlayerNames &= -9;
             }
 
             return 1;
         }
         if (var0 == 3124) {
-            client.anInt1031 = 0;
+            client.displayPlayerNames = 0;
             return 1;
         }
         if (var0 == 3125) {
-            client.aBoolean1028 = intStack[--Statics46.anInt442] == 1;
+            ContextMenu.Crosshair.display = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         if (var0 == 3126) {
-            client.aBoolean1021 = intStack[--Statics46.anInt442] == 1;
+            client.displayLoadingMessages = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         if (var0 == 3127) {
@@ -3320,13 +2690,13 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 3128) {
-            intStack[++Statics46.anInt442 - 1] = WorldMapSprite.method243() ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = WorldMapElement.method243() ? 1 : 0;
             return 1;
         }
         if (var0 == 3129) {
             Statics46.anInt442 -= 2;
-            client.anInt1004 = intStack[Statics46.anInt442];
-            client.anInt992 = intStack[Statics46.anInt442 + 1];
+            client.oculusOrbSpeed = intStack[Statics46.anInt442];
+            client.oculusOrbSlowSpeed = intStack[Statics46.anInt442 + 1];
             return 1;
         }
         if (var0 == 3130) {
@@ -3389,16 +2759,16 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 3143) {
             var7 = intStack[--Statics46.anInt442] == 1;
-            client.aBoolean958 = var7;
+            client.rememberUsername = var7;
             if (!var7) {
-                client.preferences.aString362 = "";
+                client.preferences.rememberedUsername = "";
                 ClientLocale.method854();
             }
 
             return 1;
         }
         if (var0 == 3144) {
-            intStack[++Statics46.anInt442 - 1] = client.aBoolean958 ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = client.rememberUsername ? 1 : 0;
             return 1;
         }
         if (var0 == 3145) {
@@ -3563,7 +2933,7 @@ public class ScriptEvent extends Node {
                 return 0;
             }
             ScriptEvent var4 = new ScriptEvent();
-            var4.source = var3;
+            var4.component = var3;
             var4.args = var3.anObjectArray1400;
             var4.anInt368 = Statics46.anInt440 + 1;
             client.aNodeDeque1082.add(var4);
@@ -3679,23 +3049,23 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 2610) {
-            intStack[++Statics46.anInt442 - 1] = var3.anInt1343;
+            intStack[++Statics46.anInt442 - 1] = var3.enabledAlpha;
             return 1;
         }
         if (var0 == 2611) {
-            intStack[++Statics46.anInt442 - 1] = var3.textColor;
+            intStack[++Statics46.anInt442 - 1] = var3.foreground;
             return 1;
         }
         if (var0 == 2612) {
-            intStack[++Statics46.anInt442 - 1] = var3.anInt1348;
+            intStack[++Statics46.anInt442 - 1] = var3.enabledForeground;
             return 1;
         }
         if (var0 == 2613) {
-            intStack[++Statics46.anInt442 - 1] = var3.anComponentFillType_1349.getOrdinal();
+            intStack[++Statics46.anInt442 - 1] = var3.fillType.getOrdinal();
             return 1;
         }
         if (var0 == 2614) {
-            intStack[++Statics46.anInt442 - 1] = var3.aBoolean1359 ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = var3.transparent ? 1 : 0;
             return 1;
         }
         return 2;
@@ -3770,11 +3140,11 @@ public class ScriptEvent extends Node {
         }
 
         if (var0 == 1400) {
-            var3.anObjectArray1386 = var7;
+            var3.pressListeners = var7;
         } else if (var0 == 1401) {
-            var3.anObjectArray1379 = var7;
+            var3.holdListeners = var7;
         } else if (var0 == 1402) {
-            var3.anObjectArray1376 = var7;
+            var3.releaseListeners = var7;
         } else if (var0 == 1403) {
             var3.mouseEnterListeners = var7;
         } else if (var0 == 1404) {
@@ -3782,28 +3152,28 @@ public class ScriptEvent extends Node {
         } else if (var0 == 1405) {
             var3.dragListeners = var7;
         } else if (var0 == 1406) {
-            var3.anObjectArray1380 = var7;
+            var3.targetExitListeners = var7;
         } else if (var0 == 1407) {
-            var3.configListenerArgs = var7;
-            var3.configTriggers = var5;
+            var3.varTransmit = var7;
+            var3.varTriggers = var5;
         } else if (var0 == 1408) {
             var3.renderListeners = var7;
         } else if (var0 == 1409) {
-            var3.mousePressListeners = var7;
+            var3.cs2Listeners = var7;
         } else if (var0 == 1410) {
-            var3.anObjectArray1387 = var7;
+            var3.dragReleaseListeners = var7;
         } else if (var0 == 1411) {
-            var3.anObjectArray1385 = var7;
+            var3.clickListeners = var7;
         } else if (var0 == 1412) {
             var3.hoverListeners = var7;
         } else if (var0 == 1414) {
-            var3.tableListenerArgs = var7;
+            var3.itemTransmit = var7;
             var3.itemTriggers = var5;
         } else if (var0 == 1415) {
-            var3.skillListenerArgs = var7;
+            var3.skillTransmit = var7;
             var3.skillTriggers = var5;
         } else if (var0 == 1416) {
-            var3.anObjectArray1377 = var7;
+            var3.targetEnterListeners = var7;
         } else if (var0 == 1417) {
             var3.scrollListeners = var7;
         } else if (var0 == 1418) {
@@ -3832,7 +3202,7 @@ public class ScriptEvent extends Node {
             var3.anObjectArray1400 = var7;
         }
 
-        var3.aBoolean1378 = true;
+        var3.decodedObjects = true;
         return 1;
     }
 
@@ -3866,15 +3236,15 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1302) {
-            var4.aBoolean1388 = intStack[--Statics46.anInt442] == 1;
+            var4.scrollBar = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         if (var0 == 1303) {
-            var4.anInt1381 = intStack[--Statics46.anInt442];
+            var4.dragArea = intStack[--Statics46.anInt442];
             return 1;
         }
         if (var0 == 1304) {
-            var4.anInt1383 = intStack[--Statics46.anInt442];
+            var4.dragAreaThreshold = intStack[--Statics46.anInt442];
             return 1;
         }
         if (var0 == 1305) {
@@ -3890,7 +3260,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1308) {
-            var4.aBoolean1409 = intStack[--Statics46.anInt442] == 1;
+            var4.prioritizeMenuOptions = intStack[--Statics46.anInt442] == 1;
             return 1;
         }
         byte[] var8;
@@ -3902,7 +3272,7 @@ public class ScriptEvent extends Node {
                 var5 = 10;
                 var8 = new byte[]{(byte) intStack[Statics46.anInt442]};
                 byte[] var10 = new byte[]{(byte) intStack[Statics46.anInt442 + 1]};
-                Statics12.method868(var4, var5, var8, var10);
+                method868(var4, var5, var8, var10);
                 return 1;
             }
             if (var0 == 1352) {
@@ -3964,7 +3334,7 @@ public class ScriptEvent extends Node {
 
         var9 = intStack[--Statics46.anInt442] - 1;
         if (var9 >= 0 && var9 <= 9) {
-            Statics12.method868(var4, var9, var7, var8);
+            method868(var4, var9, var7, var8);
             return 1;
         }
         throw new RuntimeException();
@@ -3988,7 +3358,7 @@ public class ScriptEvent extends Node {
             }
             if (var0 == 1202) {
                 var3.modelType = 3;
-                var3.modelId = PlayerEntity.local.appearance.method1433();
+                var3.modelId = PlayerEntity.local.model.hash();
                 return 1;
             }
             return 2;
@@ -4006,17 +3376,17 @@ public class ScriptEvent extends Node {
         var3.modelOffsetY = var6.spriteTranslateY;
         var3.modelZoom = var6.spriteScale;
         if (var0 == 1205) {
-            var3.anInt1356 = 0;
+            var3.itemStackSizeMode = 0;
         } else if (var0 == 1212 | var6.stackable == 1) {
-            var3.anInt1356 = 1;
+            var3.itemStackSizeMode = 1;
         } else {
-            var3.anInt1356 = 2;
+            var3.itemStackSizeMode = 2;
         }
 
-        if (var3.anInt1354 > 0) {
-            var3.modelZoom = var3.modelZoom * 32 / var3.anInt1354;
-        } else if (var3.anInt694 > 0) {
-            var3.modelZoom = var3.modelZoom * 32 / var3.anInt694;
+        if (var3.scaleZ > 0) {
+            var3.modelZoom = var3.modelZoom * 32 / var3.scaleZ;
+        } else if (var3.baseWidth > 0) {
+            var3.modelZoom = var3.modelZoom * 32 / var3.baseWidth;
         }
 
         return 1;
@@ -4057,12 +3427,12 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1101) {
-            var4.textColor = intStack[--Statics46.anInt442];
+            var4.foreground = intStack[--Statics46.anInt442];
             InterfaceComponent.repaint(var4);
             return 1;
         }
         if (var0 == 1102) {
-            var4.aBoolean1346 = intStack[--Statics46.anInt442] == 1;
+            var4.filled = intStack[--Statics46.anInt442] == 1;
             InterfaceComponent.repaint(var4);
             return 1;
         }
@@ -4072,7 +3442,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1104) {
-            var4.anInt1347 = intStack[--Statics46.anInt442];
+            var4.lineWidth = intStack[--Statics46.anInt442];
             InterfaceComponent.repaint(var4);
             return 1;
         }
@@ -4087,7 +3457,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1107) {
-            var4.aBoolean1358 = intStack[--Statics46.anInt442] == 1;
+            var4.tileSprites = intStack[--Statics46.anInt442] == 1;
             InterfaceComponent.repaint(var4);
             return 1;
         }
@@ -4111,17 +3481,17 @@ public class ScriptEvent extends Node {
         int var8;
         if (var0 == 1110) {
             var8 = intStack[--Statics46.anInt442];
-            if (var8 != var4.anInt1357) {
-                var4.anInt1357 = var8;
-                var4.anInt1389 = 0;
-                var4.anInt1401 = 0;
+            if (var8 != var4.animation) {
+                var4.animation = var8;
+                var4.animationFrame = 0;
+                var4.animationFrameCycle = 0;
                 InterfaceComponent.repaint(var4);
             }
 
             return 1;
         }
         if (var0 == 1111) {
-            var4.aBoolean1352 = intStack[--Statics46.anInt442] == 1;
+            var4.perpendicular = intStack[--Statics46.anInt442] == 1;
             InterfaceComponent.repaint(var4);
             return 1;
         }
@@ -4178,13 +3548,13 @@ public class ScriptEvent extends Node {
             var4.viewportHeight = intStack[Statics46.anInt442 + 1];
             InterfaceComponent.repaint(var4);
             if (var3 != -1 && var4.type == 0) {
-                GameEngine.method925(client.interfaces[var3 >> 16], var4, false);
+                GameShell.method925(client.interfaces[var3 >> 16], var4, false);
             }
 
             return 1;
         }
         if (var0 == 1121) {
-            Clock.processDialogActionPacket(var4.uid, var4.componentIndex);
+            Clock.processDialogActionPacket(var4.uid, var4.subComponentIndex);
             client.pleaseWaitComponent = var4;
             InterfaceComponent.repaint(var4);
             return 1;
@@ -4195,20 +3565,20 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1123) {
-            var4.anInt1348 = intStack[--Statics46.anInt442];
+            var4.enabledForeground = intStack[--Statics46.anInt442];
             InterfaceComponent.repaint(var4);
             return 1;
         }
         if (var0 == 1124) {
-            var4.anInt1343 = intStack[--Statics46.anInt442];
+            var4.enabledAlpha = intStack[--Statics46.anInt442];
             InterfaceComponent.repaint(var4);
             return 1;
         }
         if (var0 == 1125) {
             var8 = intStack[--Statics46.anInt442];
-            ComponentFillType var7 = (ComponentFillType) OldConnection.method716(ComponentFillType.getValues(), var8);
+            ComponentFillType var7 = (ComponentFillType) EnumType.getByOrdinal(ComponentFillType.getValues(), var8);
             if (var7 != null) {
-                var4.anComponentFillType_1349 = var7;
+                var4.fillType = var7;
                 InterfaceComponent.repaint(var4);
             }
 
@@ -4217,12 +3587,12 @@ public class ScriptEvent extends Node {
         boolean var5;
         if (var0 == 1126) {
             var5 = intStack[--Statics46.anInt442] == 1;
-            var4.aBoolean1360 = var5;
+            var4.invertDivider = var5;
             return 1;
         }
         if (var0 == 1127) {
             var5 = intStack[--Statics46.anInt442] == 1;
-            var4.aBoolean1359 = var5;
+            var4.transparent = var5;
             return 1;
         }
         return 2;
@@ -4273,7 +3643,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1702) {
-            intStack[++Statics46.anInt442 - 1] = var3.componentIndex;
+            intStack[++Statics46.anInt442 - 1] = var3.subComponentIndex;
             return 1;
         }
         return 2;
@@ -4322,23 +3692,23 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 1610) {
-            intStack[++Statics46.anInt442 - 1] = var3.anInt1343;
+            intStack[++Statics46.anInt442 - 1] = var3.enabledAlpha;
             return 1;
         }
         if (var0 == 1611) {
-            intStack[++Statics46.anInt442 - 1] = var3.textColor;
+            intStack[++Statics46.anInt442 - 1] = var3.foreground;
             return 1;
         }
         if (var0 == 1612) {
-            intStack[++Statics46.anInt442 - 1] = var3.anInt1348;
+            intStack[++Statics46.anInt442 - 1] = var3.enabledForeground;
             return 1;
         }
         if (var0 == 1613) {
-            intStack[++Statics46.anInt442 - 1] = var3.anComponentFillType_1349.getOrdinal();
+            intStack[++Statics46.anInt442 - 1] = var3.fillType.getOrdinal();
             return 1;
         }
         if (var0 == 1614) {
-            intStack[++Statics46.anInt442 - 1] = var3.aBoolean1359 ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = var3.transparent ? 1 : 0;
             return 1;
         }
         return 2;
@@ -4489,12 +3859,12 @@ public class ScriptEvent extends Node {
         int var3;
         if (var0 == 6600) {
             var3 = SceneGraph.floorLevel;
-            int var9 = client.baseX + (PlayerEntity.local.fineX >> 7);
-            int var5 = client.baseY + (PlayerEntity.local.fineY >> 7);
+            int var9 = client.baseX + (PlayerEntity.local.absoluteX >> 7);
+            int var5 = client.baseY + (PlayerEntity.local.absoluteY >> 7);
             client.getWorldMap().method1261(var3, var9, var5, true);
             return 1;
         }
-        WorldMapArea var11;
+        WorldMapCacheArea var11;
         if (var0 == 6601) {
             var3 = intStack[--Statics46.anInt442];
             String var16 = "";
@@ -4512,7 +3882,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 6603) {
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().getZoom();
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().getDesiredZoom();
             return 1;
         }
         if (var0 == 6604) {
@@ -4527,12 +3897,12 @@ public class ScriptEvent extends Node {
         WorldMapPosition var15;
         if (var0 == 6606) {
             var15 = new WorldMapPosition(intStack[--Statics46.anInt442]);
-            client.getWorldMap().method1238(var15.x, var15.y);
+            client.getWorldMap().setDestination(var15.x, var15.y);
             return 1;
         }
         if (var0 == 6607) {
             var15 = new WorldMapPosition(intStack[--Statics46.anInt442]);
-            client.getWorldMap().method1235(var15.x, var15.y);
+            client.getWorldMap().setPositionRegional(var15.x, var15.y);
             return 1;
         }
         if (var0 == 6608) {
@@ -4546,11 +3916,11 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 6610) {
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().method1232();
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().method1234();
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().getPanelX();
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().getPanelY();
             return 1;
         }
-        WorldMapArea var13;
+        WorldMapCacheArea var13;
         if (var0 == 6611) {
             var3 = intStack[--Statics46.anInt442];
             var13 = client.getWorldMap().getArea(var3);
@@ -4569,8 +3939,8 @@ public class ScriptEvent extends Node {
                 intStack[++Statics46.anInt442 - 1] = 0;
                 intStack[++Statics46.anInt442 - 1] = 0;
             } else {
-                intStack[++Statics46.anInt442 - 1] = (var13.method70() - var13.method66() + 1) * 64;
-                intStack[++Statics46.anInt442 - 1] = (var13.method72() - var13.method85() + 1) * 64;
+                intStack[++Statics46.anInt442 - 1] = (var13.method70() - var13.getMinRegionX() + 1) * 64;
+                intStack[++Statics46.anInt442 - 1] = (var13.method72() - var13.getMinRegionY() + 1) * 64;
             }
 
             return 1;
@@ -4584,8 +3954,8 @@ public class ScriptEvent extends Node {
                 intStack[++Statics46.anInt442 - 1] = 0;
                 intStack[++Statics46.anInt442 - 1] = 0;
             } else {
-                intStack[++Statics46.anInt442 - 1] = var13.method66() * 64;
-                intStack[++Statics46.anInt442 - 1] = var13.method85() * 64;
+                intStack[++Statics46.anInt442 - 1] = var13.getMinRegionX() * 64;
+                intStack[++Statics46.anInt442 - 1] = var13.getMinRegionY() * 64;
                 intStack[++Statics46.anInt442 - 1] = var13.method70() * 64 + 64 - 1;
                 intStack[++Statics46.anInt442 - 1] = var13.method72() * 64 + 64 - 1;
             }
@@ -4598,7 +3968,7 @@ public class ScriptEvent extends Node {
             if (var13 == null) {
                 intStack[++Statics46.anInt442 - 1] = -1;
             } else {
-                intStack[++Statics46.anInt442 - 1] = var13.method78();
+                intStack[++Statics46.anInt442 - 1] = var13.getZoomPercent();
             }
 
             return 1;
@@ -4627,7 +3997,7 @@ public class ScriptEvent extends Node {
                 intStack[++Statics46.anInt442 - 1] = -1;
                 return 1;
             }
-            int[] var14 = var13.method81(var15.floorLevel, var15.x, var15.y);
+            int[] var14 = var13.toScreen(var15.floorLevel, var15.x, var15.y);
             if (var14 == null) {
                 intStack[++Statics46.anInt442 - 1] = -1;
                 intStack[++Statics46.anInt442 - 1] = -1;
@@ -4684,8 +4054,8 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 6622) {
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().method1236();
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().method1228();
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().getPanelWidth();
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().getPanelHeight();
             return 1;
         }
         if (var0 == 6623) {
@@ -4718,7 +4088,7 @@ public class ScriptEvent extends Node {
         boolean var10;
         if (var0 == 6628) {
             var10 = intStack[--Statics46.anInt442] == 1;
-            client.getWorldMap().method1247(var10);
+            client.getWorldMap().setForceRefresh(var10);
             return 1;
         }
         if (var0 == 6629) {
@@ -4728,7 +4098,7 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 6630) {
             var3 = intStack[--Statics46.anInt442];
-            client.getWorldMap().method1229(var3);
+            client.getWorldMap().setCategoryIndicative(var3);
             return 1;
         }
         if (var0 == 6631) {
@@ -4761,12 +4131,12 @@ public class ScriptEvent extends Node {
         }
         if (var0 == 6636) {
             var3 = intStack[--Statics46.anInt442];
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().method1257(var3) ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().isFunctionDisabled(var3) ? 1 : 0;
             return 1;
         }
         if (var0 == 6637) {
             var3 = intStack[--Statics46.anInt442];
-            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().method1252(var3) ? 1 : 0;
+            intStack[++Statics46.anInt442 - 1] = client.getWorldMap().isCategoryDisabled(var3) ? 1 : 0;
             return 1;
         }
         if (var0 == 6638) {
@@ -4784,7 +4154,7 @@ public class ScriptEvent extends Node {
         }
         WorldMapIcon var8;
         if (var0 == 6639) {
-            var8 = client.getWorldMap().method1248();
+            var8 = client.getWorldMap().getFirstIcon();
             if (var8 == null) {
                 intStack[++Statics46.anInt442 - 1] = -1;
                 intStack[++Statics46.anInt442 - 1] = -1;
@@ -4796,7 +4166,7 @@ public class ScriptEvent extends Node {
             return 1;
         }
         if (var0 == 6640) {
-            var8 = client.getWorldMap().method1255();
+            var8 = client.getWorldMap().getNextIcon();
             if (var8 == null) {
                 intStack[++Statics46.anInt442 - 1] = -1;
                 intStack[++Statics46.anInt442 - 1] = -1;
@@ -4822,7 +4192,7 @@ public class ScriptEvent extends Node {
         if (var0 == 6694) {
             var3 = intStack[--Statics46.anInt442];
             var6 = WorldMapFunction.get(var3);
-            intStack[++Statics46.anInt442 - 1] = var6.anInt564;
+            intStack[++Statics46.anInt442 - 1] = var6.fontSize;
             return 1;
         }
         if (var0 == 6695) {
@@ -4831,7 +4201,7 @@ public class ScriptEvent extends Node {
             if (var6 == null) {
                 intStack[++Statics46.anInt442 - 1] = -1;
             } else {
-                intStack[++Statics46.anInt442 - 1] = var6.anInt1473;
+                intStack[++Statics46.anInt442 - 1] = var6.category;
             }
 
             return 1;
@@ -4871,11 +4241,11 @@ public class ScriptEvent extends Node {
     }
 
     public static void method681(String var0, int var1) {
-        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.WRITE_SOME_STRING_3604, client.connectionContext.encryptor);
-        packet.buffer.writeByte(Buffer.stringLengthPlusOne(var0) + 1);
-        packet.buffer.writeByte(var1);
-        packet.buffer.writeCString(var0);
-        client.connectionContext.writeLater(packet);
+        OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.SET_CLANCHANNEL_RANK, client.netWriter.encryptor);
+        packet.buffer.p1(Buffer.stringLengthPlusOne(var0) + 1);
+        packet.buffer.p1(var1);
+        packet.buffer.pcstr(var0);
+        client.netWriter.writeLater(packet);
     }
 
     public static boolean method725(char var0) {
@@ -4895,11 +4265,44 @@ public class ScriptEvent extends Node {
         return var0 < 0 ? -1 : 0;
     }
 
-    public void method1304(Object[] var1) {
-        this.args = var1;
+    public static boolean isAlphaNumeric(char var0) {
+        return var0 >= '0' && var0 <= '9' || var0 >= 'A' && var0 <= 'Z' || var0 >= 'a' && var0 <= 'z';
     }
 
-    public void method1193(int var1) {
-        this.anInt367 = var1;
+    public static void method868(InterfaceComponent var0, int var1, byte[] var2, byte[] var3) {
+        if (var0.aByteArrayArray1365 == null) {
+            if (var2 == null) {
+                return;
+            }
+
+            var0.aByteArrayArray1365 = new byte[11][];
+            var0.aByteArrayArray1363 = new byte[11][];
+            var0.anIntArray1361 = new int[11];
+            var0.anIntArray1366 = new int[11];
+        }
+
+        var0.aByteArrayArray1365[var1] = var2;
+        if (var2 != null) {
+            var0.aBoolean1372 = true;
+        } else {
+            var0.aBoolean1372 = false;
+
+            for (int var4 = 0; var4 < var0.aByteArrayArray1365.length; ++var4) {
+                if (var0.aByteArrayArray1365[var4] != null) {
+                    var0.aBoolean1372 = true;
+                    break;
+                }
+            }
+        }
+
+        var0.aByteArrayArray1363[var1] = var3;
+    }
+
+    public void setArgs(Object[] args) {
+        this.args = args;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

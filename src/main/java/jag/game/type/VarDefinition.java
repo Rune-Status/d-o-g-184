@@ -7,35 +7,50 @@ import jag.opcode.Buffer;
 
 public class VarDefinition extends DoublyLinkedNode {
 
-    public static final ReferenceCache aReferenceCache701;
-    public static ReferenceTable aReferenceTable383;
+    public static final ReferenceCache<VarDefinition> cache;
+    public static ReferenceTable table;
     public static int anInt568;
 
     static {
-        aReferenceCache701 = new ReferenceCache(64);
+        cache = new ReferenceCache<>(64);
     }
 
     public int anInt377;
 
     public VarDefinition() {
-        this.anInt377 = 0;
+        anInt377 = 0;
     }
 
-    void decode(Buffer var1, int var2) {
-        if (var2 == 5) {
-            this.anInt377 = var1.readUShort();
+    public static VarDefinition get(int id) {
+        VarDefinition var1 = cache.get(id);
+        if (var1 != null) {
+            return var1;
+        }
+        byte[] var2 = table.unpack(16, id);
+        var1 = new VarDefinition();
+        if (var2 != null) {
+            var1.decode(new Buffer(var2));
+        }
+
+        cache.put(var1, id);
+        return var1;
+    }
+
+    void decode(Buffer buffer, int opcode) {
+        if (opcode == 5) {
+            anInt377 = buffer.g2();
         }
 
     }
 
-    public void decode(Buffer var1) {
+    public void decode(Buffer buffer) {
         while (true) {
-            int var2 = var1.readUByte();
-            if (var2 == 0) {
+            int opcode = buffer.g1();
+            if (opcode == 0) {
                 return;
             }
 
-            this.decode(var1, var2);
+            decode(buffer, opcode);
         }
     }
 }

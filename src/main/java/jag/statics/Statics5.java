@@ -2,8 +2,6 @@ package jag.statics;
 
 import jag.game.client;
 import jag.game.relationship.Class114;
-import jag.game.type.ParameterDefinition;
-import jag.js5.BufferedFile;
 import jag.js5.DiskFile;
 import jag.opcode.Buffer;
 
@@ -15,22 +13,6 @@ public class Statics5 {
     public static String userhome;
     public static int anInt838;
     public static File aFile837;
-
-    public static ParameterDefinition method689(int var0) {
-        ParameterDefinition var1 = (ParameterDefinition) ParameterDefinition.aReferenceCache385.get(var0);
-        if (var1 != null) {
-            return var1;
-        }
-        byte[] var2 = ParameterDefinition.aReferenceTable383.unpack(34, var0);
-        var1 = new ParameterDefinition();
-        if (var2 != null) {
-            var1.decode(new Buffer(var2));
-        }
-
-        var1.method254();
-        ParameterDefinition.aReferenceCache385.put(var1, var0);
-        return var1;
-    }
 
     public static File method60(String var0, String var1, int var2) {
         String var3 = var2 == 0 ? "" : "" + var2;
@@ -46,28 +28,28 @@ public class Statics5 {
                 DiskFile var7 = new DiskFile(aFile837, "rw", 10000L);
 
                 int var9;
-                for (var8 = new Buffer((int) var7.length()); var8.caret < var8.payload.length; var8.caret += var9) {
-                    var9 = var7.read(var8.payload, var8.caret, var8.payload.length - var8.caret);
+                for (var8 = new Buffer((int) var7.length()); var8.pos < var8.payload.length; var8.pos += var9) {
+                    var9 = var7.read(var8.payload, var8.pos, var8.payload.length - var8.pos);
                     if (var9 == -1) {
                         throw new IOException();
                     }
                 }
 
-                var8.caret = 0;
-                var9 = var8.readUByte();
+                var8.pos = 0;
+                var9 = var8.g1();
                 if (var9 < 1 || var9 > 3) {
                     throw new IOException("" + var9);
                 }
 
                 int var10 = 0;
                 if (var9 > 1) {
-                    var10 = var8.readUByte();
+                    var10 = var8.g1();
                 }
 
                 if (var9 <= 2) {
-                    var4 = var8.readCString();
+                    var4 = var8.checkedgstr();
                     if (var10 == 1) {
-                        var5 = var8.readCString();
+                        var5 = var8.checkedgstr();
                     }
                 } else {
                     var4 = var8.method1045();
@@ -177,14 +159,14 @@ public class Statics5 {
             try {
                 DiskFile var33 = new DiskFile(aFile837, "rw", 10000L);
                 Buffer var31 = new Buffer(500);
-                var31.writeByte(3);
-                var31.writeByte(var8 != null ? 1 : 0);
+                var31.p1(3);
+                var31.p1(var8 != null ? 1 : 0);
                 var31.method1052(var26.getPath());
                 if (var8 != null) {
                     var31.method1052("");
                 }
 
-                var33.write(var31.payload, 0, var31.caret);
+                var33.write(var31.payload, 0, var31.pos);
                 var33.close();
             } catch (IOException var21) {
                 var21.printStackTrace();

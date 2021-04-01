@@ -1,13 +1,12 @@
 package jag.graphics;
 
-import jag.Vertex;
 import jag.audi.DefaultAudioSystemProvider;
 import jag.game.stockmarket.StockMarketOfferNameComparator;
 import jag.game.type.ItemDefinition;
 import jag.js5.ReferenceTable;
-import jag.opcode.ClassStructure;
+import jag.script.ScriptEvent;
 import jag.statics.Statics5;
-import jag.worldmap.WorldMapIcon_Sub2;
+import jag.worldmap.WorldMapLabelIcon;
 
 import java.awt.*;
 
@@ -20,7 +19,7 @@ public final class Canvas extends java.awt.Canvas {
     }
 
     public static Sprite[] method643(ReferenceTable var0, int var1, int var2) {
-        return !Vertex.method534(var0, var1, var2) ? null : Sprite.method194();
+        return !ReferenceTable.method534(var0, var1, var2) ? null : Sprite.method194();
     }
 
     public static void method640(String var0, boolean var1) {
@@ -33,7 +32,7 @@ public final class Canvas extends java.awt.Canvas {
             if ((!var1 || var5.stockMarketable) && var5.noteTemplateId == -1 && var5.name.toLowerCase().contains(var0)) {
                 if (var3 >= 250) {
                     DefaultAudioSystemProvider.anInt142 = -1;
-                    WorldMapIcon_Sub2.grandExchangeSearchResults = null;
+                    WorldMapLabelIcon.grandExchangeSearchResults = null;
                     return;
                 }
 
@@ -49,8 +48,8 @@ public final class Canvas extends java.awt.Canvas {
             }
         }
 
-        WorldMapIcon_Sub2.grandExchangeSearchResults = var2;
-        ClassStructure.anInt748 = 0;
+        WorldMapLabelIcon.grandExchangeSearchResults = var2;
+        ScriptEvent.anInt748 = 0;
         DefaultAudioSystemProvider.anInt142 = var3;
         String[] var6 = new String[DefaultAudioSystemProvider.anInt142];
 
@@ -58,7 +57,7 @@ public final class Canvas extends java.awt.Canvas {
             var6[var7] = ItemDefinition.get(var2[var7]).name;
         }
 
-        short[] var10 = WorldMapIcon_Sub2.grandExchangeSearchResults;
+        short[] var10 = WorldMapLabelIcon.grandExchangeSearchResults;
         StockMarketOfferNameComparator.method328(var6, var10, 0, var6.length - 1);
     }
 

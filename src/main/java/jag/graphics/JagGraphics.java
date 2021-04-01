@@ -466,7 +466,7 @@ public class JagGraphics extends DoublyLinkedNode {
         }
     }
 
-    public static void method1356() {
+    public static void clear() {
         int var0 = 0;
 
         int var1;

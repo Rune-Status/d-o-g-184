@@ -74,35 +74,35 @@ public class OperatingSystemNode extends Node {
     }
 
     public void method1098(Buffer buffer) {
-        buffer.writeByte(8);
-        buffer.writeByte(this.anInt556);
-        buffer.writeByte(this.x64 ? 1 : 0);
-        buffer.writeShort(this.anInt1437);
-        buffer.writeByte(this.anInt711);
-        buffer.writeByte(this.anInt709);
-        buffer.writeByte(this.anInt1424);
-        buffer.writeByte(this.anInt710);
-        buffer.writeByte(this.aBoolean1507 ? 1 : 0);
-        buffer.writeShort(this.anInt1857);
-        buffer.writeByte(this.anInt1858);
-        buffer.writeMediumInt(this.anInt1853);
-        buffer.writeShort(this.anInt1348);
-        buffer.method1027(this.aString1855);
-        buffer.method1027(this.aString1854);
-        buffer.method1027(this.aString1856);
-        buffer.method1027(this.aString1860);
-        buffer.writeByte(this.anInt1343);
-        buffer.writeShort(this.anInt1859);
-        buffer.method1027(this.aString1849);
-        buffer.method1027(this.aString1848);
-        buffer.writeByte(this.anInt1347);
-        buffer.writeByte(this.anInt1852);
+        buffer.p1(8);
+        buffer.p1(this.anInt556);
+        buffer.p1(this.x64 ? 1 : 0);
+        buffer.p2(this.anInt1437);
+        buffer.p1(this.anInt711);
+        buffer.p1(this.anInt709);
+        buffer.p1(this.anInt1424);
+        buffer.p1(this.anInt710);
+        buffer.p1(this.aBoolean1507 ? 1 : 0);
+        buffer.p2(this.anInt1857);
+        buffer.p1(this.anInt1858);
+        buffer.p3(this.anInt1853);
+        buffer.p2(this.anInt1348);
+        buffer.pstr(this.aString1855);
+        buffer.pstr(this.aString1854);
+        buffer.pstr(this.aString1856);
+        buffer.pstr(this.aString1860);
+        buffer.p1(this.anInt1343);
+        buffer.p2(this.anInt1859);
+        buffer.pstr(this.aString1849);
+        buffer.pstr(this.aString1848);
+        buffer.p1(this.anInt1347);
+        buffer.p1(this.anInt1852);
 
         for (int anAnIntArray1748 : this.anIntArray1748) {
-            buffer.writeInt(anAnIntArray1748);
+            buffer.p4(anAnIntArray1748);
         }
 
-        buffer.writeInt(this.anInt1851);
-        buffer.method1027(this.aString1850);
+        buffer.p4(this.anInt1851);
+        buffer.pstr(this.aString1850);
     }
 }

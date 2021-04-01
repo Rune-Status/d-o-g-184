@@ -5,7 +5,6 @@ import jag.commons.input.Mouse;
 import jag.game.InterfaceComponent;
 import jag.game.SubInterface;
 import jag.game.client;
-import jag.game.option.ClientPreferences;
 import jag.js5.ReferenceTable;
 import jag.script.ScriptEvent;
 import jag.statics.Statics2;
@@ -14,9 +13,9 @@ public class MouseRecorder implements Runnable {
 
     public static int anInt388;
     public final Object lock;
-    public final int[] xHistory;
-    public final int[] yHistory;
-    public final long[] timeHistory;
+    public final int[] xs;
+    public final int[] ys;
+    public final long[] times;
     public boolean enabled;
     public int caret;
 
@@ -24,9 +23,9 @@ public class MouseRecorder implements Runnable {
         enabled = true;
         lock = new Object();
         caret = 0;
-        xHistory = new int[500];
-        yHistory = new int[500];
-        timeHistory = new long[500];
+        xs = new int[500];
+        ys = new int[500];
+        times = new long[500];
     }
 
     public static boolean parseInt(CharSequence var0) {
@@ -85,8 +84,8 @@ public class MouseRecorder implements Runnable {
         for (InterfaceComponent var3 : var0) {
             if (var3 != null) {
                 if (var3.type == 0) {
-                    if (var3.components != null) {
-                        method265(var3.components, var1);
+                    if (var3.subcomponents != null) {
+                        method265(var3.subcomponents, var1);
                     }
 
                     SubInterface var4 = client.subInterfaces.lookup(var3.uid);
@@ -98,21 +97,21 @@ public class MouseRecorder implements Runnable {
                 ScriptEvent var5;
                 if (var1 == 0 && var3.anObjectArray1397 != null) {
                     var5 = new ScriptEvent();
-                    var5.source = var3;
+                    var5.component = var3;
                     var5.args = var3.anObjectArray1397;
                     ScriptEvent.fire(var5);
                 }
 
                 if (var1 == 1 && var3.anObjectArray1393 != null) {
-                    if (var3.componentIndex >= 0) {
+                    if (var3.subComponentIndex >= 0) {
                         InterfaceComponent var6 = InterfaceComponent.lookup(var3.uid);
-                        if (var6 == null || var6.components == null || var3.componentIndex >= var6.components.length || var3 != var6.components[var3.componentIndex]) {
+                        if (var6 == null || var6.subcomponents == null || var3.subComponentIndex >= var6.subcomponents.length || var3 != var6.subcomponents[var3.subComponentIndex]) {
                             continue;
                         }
                     }
 
                     var5 = new ScriptEvent();
-                    var5.source = var3;
+                    var5.component = var3;
                     var5.args = var3.anObjectArray1393;
                     ScriptEvent.fire(var5);
                 }
@@ -124,28 +123,29 @@ public class MouseRecorder implements Runnable {
     public static void method263(ReferenceTable var0, ReferenceTable var1, ReferenceTable var2, ReferenceTable var3) {
         InterfaceComponent.aReferenceTable1375 = var0;
         OldConnectionTaskProcessor.aReferenceTable854 = var1;
-        ClientPreferences.aReferenceTable364 = var2;
+        InterfaceComponent.aReferenceTable364 = var2;
         SerializableLong.aReferenceTable645 = var3;
-        client.interfaces = new InterfaceComponent[InterfaceComponent.aReferenceTable1375.method916()][];
-        Statics2.validInterfaces = new boolean[InterfaceComponent.aReferenceTable1375.method916()];
+        client.interfaces = new InterfaceComponent[InterfaceComponent.aReferenceTable1375.childrenCount()][];
+        Statics2.validInterfaces = new boolean[InterfaceComponent.aReferenceTable1375.childrenCount()];
     }
 
     public void run() {
         while (enabled) {
             synchronized (lock) {
                 if (caret < 500) {
-                    xHistory[caret] = Mouse.x;
-                    yHistory[caret] = Mouse.y;
-                    timeHistory[caret] = Mouse.lastMoveTime;
+                    xs[caret] = Mouse.x;
+                    ys[caret] = Mouse.y;
+                    times[caret] = Mouse.lastMoveTime;
                     ++caret;
                 }
             }
 
-            long var3 = 49L;
+            long time = 49L;
 
             try {
-                Thread.sleep(var3);
+                Thread.sleep(time);
             } catch (InterruptedException ignored) {
+
             }
 
             try {

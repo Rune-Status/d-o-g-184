@@ -2,49 +2,49 @@ package jag.commons.collection;
 
 import java.util.Iterator;
 
-public class LinkedListIterator implements Iterator {
+public class LinkedListIterator<T extends Node> implements Iterator<T> {
 
-    public LinkedList aLinkedList1562;
-    public Node aNode1563;
-    public Node aNode1561;
+    public LinkedList<T> list;
+    public Node head;
+    public Node current;
 
-    public LinkedListIterator(LinkedList var1) {
-        this.aNode1561 = null;
-        this.method1138(var1);
+    public LinkedListIterator(LinkedList<T> list) {
+        current = null;
+        init(list);
     }
 
-    public void method1137() {
-        this.aNode1563 = this.aLinkedList1562 != null ? this.aLinkedList1562.sentinel.next : null;
-        this.aNode1561 = null;
+    public void reset() {
+        head = list != null ? list.sentinel.next : null;
+        current = null;
     }
 
-    public void method1138(LinkedList var1) {
-        this.aLinkedList1562 = var1;
-        this.method1137();
+    public void init(LinkedList<T> list) {
+        this.list = list;
+        reset();
     }
 
     public void remove() {
-        if (this.aNode1561 == null) {
+        if (current == null) {
             throw new IllegalStateException();
         }
-        this.aNode1561.unlink();
-        this.aNode1561 = null;
+        current.unlink();
+        current = null;
     }
 
-    public Object next() {
-        Node var1 = this.aNode1563;
-        if (var1 == this.aLinkedList1562.sentinel) {
-            var1 = null;
-            this.aNode1563 = null;
+    public T next() {
+        Node node = head;
+        if (node == list.sentinel) {
+            node = null;
+            head = null;
         } else {
-            this.aNode1563 = var1.next;
+            head = node.next;
         }
 
-        this.aNode1561 = var1;
-        return var1;
+        current = node;
+        return (T) node;
     }
 
     public boolean hasNext() {
-        return this.aLinkedList1562.sentinel != this.aNode1563;
+        return list.sentinel != head;
     }
 }

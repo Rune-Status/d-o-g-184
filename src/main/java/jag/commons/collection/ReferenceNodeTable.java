@@ -1,116 +1,117 @@
 package jag.commons.collection;
 
-public final class ReferenceNodeTable {
+public final class ReferenceNodeTable<T> {
 
     final int capacity;
-    final IterableNodeTable table;
-    final IterableDoublyLinkedNode iterable;
+    final IterableNodeTable<LinkedReference<T>> table;
+    final IterableDoublyLinkedNodeQueue<LinkedReference<T>> queue;
     int remaining;
-    ReferenceSweeper aReferenceSweeper_805;
+    ReferenceSweeper sweeper;
 
-    public ReferenceNodeTable(int var1, int var2) {
-        this.iterable = new IterableDoublyLinkedNode();
-        this.capacity = var1;
-        this.remaining = var1;
+    public ReferenceNodeTable(int capacity, int maximumCapacity) {
+        this.queue = new IterableDoublyLinkedNodeQueue<>();
+        this.capacity = capacity;
+        this.remaining = capacity;
 
-        int var3;
-        for (var3 = 1; var3 + var3 < var1 && var3 < var2; var3 += var3) {
+        int size = 1;
+        while (size + size < capacity && size < maximumCapacity) {
+            size += size;
         }
 
-        this.table = new IterableNodeTable(var3);
+        this.table = new IterableNodeTable<>(size);
     }
 
-    public void method666(int var1) {
-        for (LinkedReference var2 = (LinkedReference) this.iterable.method1130(); var2 != null; var2 = (LinkedReference) this.iterable.method1129()) {
-            if (var2.isSoft()) {
-                if (var2.getReferent() == null) {
-                    var2.unlink();
-                    var2.unlinkDoubly();
-                    this.remaining += var2.size;
+    public void relegate(int index) {
+        for (LinkedReference<T> ref = queue.first(); ref != null; ref = queue.next()) {
+            if (ref.isSoft()) {
+                if (ref.getReferent() == null) {
+                    ref.unlink();
+                    ref.unlinkDoubly();
+                    remaining += ref.size;
                 }
-            } else if (++var2.doublyKey > (long) var1) {
-                SoftLinkedReference var3 = new SoftLinkedReference(var2.getReferent(), var2.size);
-                this.table.method237(var3, var2.key);
-                IterableDoublyLinkedNode.method1132(var3, var2);
-                var2.unlink();
-                var2.unlinkDoubly();
+            } else if (++ref.doublyKey > (long) index) {
+                SoftLinkedReference<T> soft = new SoftLinkedReference<T>(ref.getReferent(), ref.size);
+                table.put(soft, ref.key);
+                IterableDoublyLinkedNodeQueue.insertBefore(soft, ref);
+                ref.unlink();
+                ref.unlinkDoubly();
             }
         }
 
     }
 
-    void method670(long var1) {
-        LinkedReference var3 = (LinkedReference) this.table.lookup(var1);
-        this.method668(var3);
+    void remove(long key) {
+        LinkedReference<T> ref = table.lookup(key);
+        remove(ref);
     }
 
-    void method668(LinkedReference var1) {
-        if (var1 != null) {
-            var1.unlink();
-            var1.unlinkDoubly();
-            this.remaining += var1.size;
+    void remove(LinkedReference<T> ref) {
+        if (ref != null) {
+            ref.unlink();
+            ref.unlinkDoubly();
+            remaining += ref.size;
         }
 
     }
 
-    public Object method669(long var1) {
-        LinkedReference var3 = (LinkedReference) this.table.lookup(var1);
-        if (var3 == null) {
+    public T get(long key) {
+        LinkedReference<T> ref = table.lookup(key);
+        if (ref == null) {
             return null;
         }
-        Object var4 = var3.getReferent();
-        if (var4 == null) {
-            var3.unlink();
-            var3.unlinkDoubly();
-            this.remaining += var3.size;
+
+        T value = ref.getReferent();
+        if (value == null) {
+            ref.unlink();
+            ref.unlinkDoubly();
+            remaining += ref.size;
             return null;
         }
-        if (var3.isSoft()) {
-            HardLinkedReference var5 = new HardLinkedReference(var4, var3.size);
-            this.table.method237(var5, var3.key);
-            this.iterable.method1134(var5);
-            var5.doublyKey = 0L;
-            var3.unlink();
-            var3.unlinkDoubly();
+
+        if (ref.isSoft()) {
+            HardLinkedReference<T> hard = new HardLinkedReference<>(value, ref.size);
+            table.put(hard, ref.key);
+            queue.insert(hard);
+            hard.doublyKey = 0L;
+            ref.unlink();
+            ref.unlinkDoubly();
         } else {
-            this.iterable.method1134(var3);
-            var3.doublyKey = 0L;
+            queue.insert(ref);
+            ref.doublyKey = 0L;
         }
 
-        return var4;
+        return value;
     }
 
-    public void method667(Object var1, long var2, int var4) {
-        if (var4 > this.capacity) {
+    public void put(T value, long key, int size) {
+        if (size > capacity) {
             throw new IllegalStateException();
         }
-        this.method670(var2);
-        this.remaining -= var4;
 
-        while (this.remaining < 0) {
-            LinkedReference var5 = (LinkedReference) this.iterable.method1131();
-            if (var5 == null) {
+        remove(key);
+        remaining -= size;
+
+        while (remaining < 0) {
+            LinkedReference<T> ref = queue.pop();
+            if (ref == null) {
                 throw new RuntimeException("");
             }
 
-            if (!var5.isSoft()) {
-            }
-
-            this.method668(var5);
-            if (this.aReferenceSweeper_805 != null) {
-                this.aReferenceSweeper_805.method671(var5.getReferent());
+            remove(ref);
+            if (sweeper != null) {
+                sweeper.sweep(ref.getReferent());
             }
         }
 
-        HardLinkedReference var6 = new HardLinkedReference(var1, var4);
-        this.table.method237(var6, var2);
-        this.iterable.method1134(var6);
-        var6.doublyKey = 0L;
+        HardLinkedReference<T> ref = new HardLinkedReference<>(value, size);
+        table.put(ref, key);
+        queue.insert(ref);
+        ref.doublyKey = 0L;
     }
 
-    public void method665() {
-        this.iterable.method1133();
-        this.table.method236();
-        this.remaining = this.capacity;
+    public void clear() {
+        queue.clear();
+        table.clear();
+        remaining = capacity;
     }
 }

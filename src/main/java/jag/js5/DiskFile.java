@@ -9,7 +9,7 @@ public final class DiskFile {
     public RandomAccessFile file;
 
     public DiskFile(File file, String mode, long length) throws IOException {
-        if (-1L == length) {
+        if (length == -1L) {
             length = Long.MAX_VALUE;
         }
 
@@ -19,7 +19,7 @@ public final class DiskFile {
 
         this.file = new RandomAccessFile(file, mode);
         this.length = length;
-        this.caret = 0L;
+        caret = 0L;
         int var5 = this.file.read();
         if (var5 != -1 && !mode.equals("r")) {
             this.file.seek(0L);
@@ -30,30 +30,30 @@ public final class DiskFile {
     }
 
     public final void close(boolean sync) throws IOException {
-        if (this.file != null) {
+        if (file != null) {
             if (sync) {
                 try {
-                    this.file.getFD().sync();
+                    file.getFD().sync();
                 } catch (SyncFailedException ignored) {
                 }
             }
 
-            this.file.close();
-            this.file = null;
+            file.close();
+            file = null;
         }
 
     }
 
     public final long length() throws IOException {
-        return this.file.length();
+        return file.length();
     }
 
     public final void close() throws IOException {
-        this.close(false);
+        close(false);
     }
 
     public final int read(byte[] buffer, int caret, int length) throws IOException {
-        int read = this.file.read(buffer, caret, length);
+        int read = file.read(buffer, caret, length);
         if (read > 0) {
             this.caret += read;
         }
@@ -62,24 +62,23 @@ public final class DiskFile {
     }
 
     final void seek(long caret) throws IOException {
-        this.file.seek(caret);
+        file.seek(caret);
         this.caret = caret;
     }
 
     public final void write(byte[] buffer, int caret, int length) throws IOException {
         if ((long) length + this.caret > this.length) {
-            this.file.seek(this.length);
-            this.file.write(1);
+            file.seek(this.length);
+            file.write(1);
             throw new EOFException();
         }
-        this.file.write(buffer, caret, length);
+        file.write(buffer, caret, length);
         this.caret += length;
     }
 
     protected void finalize() throws Throwable {
-        if (this.file != null) {
-            this.close();
+        if (file != null) {
+            close();
         }
-
     }
 }

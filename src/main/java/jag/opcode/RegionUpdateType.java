@@ -12,7 +12,7 @@ import java.io.IOException;
 public class RegionUpdateType {
     public static final RegionUpdateType A_REGION_UPDATE_TYPE___1204;
     public static final RegionUpdateType A_REGION_UPDATE_TYPE___1206;
-    public static final RegionUpdateType A_REGION_UPDATE_TYPE___1201;
+    public static final RegionUpdateType TRANSMOGRIFY_PLAYER;
     public static final RegionUpdateType ADD_PICKABLE;
     public static final RegionUpdateType SPAWN_PROJECTILE;
     public static final RegionUpdateType REMOVE_SCENE_OBJECT;
@@ -20,12 +20,12 @@ public class RegionUpdateType {
     public static final RegionUpdateType A_REGION_UPDATE_TYPE___1205;
     public static final RegionUpdateType SET_PICKABLE_STACK_SIZE;
     public static final RegionUpdateType REMOVE_PICKABLE;
-    public static int anInt1199;
+    public static int parsedTotp;
 
     static {
         A_REGION_UPDATE_TYPE___1204 = new RegionUpdateType();
         A_REGION_UPDATE_TYPE___1206 = new RegionUpdateType();
-        A_REGION_UPDATE_TYPE___1201 = new RegionUpdateType();
+        TRANSMOGRIFY_PLAYER = new RegionUpdateType();
         ADD_PICKABLE = new RegionUpdateType();
         SPAWN_PROJECTILE = new RegionUpdateType();
         REMOVE_SCENE_OBJECT = new RegionUpdateType();
@@ -78,6 +78,6 @@ public class RegionUpdateType {
     }
 
     public static RegionUpdateType[] values() {
-        return new RegionUpdateType[]{A_REGION_UPDATE_TYPE___1204, A_REGION_UPDATE_TYPE___1206, A_REGION_UPDATE_TYPE___1201, ADD_PICKABLE, SPAWN_PROJECTILE, REMOVE_SCENE_OBJECT, SPAWN_GRAPHICS_OBJECT, A_REGION_UPDATE_TYPE___1205, SET_PICKABLE_STACK_SIZE, REMOVE_PICKABLE};
+        return new RegionUpdateType[]{A_REGION_UPDATE_TYPE___1204, A_REGION_UPDATE_TYPE___1206, TRANSMOGRIFY_PLAYER, ADD_PICKABLE, SPAWN_PROJECTILE, REMOVE_SCENE_OBJECT, SPAWN_GRAPHICS_OBJECT, A_REGION_UPDATE_TYPE___1205, SET_PICKABLE_STACK_SIZE, REMOVE_PICKABLE};
     }
 }

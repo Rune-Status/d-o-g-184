@@ -4,8 +4,8 @@ public final class TileDecor {
 
     public Entity entity;
     public long uid;
-    public int fineX;
-    public int fineY;
+    public int absoluteX;
+    public int absoluteY;
     public int height;
     public int config;
 

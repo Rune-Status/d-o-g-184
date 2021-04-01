@@ -24,25 +24,25 @@ public class StockMarketOffer {
     }
 
     public StockMarketOffer(Buffer var1) {
-        this.state = var1.readByte();
-        this.itemId = var1.readUShort();
-        this.itemPrice = var1.readInt();
-        this.itemQuantity = var1.readInt();
-        this.transferred = var1.readInt();
-        this.spent = var1.readInt();
+        this.state = var1.g1b();
+        this.itemId = var1.g2();
+        this.itemPrice = var1.g4();
+        this.itemQuantity = var1.g4();
+        this.transferred = var1.g4();
+        this.spent = var1.g4();
     }
 
     public static void method231(boolean var0) {
         AudioSystem.process();
-        ++client.connectionContext.idleWriteTicks;
-        if (client.connectionContext.idleWriteTicks >= 50 || var0) {
-            client.connectionContext.idleWriteTicks = 0;
-            if (!client.pendingDisconnect && client.connectionContext.unwrap() != null) {
-                OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.IDLE_WRITE, client.connectionContext.encryptor);
-                client.connectionContext.writeLater(packet);
+        ++client.netWriter.idleWriteTicks;
+        if (client.netWriter.idleWriteTicks >= 50 || var0) {
+            client.netWriter.idleWriteTicks = 0;
+            if (!client.pendingDisconnect && client.netWriter.unwrap() != null) {
+                OutgoingPacket packet = OutgoingPacket.prepare(OutgoingPacketMeta.KEEP_ALIVE, client.netWriter.encryptor);
+                client.netWriter.writeLater(packet);
 
                 try {
-                    client.connectionContext.flush();
+                    client.netWriter.flush();
                 } catch (IOException var3) {
                     client.pendingDisconnect = true;
                 }

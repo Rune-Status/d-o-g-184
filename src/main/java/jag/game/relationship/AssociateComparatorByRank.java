@@ -1,6 +1,6 @@
 package jag.game.relationship;
 
-import jag.game.client;
+import jag.game.menu.ContextMenu;
 
 public class AssociateComparatorByRank extends AssociateComparator {
 
@@ -10,8 +10,8 @@ public class AssociateComparatorByRank extends AssociateComparator {
         this.aBoolean764 = var1;
     }
 
-    public static int method679() {
-        return client.menuRowCount - 1;
+    public static int getMaximumMenuRowIndex() {
+        return ContextMenu.rowCount - 1;
     }
 
     int method604(Associate var1, Associate var2) {

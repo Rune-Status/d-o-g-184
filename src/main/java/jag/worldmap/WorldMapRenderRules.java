@@ -1,13 +1,11 @@
 package jag.worldmap;
 
-import jag.game.InterfaceComponent;
 import jag.game.client;
 import jag.game.scene.CollisionMap;
-import jag.game.stockmarket.Class76;
+import jag.game.scene.SceneGraph;
 import jag.graphics.JagGraphics;
 import jag.graphics.Sprite;
 import jag.opcode.Buffer;
-import jag.opcode.MouseRecorder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,13 +20,6 @@ public class WorldMapRenderRules {
 
     WorldMapRenderRules(int var1) {
         this.anInt170 = var1;
-    }
-
-    public static String method131(int var0) {
-        if (var0 < 0) {
-            return "";
-        }
-        return client.menuTargets[var0].length() > 0 ? client.menuActions[var0] + " " + client.menuTargets[var0] : client.menuActions[var0];
     }
 
     public static Sprite method130(byte[] var0) {
@@ -64,7 +55,7 @@ public class WorldMapRenderRules {
         for (int level = 0; level < 4; ++level) {
             for (int x = 0; x < 64; ++x) {
                 for (int y = 0; y < 64; ++y) {
-                    Class76.method416(buffer, level, x + var1, y + var2, var3, var4, 0);
+                    SceneGraph.method416(buffer, level, x + var1, y + var2, var3, var4, 0);
                 }
             }
         }

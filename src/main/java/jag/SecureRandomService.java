@@ -1,10 +1,7 @@
 package jag;
 
-import jag.game.client;
-import jag.game.relationship.AssociateComparatorByName;
-import jag.game.relationship.RelationshipSystem;
+import jag.game.menu.ContextMenu;
 import jag.js5.Bzip2Entry;
-import jag.statics.Statics1;
 
 import java.security.SecureRandom;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +12,7 @@ public class SecureRandomService {
 
     public static int anInt457;
     public static int anInt458;
-    public static SecureRandom aSecureRandom864;
+    public static SecureRandom instance;
 
     final Future<SecureRandom> future;
     ExecutorService executor;
@@ -26,26 +23,26 @@ public class SecureRandomService {
     }
 
     public static void method317() {
-        for (int var0 = 0; var0 < client.menuRowCount; ++var0) {
-            if (Bzip2Entry.method1169(client.menuOpcodes[var0])) {
-                if (var0 < client.menuRowCount - 1) {
-                    for (int var1 = var0; var1 < client.menuRowCount - 1; ++var1) {
-                        client.menuActions[var1] = client.menuActions[var1 + 1];
-                        client.menuTargets[var1] = client.menuTargets[var1 + 1];
-                        client.menuOpcodes[var1] = client.menuOpcodes[var1 + 1];
-                        client.menuPrimaryArgs[var1] = client.menuPrimaryArgs[var1 + 1];
-                        client.menuSecondaryArgs[var1] = client.menuSecondaryArgs[var1 + 1];
-                        client.menuTertiaryArgs[var1] = client.menuTertiaryArgs[var1 + 1];
-                        client.menuShiftClickActions[var1] = client.menuShiftClickActions[var1 + 1];
+        for (int i = 0; i < ContextMenu.rowCount; ++i) {
+            if (Bzip2Entry.method1169(ContextMenu.opcodes[i])) {
+                if (i < ContextMenu.rowCount - 1) {
+                    for (int j = i; j < ContextMenu.rowCount - 1; ++j) {
+                        ContextMenu.actions[j] = ContextMenu.actions[j + 1];
+                        ContextMenu.targets[j] = ContextMenu.targets[j + 1];
+                        ContextMenu.opcodes[j] = ContextMenu.opcodes[j + 1];
+                        ContextMenu.primaryArgs[j] = ContextMenu.primaryArgs[j + 1];
+                        ContextMenu.secondaryArgs[j] = ContextMenu.secondaryArgs[j + 1];
+                        ContextMenu.tertiaryArgs[j] = ContextMenu.tertiaryArgs[j + 1];
+                        ContextMenu.shiftClickActions[j] = ContextMenu.shiftClickActions[j + 1];
                     }
                 }
 
-                --var0;
-                --client.menuRowCount;
+                --i;
+                --ContextMenu.rowCount;
             }
         }
 
-        AssociateComparatorByName.openMenu(RelationshipSystem.anInt319 / 2 + URLRequestProcessor.anInt797, Statics1.anInt321);
+        ContextMenu.open(ContextMenu.width / 2 + ContextMenu.x, ContextMenu.y);
     }
 
     public static SecureRandom provide() {
@@ -55,19 +52,19 @@ public class SecureRandomService {
     }
 
     public boolean isDone() {
-        return this.future.isDone();
+        return future.isDone();
     }
 
     public SecureRandom get() {
         try {
-            return this.future.get();
-        } catch (Exception var2) {
+            return future.get();
+        } catch (Exception e) {
             return provide();
         }
     }
 
     public void kill() {
-        this.executor.shutdown();
-        this.executor = null;
+        executor.shutdown();
+        executor = null;
     }
 }

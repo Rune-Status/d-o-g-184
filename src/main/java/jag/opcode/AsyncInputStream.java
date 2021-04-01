@@ -6,46 +6,43 @@ import java.io.InputStream;
 
 public class AsyncInputStream implements Runnable {
 
-    final int anInt1666;
-    int anInt1662;
-    int anInt1664;
-
+    final int payloadCapacity;
     final byte[] payload;
-
     final InputStream input;
     final Thread thread;
-
+    int anInt1662;
+    int anInt1664;
     IOException error;
 
-    AsyncInputStream(InputStream var1, int var2) {
-        this.anInt1664 = 0;
-        this.anInt1662 = 0;
-        this.input = var1;
-        this.anInt1666 = var2 + 1;
-        this.payload = new byte[this.anInt1666];
-        this.thread = new Thread(this);
-        this.thread.setDaemon(true);
-        this.thread.start();
+    AsyncInputStream(InputStream input, int payloadCapacity) {
+        anInt1664 = 0;
+        anInt1662 = 0;
+        this.input = input;
+        this.payloadCapacity = payloadCapacity + 1;
+        payload = new byte[this.payloadCapacity];
+        thread = new Thread(this);
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    boolean method1198(int var1) throws IOException {
+    boolean available(int var1) throws IOException {
         if (var1 == 0) {
             return true;
         }
-        if (var1 > 0 && var1 < this.anInt1666) {
+        if (var1 > 0 && var1 < payloadCapacity) {
             synchronized (this) {
                 int var3;
-                if (this.anInt1664 <= this.anInt1662) {
-                    var3 = this.anInt1662 - this.anInt1664;
+                if (anInt1664 <= anInt1662) {
+                    var3 = anInt1662 - anInt1664;
                 } else {
-                    var3 = this.anInt1666 - this.anInt1664 + this.anInt1662;
+                    var3 = payloadCapacity - anInt1664 + anInt1662;
                 }
 
                 if (var3 < var1) {
-                    if (this.error != null) {
-                        throw new IOException(this.error.toString());
+                    if (error != null) {
+                        throw new IOException(error.toString());
                     }
-                    this.notifyAll();
+                    notifyAll();
                     return false;
                 }
                 return true;
@@ -54,85 +51,84 @@ public class AsyncInputStream implements Runnable {
         throw new IOException();
     }
 
-    int method1197() throws IOException {
+    int read() throws IOException {
         synchronized (this) {
-            if (this.anInt1662 == this.anInt1664) {
-                if (this.error != null) {
-                    throw new IOException(this.error.toString());
+            if (anInt1662 == anInt1664) {
+                if (error != null) {
+                    throw new IOException(error.toString());
                 }
                 return -1;
             }
-            int var2 = this.payload[this.anInt1664] & 255;
-            this.anInt1664 = (this.anInt1664 + 1) % this.anInt1666;
-            this.notifyAll();
+            int var2 = payload[anInt1664] & 255;
+            anInt1664 = (anInt1664 + 1) % payloadCapacity;
+            notifyAll();
             return var2;
         }
     }
 
-    int method1196(byte[] var1, int var2, int var3) throws IOException {
+    int read(byte[] var1, int var2, int var3) throws IOException {
         if (var3 >= 0 && var2 >= 0 && var3 + var2 <= var1.length) {
             synchronized (this) {
                 int var5;
-                if (this.anInt1664 <= this.anInt1662) {
-                    var5 = this.anInt1662 - this.anInt1664;
+                if (anInt1664 <= anInt1662) {
+                    var5 = anInt1662 - anInt1664;
                 } else {
-                    var5 = this.anInt1666 - this.anInt1664 + this.anInt1662;
+                    var5 = payloadCapacity - anInt1664 + anInt1662;
                 }
 
                 if (var3 > var5) {
                     var3 = var5;
                 }
 
-                if (var3 == 0 && this.error != null) {
-                    throw new IOException(this.error.toString());
+                if (var3 == 0 && error != null) {
+                    throw new IOException(error.toString());
                 }
-                if (var3 + this.anInt1664 <= this.anInt1666) {
-                    System.arraycopy(this.payload, this.anInt1664, var1, var2, var3);
+                if (var3 + anInt1664 <= payloadCapacity) {
+                    System.arraycopy(payload, anInt1664, var1, var2, var3);
                 } else {
-                    int var6 = this.anInt1666 - this.anInt1664;
-                    System.arraycopy(this.payload, this.anInt1664, var1, var2, var6);
-                    System.arraycopy(this.payload, 0, var1, var6 + var2, var3 - var6);
+                    int var6 = payloadCapacity - anInt1664;
+                    System.arraycopy(payload, anInt1664, var1, var2, var6);
+                    System.arraycopy(payload, 0, var1, var6 + var2, var3 - var6);
                 }
 
-                this.anInt1664 = (var3 + this.anInt1664) % this.anInt1666;
-                this.notifyAll();
+                anInt1664 = (var3 + anInt1664) % payloadCapacity;
+                notifyAll();
                 return var3;
             }
         }
         throw new IOException();
     }
 
-    int method1199() throws IOException {
+    int available() throws IOException {
         synchronized (this) {
             int var2;
-            if (this.anInt1664 <= this.anInt1662) {
-                var2 = this.anInt1662 - this.anInt1664;
+            if (anInt1664 <= anInt1662) {
+                var2 = anInt1662 - anInt1664;
             } else {
-                var2 = this.anInt1666 - this.anInt1664 + this.anInt1662;
+                var2 = payloadCapacity - anInt1664 + anInt1662;
             }
 
-            if (var2 <= 0 && this.error != null) {
-                throw new IOException(this.error.toString());
+            if (var2 <= 0 && error != null) {
+                throw new IOException(error.toString());
             }
-            this.notifyAll();
+            notifyAll();
             return var2;
         }
     }
 
-    void method1195() {
+    void close() {
         synchronized (this) {
-            if (this.error == null) {
-                this.error = new IOException("");
+            if (error == null) {
+                error = new IOException("");
             }
 
-            this.notifyAll();
+            notifyAll();
         }
 
         try {
-            this.thread.join();
+            thread.join();
         } catch (InterruptedException ignored) {
         }
-
     }
 
     public void run() {
@@ -140,16 +136,16 @@ public class AsyncInputStream implements Runnable {
             int var2;
             synchronized (this) {
                 while (true) {
-                    if (this.error != null) {
+                    if (error != null) {
                         return;
                     }
 
-                    if (this.anInt1664 == 0) {
-                        var2 = this.anInt1666 - this.anInt1662 - 1;
-                    } else if (this.anInt1664 <= this.anInt1662) {
-                        var2 = this.anInt1666 - this.anInt1662;
+                    if (anInt1664 == 0) {
+                        var2 = payloadCapacity - anInt1662 - 1;
+                    } else if (anInt1664 <= anInt1662) {
+                        var2 = payloadCapacity - anInt1662;
                     } else {
-                        var2 = this.anInt1664 - this.anInt1662 - 1;
+                        var2 = anInt1664 - anInt1662 - 1;
                     }
 
                     if (var2 > 0) {
@@ -157,7 +153,7 @@ public class AsyncInputStream implements Runnable {
                     }
 
                     try {
-                        this.wait();
+                        wait();
                     } catch (InterruptedException ignored) {
                     }
                 }
@@ -165,19 +161,19 @@ public class AsyncInputStream implements Runnable {
 
             int var5;
             try {
-                var5 = this.input.read(this.payload, this.anInt1662, var2);
+                var5 = input.read(payload, anInt1662, var2);
                 if (var5 == -1) {
                     throw new EOFException();
                 }
             } catch (IOException var11) {
                 synchronized (this) {
-                    this.error = var11;
+                    error = var11;
                     return;
                 }
             }
 
             synchronized (this) {
-                this.anInt1662 = (var5 + this.anInt1662) % this.anInt1666;
+                anInt1662 = (var5 + anInt1662) % payloadCapacity;
             }
         }
     }

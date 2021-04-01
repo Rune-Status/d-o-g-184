@@ -1,9 +1,9 @@
 package jag.js5;
 
+import jag.Huffman;
 import jag.audi.AudioRunnable;
 import jag.game.relationship.AssociateComparatorByWorld;
 import jag.opcode.Buffer;
-import jag.statics.Statics19;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -22,9 +22,6 @@ public final class ResourceCache {
     int id;
 
     public ResourceCache(int id, BufferedFile data, BufferedFile index, int caret) {
-        this.data = null;
-        this.index = null;
-        this.caret = 65000;
         this.id = id;
         this.data = data;
         this.index = index;
@@ -37,11 +34,11 @@ public final class ResourceCache {
     }
 
     public static int method1491(Buffer var0, String var1) {
-        int var2 = var0.caret;
+        int var2 = var0.pos;
         byte[] var3 = AssociateComparatorByWorld.method680(var1);
-        var0.writeSmart(var3.length);
-        var0.caret += Statics19.huffman.method951(var3, 0, var3.length, var0.payload, var0.caret);
-        return var0.caret - var2;
+        var0.psmart(var3.length);
+        var0.pos += Huffman.instance.compress(var3, 0, var3.length, var0.payload, var0.pos);
+        return var0.pos - var2;
     }
 
     boolean write(int var1, byte[] var2, int var3, boolean var4) {

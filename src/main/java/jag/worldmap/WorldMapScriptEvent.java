@@ -1,11 +1,8 @@
 package jag.worldmap;
 
-import jag.js5.Archive;
-import jag.js5.ResourceRequest;
 import jag.statics.Statics35;
 
 public class WorldMapScriptEvent {
-    public static Archive aArchive304;
     public final int anInt306;
     public final WorldMapPosition aWorldMapPosition307;
     public final WorldMapPosition aWorldMapPosition305;
